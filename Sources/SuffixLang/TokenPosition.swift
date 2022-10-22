@@ -19,8 +19,8 @@ public struct TokenPosition {
     /// The UTF-16, 1-indexed, character number
     public var char: Int = 1
     
-    /// The UTF-16, 1-indexed, character number
-    public var index: String.Index
+    /// The index in the document, used for the cursor internally
+    var index: String.Index
     
     mutating func nextChar(document: String) {
         let prev = index

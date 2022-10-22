@@ -167,27 +167,11 @@ public class Lexer {
             }
             if var last = result.last {
                 defer { result[result.endIndex - 1] = last }
-                switch type {
+                switch last.type {
                 case .integerLiteral:
                     last.data = .int(Int(last.literal.filter({ $0.isNumber })) ?? 0)
                 case .floatLiteral:
                     last.data = .float(Double(last.literal.filter({ $0.isNumber || $0 == "." })) ?? 0)
-                case .identifier:
-                    let source = last.literal
-                    var result = ""
-                    var isSpaced = false
-                    for char in source {
-                        if char.isWhitespace {
-                            isSpaced = true
-                            continue
-                        }
-                        if isSpaced {
-                            result.append(" ")
-                            isSpaced = false
-                        }
-                        result.append(char)
-                    }
-                    last.data = .identifier(result)
                 case .stringLiteral:
                     last.data = .interpolation(parseStringLiteral(token: last))
                 default:
@@ -195,24 +179,53 @@ public class Lexer {
                 }
             }
             if let last = result.last,
-               last.type == .identifier,
-               case .identifier(let id) = last.data {
-                let words = id.split(separator: " ")
-                if let keyword = words.first,
-                   keyword == "func" || keyword == "record" {
-                    result.removeLast()
-                    var pos = last.position
-                    pos.advance(by: keyword.count, in: document)
-                    result.append(Token(position: last.position, literal: document[last.position.index..<pos.index], type: .keyword))
-                    let whitespaceStart = pos
-                    while document[pos.index].isWhitespace {
-                        pos.nextChar(document: document)
+               last.type == .identifier {
+                let source = last.literal
+                var words: [Substring] = []
+                var current: Substring = source[source.startIndex..<source.startIndex]
+                var isSpaced = false
+                for (index, char) in zip(source.indices, source) {
+                    if char.isWhitespace {
+                        isSpaced = true
+                        continue
                     }
-                    result.append(Token(position: whitespaceStart, literal: document[whitespaceStart.index..<pos.index], type: .whitespace))
-                    if pos.index != last.literal.endIndex {
-                        result.append(Token(position: pos, literal: document[pos.index..<last.literal.endIndex], type: .identifier, data: .identifier(String(id.dropFirst(keyword.count + 1)))))
+                    if isSpaced {
+                        words.append(current)
+                        current = source[index...index]
+                        isSpaced = false
+                    }
+                    current = source[current.startIndex...index]
+                }
+                words.append(current)
+                var start = 0
+                var pos = last.position
+                result.removeLast()
+                func commit(_ i: Int) {
+                    if i != start {
+                        let end = i == words.count ? last.literal.endIndex : words[i].startIndex
+                        let firstWord = words[start]
+                        pos.advance(to: firstWord.startIndex, in: document)
+                        result.append(
+                            Token(position: pos,
+                                  literal: document[firstWord.startIndex..<end],
+                                  type: .identifier,
+                                  data: .identifier(words[start..<i].joined(separator: " "))))
                     }
                 }
+                for (i, word) in words.enumerated() {
+                    if word == "func" || word == "record" || word == "where" {
+                        commit(i)
+                        pos.advance(to: word.startIndex, in: document)
+                        result.append(Token(position: pos, literal: word, type: .keyword))
+                        start = i + 1
+                        let end = start == words.count ? last.literal.endIndex : words[start].startIndex
+                        if word.endIndex != end {
+                            pos.advance(to: word.endIndex, in: document)
+                            result.append(Token(position: pos, literal: document[word.endIndex..<end], type: .whitespace))
+                        }
+                    }
+                }
+                commit(words.count)
             }
         }
     }
