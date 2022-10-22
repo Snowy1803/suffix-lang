@@ -15,19 +15,30 @@ import SuffixLang
 
 extension Token {
     var dumped: String {
-        return "\(literal.debugDescription.red) \(String(describing: type).magenta) (\(position.line):\(position.char)) \(data?.description ?? "")\n"
+        return "\(literal.debugDescription.red) \(String(describing: type).magenta) (\(position.line):\(position.char)) \(data?.dumped ?? "")\n"
     }
 }
 
-extension Token.AssociatedData: CustomStringConvertible {
-    public var description: String {
+extension Token.AssociatedData {
+    var dumped: String {
         switch self {
-        case .string(let value):
-            return value.debugDescription
+        case .identifier(let value):
+            return value.debugDescription.red
         case .int(let value):
-            return "\(value)"
+            return "\(value)".blue
         case .float(let value):
-            return "\(value)"
+            return "\(value)".blue
+        case .interpolation(let array):
+            return array.map({
+                switch $0 {
+                case .literal(let value):
+                    return value.debugDescription.red
+                case .escaped(let value):
+                    return value.description.magenta
+                case .percent(let value):
+                    return value.description.blue
+                }
+            }).joined()
         }
     }
 }

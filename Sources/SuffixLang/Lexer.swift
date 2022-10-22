@@ -118,6 +118,39 @@ public class Lexer {
         }
     }
     
+    func parseStringLiteral(token: Token) -> [Token.StringComponent] {
+        var result: [Token.StringComponent] = []
+        let literal = token.literal.dropFirst().dropLast(token.literal.hasSuffix("\"") ? 1 : 0)
+        var iterator = literal.indices.makeIterator()
+        var current: Token.StringComponent?
+        func commit(_ i: String.Index, include: Bool) {
+            if var current {
+                if include {
+                    current.substring = literal[current.substring.startIndex...i]
+                } else {
+                    current.substring = literal[current.substring.startIndex..<i]
+                }
+                result.append(current)
+            }
+            current = nil
+        }
+        while let i = iterator.next() {
+            if literal[i] == "\\", let next = iterator.next() {
+                commit(i, include: false)
+                result.append(.escaped(literal[i...next]))
+            } else if literal[i] == "%" {
+                commit(i, include: false)
+                current = .percent(literal[i...i])
+            } else if case .percent(_) = current, literal[i].isLetter {
+                commit(i, include: true)
+            } else if current == nil {
+                current = .literal(literal[i...i])
+            }
+        }
+        commit(literal.endIndex, include: false)
+        return result
+    }
+    
     func didAddToken() {
         // resolves literals
         do {
@@ -154,16 +187,16 @@ public class Lexer {
                         }
                         result.append(char)
                     }
-                    last.data = .string(result)
+                    last.data = .identifier(result)
                 case .stringLiteral:
-                    break // TODO
+                    last.data = .interpolation(parseStringLiteral(token: last))
                 default:
                     break
                 }
             }
             if let last = result.last,
                last.type == .identifier,
-               case .string(let id) = last.data {
+               case .identifier(let id) = last.data {
                 let words = id.split(separator: " ")
                 if let keyword = words.first,
                    keyword == "func" || keyword == "record" {
@@ -177,7 +210,7 @@ public class Lexer {
                     }
                     result.append(Token(position: whitespaceStart, literal: document[whitespaceStart.index..<pos.index], type: .whitespace))
                     if pos.index != last.literal.endIndex {
-                        result.append(Token(position: pos, literal: document[pos.index..<last.literal.endIndex], type: .identifier, data: .string(String(id.dropFirst(keyword.count + 1)))))
+                        result.append(Token(position: pos, literal: document[pos.index..<last.literal.endIndex], type: .identifier, data: .identifier(String(id.dropFirst(keyword.count + 1)))))
                     }
                 }
             }

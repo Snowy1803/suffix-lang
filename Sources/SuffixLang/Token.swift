@@ -24,44 +24,43 @@ public struct Token {
     
     /// The type of this token
     public var data: AssociatedData?
-    
+}
+
+extension Token {
     public enum AssociatedData {
-        case string(String)
+        case identifier(String)
         case int(Int)
         case float(Double)
+        case interpolation([StringComponent])
     }
 }
 
-public struct TokenPosition {
-    /// A 1-indexed line number
-    public var line: Int = 1
-    
-    /// The UTF-16, 1-indexed, character number
-    public var char: Int = 1
-    
-    /// The UTF-16, 1-indexed, character number
-    public var index: String.Index
-    
-    mutating func nextChar(document: String) {
-        let prev = index
-        index = document.index(after: index)
-        if document[prev].isNewline {
-            line += 1
-            char = 1
-        } else {
-            char += index.utf16Offset(in: document) - prev.utf16Offset(in: document)
-        }
-    }
-    
-    mutating func advance(to dest: String.Index, in document: String) {
-        while index != dest {
-            nextChar(document: document)
-        }
-    }
-    
-    mutating func advance(by amount: Int, in document: String) {
-        for _ in 0..<amount {
-            nextChar(document: document)
+extension Token {
+    public enum StringComponent {
+        /// Literal text
+        case literal(Substring)
+        /// An escaped char, such as `\n`. Always starts with `\`
+        case escaped(Substring)
+        /// A percent encoded interpolation, such as `%.2f`. Always starts with `%`.
+        case percent(Substring)
+        
+        var substring: Substring {
+            get {
+                switch self {
+                case .literal(let value), .escaped(let value), .percent(let value):
+                    return value
+                }
+            }
+            set {
+                switch self {
+                case .literal(_):
+                    self = .literal(newValue)
+                case .escaped(_):
+                    self = .escaped(newValue)
+                case .percent(_):
+                    self = .percent(newValue)
+                }
+            }
         }
     }
 }
