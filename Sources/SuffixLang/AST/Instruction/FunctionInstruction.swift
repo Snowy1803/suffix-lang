@@ -1,5 +1,5 @@
 //
-//  Value.swift
+//  FunctionInstruction.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 22/10/2022.
@@ -12,40 +12,19 @@
 
 import Foundation
 
-enum Value {
-    case constant(ConstantValue)
-    case string(ConstantValue)
-    case reference(ReferenceValue)
-    case anonymousFunc(AnonymousFunctionValue)
-    
-    var node: ASTNode {
-        switch self {
-        case .constant(let node as ASTNode),
-             .string(let node as ASTNode),
-             .reference(let node as ASTNode),
-             .anonymousFunc(let node as ASTNode):
-            return node
-        }
-    }
-}
-
-struct ConstantValue: SingleTokenASTNode {
-    var token: Token
-}
-
-struct ReferenceValue: ASTNode {
-    var literal: Token
-    var typeAnnotation: TypeAnnotation?
-    
-    var nodeData: String { literal.data.debugDescription }
-    var nodeChildren: [ASTElement] { [] }
-}
-
-struct AnonymousFunctionValue: ASTNode {
+struct FunctionInstruction: ASTNode {
     var keyword: Token
+    var name: Token
     var arguments: FunctionTypeReference.Arguments
     var returning: FunctionTypeReference.Arguments
     var block: Block
+    
+    var nodeData: String? {
+        if case .identifier(let id) = name.data {
+            return id
+        }
+        return nil
+    }
     
     var nodeChildren: [ASTElement] {
         [

@@ -13,6 +13,16 @@
 import Foundation
 
 struct Block: ASTNode {
+    var open: Token
+    var content: BlockContent
+    var close: Token
+    
+    var nodeChildren: [ASTElement] {
+        [ASTElement(name: "content", value: content)]
+    }
+}
+
+struct BlockContent: ASTNode {
     var instructions: [Instruction]
     
     var nodeChildren: [ASTElement] {

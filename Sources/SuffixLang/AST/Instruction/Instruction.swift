@@ -17,7 +17,7 @@ enum Instruction {
     case call(CallInstruction)
     case bind(BindInstruction)
     case coerce(CoerceInstruction)
-//    case function(FunctionInstruction)
+    case function(FunctionInstruction)
 //    case record(RecordInstruction)
     
     var node: ASTNode {
@@ -25,7 +25,8 @@ enum Instruction {
         case .push(let node as ASTNode),
              .call(let node as ASTNode),
              .bind(let node as ASTNode),
-             .coerce(let node as ASTNode):
+             .coerce(let node as ASTNode),
+             .function(let node as ASTNode):
             return node
         }
     }
