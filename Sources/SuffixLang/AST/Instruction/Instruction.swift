@@ -18,7 +18,7 @@ enum Instruction {
     case bind(BindInstruction)
     case coerce(CoerceInstruction)
     case function(FunctionInstruction)
-//    case record(RecordInstruction)
+    case record(RecordInstruction)
     
     var node: ASTNode {
         switch self {
@@ -26,7 +26,8 @@ enum Instruction {
              .call(let node as ASTNode),
              .bind(let node as ASTNode),
              .coerce(let node as ASTNode),
-             .function(let node as ASTNode):
+             .function(let node as ASTNode),
+             .record(let node as ASTNode):
             return node
         }
     }

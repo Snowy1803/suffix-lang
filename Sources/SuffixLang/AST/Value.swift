@@ -38,7 +38,9 @@ struct ReferenceValue: ASTNode {
     var typeAnnotation: TypeAnnotation?
     
     var nodeData: String { literal.data.debugDescription }
-    var nodeChildren: [ASTElement] { [] }
+    var nodeChildren: [ASTElement] {
+        [ASTElement(name: "typeAnnotation", value: typeAnnotation)]
+    }
 }
 
 struct AnonymousFunctionValue: ASTNode {

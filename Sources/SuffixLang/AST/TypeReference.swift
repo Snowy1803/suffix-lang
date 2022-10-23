@@ -14,24 +14,27 @@ import Foundation
 
 enum TypeReference {
     case primitive(PrimitiveTypeReference)
+    case record(RecordTypeReference)
 //    case array(ArrayTypeReference)
     case function(FunctionTypeReference)
     
     var node: ASTNode {
         switch self {
         case .primitive(let node as ASTNode),
+             .record(let node as ASTNode),
              .function(let node as ASTNode):
             return node
         }
     }
 }
 
-struct PrimitiveTypeReference: ASTNode {
-    var literal: Token
+struct PrimitiveTypeReference: SingleTokenASTNode {
+    var token: Token
     var type: PrimitiveType
-    
-    var nodeData: String { literal.data.debugDescription }
-    var nodeChildren: [ASTElement] { [] }
+}
+
+struct RecordTypeReference: SingleTokenASTNode {
+    var token: Token
 }
 
 struct FunctionTypeReference: ASTNode {
