@@ -18,6 +18,14 @@ public protocol ASTNode {
     var nodeChildren: [ASTElement] { get }
 }
 
+public protocol ASTEnum: ASTNode {
+    var node: ASTNode { get } // unused
+}
+
+public protocol ASTArray {
+    var nodes: [ASTNode] { get }
+}
+
 public extension ASTNode {
     var nodeType: String {
         String(describing: type(of: self))
@@ -25,6 +33,47 @@ public extension ASTNode {
     
     var nodeData: String? {
         nil
+    }
+    
+    var nodeChildren: [ASTElement] {
+        let mirror = Mirror(reflecting: self)
+        var result: [ASTElement] = []
+        for (label, value) in mirror.children {
+            switch value {
+            case let node as ASTNode:
+                result.append(ASTElement(name: label ?? "unnamed", value: node))
+            case let node as ASTNode?:
+                result.append(ASTElement(name: label ?? "unnamed", value: node))
+            case let array as ASTArray:
+                result.append(ASTElement(name: label ?? "unnamed", value: array.nodes))
+            default:
+                print("unknown type: \(type(of: value))")
+                break
+            }
+        }
+        return result
+    }
+}
+
+extension Token: ASTNode {
+    public var nodeType: String {
+        "\(type)"
+    }
+    
+    public var nodeData: String? {
+        if let data = data {
+            return "\(data)"
+        } else {
+            return literal.debugDescription
+        }
+    }
+    
+    public var nodeChildren: [ASTElement] { [] }
+}
+
+extension Array: ASTArray where Element: ASTNode {
+    public var nodes: [ASTNode] {
+        self
     }
 }
 
@@ -37,13 +86,4 @@ extension ASTElement {
     init(name: String, value: ASTNode?) {
         self.init(name: name, value: value.map { [$0] } ?? [])
     }
-}
-
-protocol SingleTokenASTNode: ASTNode {
-    var token: Token { get }
-}
-
-extension SingleTokenASTNode {
-    var nodeData: String? { token.data.debugDescription }
-    var nodeChildren: [ASTElement] { [] }
 }

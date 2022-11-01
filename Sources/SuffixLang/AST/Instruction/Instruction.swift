@@ -12,7 +12,7 @@
 
 import Foundation
 
-enum Instruction {
+enum Instruction: ASTEnum {
     case push(PushInstruction)
     case call(CallInstruction)
     case bind(BindInstruction)

@@ -18,19 +18,4 @@ struct FunctionInstruction: ASTNode {
     var arguments: FunctionTypeReference.Arguments
     var returning: FunctionTypeReference.Arguments
     var block: Block
-    
-    var nodeData: String? {
-        if case .identifier(let id) = name.data {
-            return id
-        }
-        return nil
-    }
-    
-    var nodeChildren: [ASTElement] {
-        [
-            ASTElement(name: "arguments", value: [arguments]),
-            ASTElement(name: "returning", value: [returning]),
-            ASTElement(name: "block", value: [block]),
-        ]
-    }
 }

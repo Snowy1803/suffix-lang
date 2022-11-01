@@ -15,10 +15,6 @@ import Foundation
 struct GenericTypeReference: ASTNode {
     var name: Token
     var generics: GenericTypeArguments?
-    
-    var nodeChildren: [ASTElement] {
-        []
-    }
 }
 
 struct GenericTypeArguments: ASTNode {
@@ -26,16 +22,8 @@ struct GenericTypeArguments: ASTNode {
     var generics: [Generic]
     var close: Token
     
-    var nodeChildren: [ASTElement] {
-        [ASTElement(name: "generics", value: generics)]
-    }
-    
     struct Generic: ASTNode {
         var type: TypeReference
         var trailingComma: Token?
-        
-        var nodeChildren: [ASTElement] {
-            [ASTElement(name: "type", value: type.node)]
-        }
     }
 }

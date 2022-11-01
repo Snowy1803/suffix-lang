@@ -16,15 +16,4 @@ struct RecordInstruction: ASTNode {
     var keyword: Token
     var name: Token
     var block: RecordBlock
-    
-    var nodeData: String? {
-        if case .identifier(let id) = name.data {
-            return id
-        }
-        return nil
-    }
-    
-    var nodeChildren: [ASTElement] {
-        [ASTElement(name: "block", value: [block])]
-    }
 }

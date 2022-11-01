@@ -15,10 +15,4 @@ import Foundation
 struct CallInstruction: ASTNode {
     var op: Token
     var value: ReferenceValue
-    
-    var nodeChildren: [ASTElement] {
-        [
-            ASTElement(name: "value", value: [value])
-        ]
-    }
 }

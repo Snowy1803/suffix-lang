@@ -15,10 +15,4 @@ import Foundation
 struct PushInstruction: ASTNode {
     var op: Token
     var value: Value
-    
-    var nodeChildren: [ASTElement] {
-        [
-            ASTElement(name: "value", value: [value.node])
-        ]
-    }
 }

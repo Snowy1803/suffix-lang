@@ -12,7 +12,7 @@
 
 import Foundation
 
-enum Value {
+enum Value: ASTEnum {
     case constant(ConstantValue)
     case string(StringValue)
     case reference(ReferenceValue)
@@ -29,7 +29,7 @@ enum Value {
     }
 }
 
-struct ConstantValue: SingleTokenASTNode {
+struct ConstantValue: ASTNode {
     var token: Token
     
     var integer: Int {
@@ -40,18 +40,13 @@ struct ConstantValue: SingleTokenASTNode {
     }
 }
 
-struct StringValue: SingleTokenASTNode {
+struct StringValue: ASTNode {
     var token: Token
 }
 
 struct ReferenceValue: ASTNode {
     var literal: Token
     var typeAnnotation: TypeAnnotation?
-    
-    var nodeData: String { literal.data.debugDescription }
-    var nodeChildren: [ASTElement] {
-        [ASTElement(name: "typeAnnotation", value: typeAnnotation)]
-    }
     
     var identifier: String {
         if case .identifier(let id) = literal.data {
@@ -67,12 +62,4 @@ struct AnonymousFunctionValue: ASTNode {
     var arguments: FunctionTypeReference.Arguments
     var returning: FunctionTypeReference.Arguments
     var block: Block
-    
-    var nodeChildren: [ASTElement] {
-        [
-            ASTElement(name: "arguments", value: [arguments]),
-            ASTElement(name: "returning", value: [returning]),
-            ASTElement(name: "block", value: [block]),
-        ]
-    }
 }

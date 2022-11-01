@@ -12,7 +12,7 @@
 
 import Foundation
 
-enum TypeReference {
+enum TypeReference: ASTEnum {
     case generic(GenericTypeReference)
     case function(FunctionTypeReference)
     
@@ -28,8 +28,4 @@ enum TypeReference {
 struct TypeAnnotation: ASTNode {
     var colon: Token
     var type: TypeReference
-    
-    var nodeChildren: [ASTElement] {
-        [ASTElement(name: "type", value: [type.node])]
-    }
 }

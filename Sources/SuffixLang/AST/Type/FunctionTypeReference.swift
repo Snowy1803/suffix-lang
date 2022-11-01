@@ -16,23 +16,10 @@ struct FunctionTypeReference: ASTNode {
     var arguments: Arguments
     var returning: Arguments
     
-    var nodeChildren: [ASTElement] {
-        [
-            ASTElement(name: "arguments", value: [arguments]),
-            ASTElement(name: "returning", value: [returning]),
-        ]
-    }
-    
     struct Arguments: ASTNode {
         var open: Token
         var arguments: [Argument]
         var close: Token
-        
-        var nodeChildren: [ASTElement] {
-            [
-                ASTElement(name: "arguments", value: arguments.map { $0 })
-            ]
-        }
     }
     
     struct Argument: ASTNode {
@@ -40,14 +27,7 @@ struct FunctionTypeReference: ASTNode {
         var typeAnnotation: TypeAnnotation?
         var trailingComma: Token?
         
-        var nodeChildren: [ASTElement] {
-            [
-                ASTElement(name: "spec", value: [spec.node]),
-                ASTElement(name: "typeAnnotation", value: typeAnnotation),
-            ]
-        }
-        
-        enum Spec {
+        enum Spec: ASTEnum {
             case count(ConstantValue)
             case unnamedVariadic(Variadic)
             case named(Named)
@@ -61,18 +41,13 @@ struct FunctionTypeReference: ASTNode {
                 }
             }
             
-            struct Variadic: SingleTokenASTNode {
+            struct Variadic: ASTNode {
                 var token: Token
             }
             
             struct Named: ASTNode {
                 var name: Token
                 var variadic: Variadic?
-                
-                var nodeData: String? { name.data.debugDescription }
-                var nodeChildren: [ASTElement] {
-                    [ASTElement(name: "variadic", value: variadic)]
-                }
             }
         }
     }

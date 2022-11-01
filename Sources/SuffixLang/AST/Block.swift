@@ -14,28 +14,16 @@ import Foundation
 
 struct BlockContent: ASTNode {
     var instructions: [Instruction]
-    
-    var nodeChildren: [ASTElement] {
-        [ASTElement(name: "instructions", value: instructions.map(\.node))]
-    }
 }
 
 struct Block: ASTNode {
     var open: Token
     var content: BlockContent
     var close: Token
-    
-    var nodeChildren: [ASTElement] {
-        [ASTElement(name: "content", value: content)]
-    }
 }
 
 struct RecordBlock: ASTNode {
     var open: Token
     var content: [BindInstruction]
     var close: Token
-    
-    var nodeChildren: [ASTElement] {
-        [ASTElement(name: "content", value: content)]
-    }
 }
