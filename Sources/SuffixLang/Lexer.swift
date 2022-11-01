@@ -13,6 +13,7 @@
 import Foundation
 
 public class Lexer {
+    static let keywords = ["func", "record", "where", "enum", "typealias"]
     var document: String
     var result: [Token] = []
     
@@ -71,7 +72,7 @@ public class Lexer {
                 return .satisfies
             }
             return .newToken
-        case .pushOperator, .bindOperator, .coercingOperator, .variadic, .curlyOpen, .curlyClose, .parenOpen, .parenClose, .comma, .unresolved:
+        case .pushOperator, .bindOperator, .coercingOperator, .variadic, .curlyOpen, .curlyClose, .parenOpen, .parenClose, .bracketOpen, .bracketClose, .comma, .unresolved:
             return .newToken
         case .floatLiteral, .keyword:
             print("shouldn't happen")
@@ -111,6 +112,10 @@ public class Lexer {
             return .parenOpen
         case ")":
             return .parenClose
+        case "[":
+            return .bracketOpen
+        case "]":
+            return .bracketClose
         case ",":
             return .comma
         default:
@@ -213,7 +218,7 @@ public class Lexer {
                     }
                 }
                 for (i, word) in words.enumerated() {
-                    if word == "func" || word == "record" || word == "where" {
+                    if Self.keywords.contains(String(word)) {
                         commit(i)
                         pos.advance(to: word.startIndex, in: document)
                         result.append(Token(position: pos, literal: word, type: .keyword))

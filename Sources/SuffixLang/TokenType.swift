@@ -44,14 +44,18 @@ public enum TokenType {
     /// The `::` type coercing operator
     case coercingOperator
     
-    /// The `{` token
+    /// The `{` token, used for function definitions
     case curlyOpen
     /// The `}` token
     case curlyClose
-    /// The `(` token
+    /// The `(` token, used for parameter specifications
     case parenOpen
     /// The `)` token
     case parenClose
+    /// The `[` token, used for generic types
+    case bracketOpen
+    /// The `]` token
+    case bracketClose
     /// The `,` token
     case comma
     /// The `...` token

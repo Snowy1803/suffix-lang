@@ -21,6 +21,22 @@ public struct TokenPosition {
     
     /// The index in the document, used for the cursor internally
     var index: String.Index
+    var lineStart: String.Index
+    
+    init(line: Int = 1, char: Int = 1, index: String.Index) {
+        self.line = line
+        self.char = char
+        self.index = index
+        self.lineStart = index
+    }
+    
+    public func getFullLine(document: String) -> Substring {
+        var lineEnd = self
+        while index < document.endIndex && line == lineEnd.line {
+            lineEnd.nextChar(document: document)
+        }
+        return document[lineStart..<lineEnd.index]
+    }
     
     mutating func nextChar(document: String) {
         let prev = index
@@ -28,6 +44,7 @@ public struct TokenPosition {
         if document[prev].isNewline {
             line += 1
             char = 1
+            lineStart = index
         } else {
             char += index.utf16Offset(in: document) - prev.utf16Offset(in: document)
         }
@@ -44,4 +61,8 @@ public struct TokenPosition {
             nextChar(document: document)
         }
     }
+}
+
+internal extension TokenPosition {
+    static let missing = TokenPosition(line: -1, char: -1, index: "".startIndex)
 }

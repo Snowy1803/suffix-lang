@@ -1,5 +1,5 @@
 //
-//  TypeReference.swift
+//  FunctionTypeReference.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 22/10/2022.
@@ -11,31 +11,6 @@
 //
 
 import Foundation
-
-enum TypeReference {
-    case primitive(PrimitiveTypeReference)
-    case record(RecordTypeReference)
-//    case array(ArrayTypeReference)
-    case function(FunctionTypeReference)
-    
-    var node: ASTNode {
-        switch self {
-        case .primitive(let node as ASTNode),
-             .record(let node as ASTNode),
-             .function(let node as ASTNode):
-            return node
-        }
-    }
-}
-
-struct PrimitiveTypeReference: SingleTokenASTNode {
-    var token: Token
-    var type: PrimitiveType
-}
-
-struct RecordTypeReference: SingleTokenASTNode {
-    var token: Token
-}
 
 struct FunctionTypeReference: ASTNode {
     var arguments: Arguments
@@ -63,7 +38,7 @@ struct FunctionTypeReference: ASTNode {
     struct Argument: ASTNode {
         var spec: Spec
         var typeAnnotation: TypeAnnotation?
-        var trailingComma: Token
+        var trailingComma: Token?
         
         var nodeChildren: [ASTElement] {
             [
@@ -74,30 +49,31 @@ struct FunctionTypeReference: ASTNode {
         
         enum Spec {
             case count(ConstantValue)
-            case variadic(Variadic)
-            case named(ConstantValue)
+            case unnamedVariadic(Variadic)
+            case named(Named)
             
             var node: ASTNode {
                 switch self {
                 case .count(let node as ASTNode),
-                     .variadic(let node as ASTNode),
+                     .unnamedVariadic(let node as ASTNode),
                      .named(let node as ASTNode):
                     return node
                 }
             }
+            
+            struct Variadic: SingleTokenASTNode {
+                var token: Token
+            }
+            
+            struct Named: ASTNode {
+                var name: Token
+                var variadic: Variadic?
+                
+                var nodeData: String? { name.data.debugDescription }
+                var nodeChildren: [ASTElement] {
+                    [ASTElement(name: "variadic", value: variadic)]
+                }
+            }
         }
-        
-        struct Variadic: SingleTokenASTNode {
-            var token: Token
-        }
-    }
-}
-
-struct TypeAnnotation: ASTNode {
-    var colon: Token
-    var type: TypeReference
-    
-    var nodeChildren: [ASTElement] {
-        [ASTElement(name: "type", value: [type.node])]
     }
 }

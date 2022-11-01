@@ -14,9 +14,9 @@ import Foundation
 import ArgumentParser
 import SuffixLang
 
-struct PrintLexemesCommand: ParsableCommand {
+struct PrintASTCommand: ParsableCommand {
     static var configuration: CommandConfiguration {
-        CommandConfiguration(commandName: "lex")
+        CommandConfiguration(commandName: "parse")
     }
     
     @Argument(help: "The input file to read, as an utf8 encoded suffix source", completion: .file(extensions: ["grph"]))
@@ -25,6 +25,12 @@ struct PrintLexemesCommand: ParsableCommand {
     func run() throws {
         let lexer = Lexer(document: try String(contentsOfFile: input, encoding: .utf8))
         let result = lexer.parseDocument()
-        print(result.map(\.dumped).joined())
+        let parser = Parser(tokens: result)
+        let nodes = parser.parseAST()
+        print(nodes.dumpAST())
+        for diagnostic in parser.diagnostics {
+            print(diagnostic.representNicely(filepath: input))
+        }
+        _ = lexer
     }
 }

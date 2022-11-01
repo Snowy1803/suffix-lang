@@ -1,5 +1,5 @@
 //
-//  Instruction.swift
+//  TypeReference.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 22/10/2022.
@@ -12,21 +12,24 @@
 
 import Foundation
 
-enum Instruction {
-    case push(PushInstruction)
-    case call(CallInstruction)
-    case bind(BindInstruction)
-    case function(FunctionInstruction)
-    case record(RecordInstruction)
+enum TypeReference {
+    case generic(GenericTypeReference)
+    case function(FunctionTypeReference)
     
     var node: ASTNode {
         switch self {
-        case .push(let node as ASTNode),
-             .call(let node as ASTNode),
-             .bind(let node as ASTNode),
-             .function(let node as ASTNode),
-             .record(let node as ASTNode):
+        case .generic(let node as ASTNode),
+             .function(let node as ASTNode):
             return node
         }
+    }
+}
+
+struct TypeAnnotation: ASTNode {
+    var colon: Token
+    var type: TypeReference
+    
+    var nodeChildren: [ASTElement] {
+        [ASTElement(name: "type", value: [type.node])]
     }
 }

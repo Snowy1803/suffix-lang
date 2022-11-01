@@ -14,7 +14,7 @@ import Foundation
 
 enum Value {
     case constant(ConstantValue)
-    case string(ConstantValue)
+    case string(StringValue)
     case reference(ReferenceValue)
     case anonymousFunc(AnonymousFunctionValue)
     
@@ -31,6 +31,17 @@ enum Value {
 
 struct ConstantValue: SingleTokenASTNode {
     var token: Token
+    
+    var integer: Int {
+        if case .int(let int) = token.data {
+            return int
+        }
+        return 0
+    }
+}
+
+struct StringValue: SingleTokenASTNode {
+    var token: Token
 }
 
 struct ReferenceValue: ASTNode {
@@ -40,6 +51,14 @@ struct ReferenceValue: ASTNode {
     var nodeData: String { literal.data.debugDescription }
     var nodeChildren: [ASTElement] {
         [ASTElement(name: "typeAnnotation", value: typeAnnotation)]
+    }
+    
+    var identifier: String {
+        if case .identifier(let id) = literal.data {
+            return id
+        }
+        // happens in the case of a synthesized missing token
+        return literal.literal.description
     }
 }
 

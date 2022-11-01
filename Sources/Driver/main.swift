@@ -17,7 +17,7 @@ struct SuffixCommand: ParsableCommand {
         CommandConfiguration(
             commandName: "suffix",
             abstract: "Run operations on Suffix code",
-            subcommands: [PrintLexemesCommand.self]
+            subcommands: [PrintLexemesCommand.self, PrintASTCommand.self]
         )
     }
 }

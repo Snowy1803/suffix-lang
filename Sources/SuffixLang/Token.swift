@@ -64,3 +64,9 @@ extension Token {
         }
     }
 }
+
+extension Token {
+    static func onePastEnd(document: String) -> Token {
+        Token(position: .missing, literal: document[document.endIndex..<document.endIndex], type: .unresolved)
+    }
+}

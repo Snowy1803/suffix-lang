@@ -1,8 +1,8 @@
 //
-//  Parser.swift
+//  CallInstruction+Parse.swift
 //  SuffixLang
 // 
-//  Created by Emil Pedersen on 22/10/2022.
+//  Created by Emil Pedersen on 23/10/2022.
 //  Copyright © 2022 Emil Pedersen (emil.codes). All rights reserved.
 // 
 //  This Source Code Form is subject to the terms of the Mozilla Public
@@ -12,12 +12,12 @@
 
 import Foundation
 
-public class Parser {
-    var tokens: [Token]
-    
-    public init(tokens: [Token]) {
-        self.tokens = tokens
+extension CallInstruction {
+    init?(stream: TokenStream) {
+        guard let op = stream.consumeOne(type: .dotOperator) else {
+            return nil
+        }
+        self.op = op
+        self.value = ReferenceValue(stream: stream)
     }
-    
-//    public func 
 }

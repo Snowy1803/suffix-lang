@@ -14,10 +14,11 @@ import Foundation
 
 enum SType {
     case primitive(PrimitiveType)
+    case record(RecordType)
     case function(FunctionType)
 }
 
-enum PrimitiveType {
+enum PrimitiveType: String {
     case int
     case bool
     case float
@@ -38,5 +39,15 @@ struct FunctionType {
             case infinite
             case exact(Int)
         }
+    }
+}
+
+struct RecordType {
+    var name: String
+    var fields: [Field]
+    
+    struct Field {
+        var name: String
+        var type: SType
     }
 }
