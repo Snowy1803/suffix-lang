@@ -16,13 +16,16 @@ import SuffixLang
 extension ASTNode {
     func dumpAST(indent: String = "") -> String {
         let nextIndent = indent + "  "
-        return "\(indent)- \(nodeType.magenta)\((nodeData?.green).map { ": \($0)" } ?? "")\n" + nodeChildren.map { element -> String in
+        return "\(nodeType.magenta)\((nodeData?.green).map { ": \($0)" } ?? "")\n" + nodeChildren.map { element -> String in
             let elem: String
             if element.value.isEmpty {
-                elem = "(empty)\n"
+                elem = "(none)\n"
+            } else if element.value.count == 1 {
+                elem = element.value[0].dumpAST(indent: nextIndent)
             } else {
                 elem = "\n" + element.value.map {
-                    $0.dumpAST(indent: nextIndent + "  ")
+                    let contentIndent = nextIndent + "  "
+                    return "\(contentIndent)- " + $0.dumpAST(indent: contentIndent)
                 }.joined()
             }
             return "\(nextIndent)- \(element.name.red): \(elem)"
