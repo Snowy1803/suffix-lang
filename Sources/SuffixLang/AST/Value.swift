@@ -13,14 +13,16 @@
 import Foundation
 
 enum Value: ASTEnum {
-    case constant(ConstantValue)
+    case int(IntegerValue)
+    case float(FloatValue)
     case string(StringValue)
     case reference(ReferenceValue)
     case anonymousFunc(AnonymousFunctionValue)
     
     var node: ASTNode {
         switch self {
-        case .constant(let node as ASTNode),
+        case .int(let node as ASTNode),
+             .float(let node as ASTNode),
              .string(let node as ASTNode),
              .reference(let node as ASTNode),
              .anonymousFunc(let node as ASTNode):
@@ -29,12 +31,23 @@ enum Value: ASTEnum {
     }
 }
 
-struct ConstantValue: ASTNode {
+struct IntegerValue: ASTNode {
     var token: Token
     
     var integer: Int {
         if case .int(let int) = token.data {
             return int
+        }
+        return 0
+    }
+}
+
+struct FloatValue: ASTNode {
+    var token: Token
+    
+    var float: Double {
+        if case .float(let float) = token.data {
+            return float
         }
         return 0
     }

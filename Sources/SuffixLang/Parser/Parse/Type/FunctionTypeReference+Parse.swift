@@ -65,8 +65,7 @@ extension FunctionTypeReference.Argument {
 
 extension FunctionTypeReference.Argument.Spec {
     init?(stream: TokenStream) {
-        // TODO: integer only not float
-        if let int = ConstantValue(stream: stream) {
+        if let int = IntegerValue(stream: stream) {
             self = .count(int)
         } else if let spec = Variadic(stream: stream) {
             self = .unnamedVariadic(spec)

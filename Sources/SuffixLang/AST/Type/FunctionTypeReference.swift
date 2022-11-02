@@ -28,7 +28,7 @@ struct FunctionTypeReference: ASTNode {
         var trailingComma: Token?
         
         enum Spec: ASTEnum {
-            case count(ConstantValue)
+            case count(IntegerValue)
             case unnamedVariadic(Variadic)
             case named(Named)
             

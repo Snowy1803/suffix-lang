@@ -12,9 +12,18 @@
 
 import Foundation
 
-extension ConstantValue {
+extension IntegerValue {
     init?(stream: TokenStream) {
-        guard let token = stream.consumeOne(if: { $0.type == .integerLiteral || $0.type == .floatLiteral }) else {
+        guard let token = stream.consumeOne(type: .integerLiteral) else {
+            return nil
+        }
+        self.token = token
+    }
+}
+
+extension FloatValue {
+    init?(stream: TokenStream) {
+        guard let token = stream.consumeOne(type: .floatLiteral) else {
             return nil
         }
         self.token = token
