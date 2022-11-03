@@ -12,6 +12,7 @@
 
 import ArgumentParser
 
+@main
 struct SuffixCommand: ParsableCommand {
     static var configuration: CommandConfiguration {
         CommandConfiguration(
@@ -21,5 +22,3 @@ struct SuffixCommand: ParsableCommand {
         )
     }
 }
-
-SuffixCommand.main()
