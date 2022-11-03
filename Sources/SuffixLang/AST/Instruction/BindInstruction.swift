@@ -14,5 +14,5 @@ import Foundation
 
 struct BindInstruction: ASTNode {
     var op: Token
-    var value: ReferenceValue
+    var value: TypedIdentifier
 }

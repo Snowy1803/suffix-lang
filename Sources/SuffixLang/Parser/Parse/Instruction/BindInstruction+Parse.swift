@@ -18,6 +18,6 @@ extension BindInstruction {
             return nil
         }
         self.op = op
-        self.value = ReferenceValue(stream: stream)
+        self.value = TypedIdentifier(stream: stream)
     }
 }

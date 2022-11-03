@@ -13,6 +13,10 @@
 import Foundation
 
 struct ReferenceValue: ASTNode {
+    var identifier: TypedIdentifier
+}
+
+struct TypedIdentifier: ASTNode {
     var literal: Token
     var typeAnnotation: TypeAnnotation?
     

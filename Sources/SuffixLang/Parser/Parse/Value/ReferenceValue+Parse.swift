@@ -14,6 +14,12 @@ import Foundation
 
 extension ReferenceValue {
     init(stream: TokenStream) {
+        self.identifier = TypedIdentifier(stream: stream)
+    }
+}
+
+extension TypedIdentifier {
+    init(stream: TokenStream) {
         self.literal = stream.consumeOne(
             assert: .identifier,
             recoveryDefault: "missing " + UUID().uuidString)
