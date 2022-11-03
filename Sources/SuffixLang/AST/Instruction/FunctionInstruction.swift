@@ -15,6 +15,7 @@ import Foundation
 struct FunctionInstruction: ASTNode {
     var keyword: Token
     var name: Token
+    var generics: GenericTypeArguments?
     var arguments: FunctionTypeReference.Arguments
     var returning: FunctionTypeReference.Arguments
     var block: Block

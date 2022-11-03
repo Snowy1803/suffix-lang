@@ -15,6 +15,9 @@ import Foundation
 extension ReferenceValue {
     init(stream: TokenStream) {
         self.identifier = TypedIdentifier(stream: stream)
+        if identifier.typeAnnotation == nil { // can't have both
+            self.generics = GenericTypeArguments(stream: stream)
+        }
     }
 }
 

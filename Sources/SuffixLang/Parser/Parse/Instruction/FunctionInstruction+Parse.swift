@@ -19,6 +19,7 @@ extension FunctionInstruction {
         }
         self.keyword = op
         self.name = stream.consumeOne(assert: .identifier, recoveryDefault: "missing \(UUID())")
+        self.generics = GenericTypeArguments(stream: stream)
         self.arguments = FunctionTypeReference.Arguments(assert: stream)
         self.returning = FunctionTypeReference.Arguments(assert: stream)
         self.block = Block(stream: stream)

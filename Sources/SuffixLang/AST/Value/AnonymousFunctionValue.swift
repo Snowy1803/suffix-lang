@@ -14,6 +14,7 @@ import Foundation
 
 struct AnonymousFunctionValue: ASTNode {
     var keyword: Token
+    var generics: GenericTypeArguments?
     var arguments: FunctionTypeReference.Arguments
     var returning: FunctionTypeReference.Arguments
     var block: Block

@@ -14,6 +14,7 @@ import Foundation
 
 struct ReferenceValue: ASTNode {
     var identifier: TypedIdentifier
+    var generics: GenericTypeArguments?
 }
 
 struct TypedIdentifier: ASTNode {
