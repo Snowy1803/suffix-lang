@@ -15,6 +15,7 @@ import Foundation
 public protocol ASTNode {
     var nodeType: String { get }
     var nodeData: String? { get }
+    var nodePosition: TokenPosition? { get }
     var nodeChildren: [ASTElement] { get }
 }
 
@@ -32,6 +33,10 @@ public extension ASTNode {
     }
     
     var nodeData: String? {
+        nil
+    }
+    
+    var nodePosition: TokenPosition? {
         nil
     }
     
@@ -66,6 +71,10 @@ extension Token: ASTNode {
         } else {
             return literal.debugDescription
         }
+    }
+    
+    public var nodePosition: TokenPosition? {
+        position
     }
     
     public var nodeChildren: [ASTElement] { [] }

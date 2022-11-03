@@ -16,7 +16,9 @@ import SuffixLang
 extension ASTNode {
     func dumpAST(indent: String = "") -> String {
         let nextIndent = indent + "  "
-        return "\(nodeType.magenta)\((nodeData?.green).map { ": \($0)" } ?? "")\n" + nodeChildren.map { element -> String in
+        let data = (nodeData?.green).map { ": \($0)" } ?? ""
+        let position = nodePosition.map { " (\($0.line):\($0.char))".blue } ?? ""
+        return "\(nodeType.magenta)\(data)\(position)\n" + nodeChildren.map { element -> String in
             let elem: String
             if element.value.isEmpty {
                 elem = "(none)\n"
