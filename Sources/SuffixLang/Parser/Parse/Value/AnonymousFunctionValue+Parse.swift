@@ -20,7 +20,7 @@ extension AnonymousFunctionValue {
             self.returning = .recovery
             self.block = Block(stream: stream)
         } else {
-            guard let keyword = stream.consumeOne(if: { $0.type == .stringLiteral }) else {
+            guard let keyword = stream.consumeOne(type: .keyword, literal: "func") else {
                 return nil
             }
             self.keyword = keyword
