@@ -17,6 +17,7 @@ extension ReferenceValue {
         self.identifier = TypedIdentifier(stream: stream)
         if identifier.typeAnnotation == nil { // can't have both
             self.generics = GenericTypeArguments(stream: stream)
+            self.argumentCount = TakenArgumentCount(stream: stream)
         }
     }
 }
@@ -27,6 +28,20 @@ extension TypedIdentifier {
             assert: .identifier,
             recoveryDefault: "missing " + UUID().uuidString)
         self.typeAnnotation = TypeAnnotation(stream: stream)
+    }
+}
+
+extension TakenArgumentCount {
+    init?(stream: TokenStream) {
+        guard let open = stream.consumeOne(type: .parenOpen) else {
+            return nil
+        }
+        self.open = open
+        self.count = IntegerValue(stream: stream) ?? {
+            stream.diagnostics.append(Diagnostic(token: stream.nextTokenForDiagnostics(), message: ParserDiagnosticMessage.expectedTokenType(.integerLiteral), severity: .error))
+            return IntegerValue(token: Token(position: .missing, literal: "0", type: .integerLiteral, data: .int(0)))
+        }()
+        self.close = stream.consumeOne(assert: .parenClose, recoveryDefault: ")")
     }
 }
 

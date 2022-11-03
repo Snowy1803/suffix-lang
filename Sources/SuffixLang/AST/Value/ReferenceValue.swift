@@ -15,6 +15,7 @@ import Foundation
 struct ReferenceValue: ASTNode {
     var identifier: TypedIdentifier
     var generics: GenericTypeArguments?
+    var argumentCount: TakenArgumentCount?
 }
 
 struct TypedIdentifier: ASTNode {
@@ -28,4 +29,10 @@ struct TypedIdentifier: ASTNode {
         // happens in the case of a synthesized missing token
         return literal.literal.description
     }
+}
+
+struct TakenArgumentCount: ASTNode {
+    var open: Token
+    var count: IntegerValue
+    var close: Token
 }

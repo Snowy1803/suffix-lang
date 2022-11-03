@@ -45,7 +45,7 @@ extension FunctionTypeReference.Arguments {
             self = args
         } else {
             self = .recovery
-            stream.diagnostics.append(Diagnostic(token: stream.peekNext() ?? .onePastEnd(document: stream.document), message: ParserDiagnosticMessage.expectedNode(Self.self), severity: .error))
+            stream.diagnostics.append(Diagnostic(token: stream.nextTokenForDiagnostics(), message: ParserDiagnosticMessage.expectedNode(Self.self), severity: .error))
         }
     }
 }

@@ -93,6 +93,10 @@ class TokenStream {
         return Token(position: .missing, literal: recoveryDefault()[...], type: type)
     }
     
+    func nextTokenForDiagnostics() -> Token {
+        peekNext() ?? .onePastEnd(document: document)
+    }
+    
     func peekNext() -> Token? {
         let state = saveState()
         defer { restore(state: state) }
