@@ -12,17 +12,17 @@
 
 import Foundation
 
-struct ReferenceValue: ASTNode {
-    var identifier: TypedIdentifier
-    var generics: GenericTypeArguments?
-    var argumentCount: TakenArgumentCount?
+public struct ReferenceValue: ASTNode {
+    public var identifier: TypedIdentifier
+    public var generics: GenericTypeArguments?
+    public var argumentCount: TakenArgumentCount?
 }
 
-struct TypedIdentifier: ASTNode {
-    var literal: Token
-    var typeAnnotation: TypeAnnotation?
+public struct TypedIdentifier: ASTNode {
+    public var literal: Token
+    public var typeAnnotation: TypeAnnotation?
     
-    var identifier: String {
+    public var identifier: String {
         if case .identifier(let id) = literal.data {
             return id
         }
@@ -31,8 +31,8 @@ struct TypedIdentifier: ASTNode {
     }
 }
 
-struct TakenArgumentCount: ASTNode {
-    var open: Token
-    var count: IntegerValue
-    var close: Token
+public struct TakenArgumentCount: ASTNode {
+    public var open: Token
+    public var count: IntegerValue
+    public var close: Token
 }

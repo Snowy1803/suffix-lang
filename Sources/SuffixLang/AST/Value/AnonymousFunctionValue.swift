@@ -12,10 +12,10 @@
 
 import Foundation
 
-struct AnonymousFunctionValue: ASTNode {
-    var keyword: Token
-    var generics: GenericTypeArguments?
-    var arguments: FunctionTypeReference.Arguments
-    var returning: FunctionTypeReference.ReturnValues
-    var block: Block
+public struct AnonymousFunctionValue: ASTNode {
+    public var keyword: Token
+    public var generics: GenericTypeArguments?
+    public var arguments: FunctionTypeReference.Arguments
+    public var returning: FunctionTypeReference.ReturnValues
+    public var block: Block
 }

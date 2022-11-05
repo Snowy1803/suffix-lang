@@ -12,7 +12,7 @@
 
 import Foundation
 
-struct PushInstruction: ASTNode {
-    var op: Token
-    var value: Value
+public struct PushInstruction: ASTNode {
+    public var op: Token
+    public var value: Value
 }

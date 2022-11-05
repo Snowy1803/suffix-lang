@@ -23,16 +23,12 @@ public class Parser {
         self.stream = TokenStream(tokens: tokens)
     }
     
-    func parse() -> BlockContent {
+    public func parse() -> BlockContent {
         defer {
             if let remainingToken = stream.consumeOne() {
                 stream.diagnostics.append(Diagnostic(token: remainingToken, message: ParserDiagnosticMessage.invalidToken, severity: .fatal))
             }
         }
         return BlockContent(stream: stream)
-    }
-    
-    public func parseAST() -> ASTNode {
-        parse()
     }
 }

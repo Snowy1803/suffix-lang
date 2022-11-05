@@ -12,14 +12,14 @@
 
 import Foundation
 
-enum Instruction: ASTEnum {
+public enum Instruction: ASTEnum {
     case push(PushInstruction)
     case call(CallInstruction)
     case bind(BindInstruction)
     case function(FunctionInstruction)
     case record(RecordInstruction)
     
-    var node: ASTNode {
+    public var node: ASTNode {
         switch self {
         case .push(let node as ASTNode),
              .call(let node as ASTNode),

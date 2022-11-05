@@ -12,14 +12,14 @@
 
 import Foundation
 
-enum Value: ASTEnum {
+public enum Value: ASTEnum {
     case int(IntegerValue)
     case float(FloatValue)
     case string(StringValue)
     case reference(ReferenceValue)
     case anonymousFunc(AnonymousFunctionValue)
     
-    var node: ASTNode {
+    public var node: ASTNode {
         switch self {
         case .int(let node as ASTNode),
              .float(let node as ASTNode),

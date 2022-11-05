@@ -12,18 +12,18 @@
 
 import Foundation
 
-struct GenericTypeReference: ASTNode {
-    var name: Token
-    var generics: GenericTypeArguments?
+public struct GenericTypeReference: ASTNode {
+    public var name: Token
+    public var generics: GenericTypeArguments?
 }
 
-struct GenericTypeArguments: ASTNode {
-    var open: Token
-    var generics: [Generic]
-    var close: Token
+public struct GenericTypeArguments: ASTNode {
+    public var open: Token
+    public var generics: [Generic]
+    public var close: Token
     
-    struct Generic: ASTNode {
-        var type: TypeReference
-        var trailingComma: Token?
+    public struct Generic: ASTNode {
+        public var type: TypeReference
+        public var trailingComma: Token?
     }
 }

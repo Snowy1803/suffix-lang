@@ -12,7 +12,7 @@
 
 import Foundation
 
-struct BindInstruction: ASTNode {
-    var op: Token
-    var value: TypedIdentifier
+public struct BindInstruction: ASTNode {
+    public var op: Token
+    public var value: TypedIdentifier
 }

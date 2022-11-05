@@ -12,11 +12,11 @@
 
 import Foundation
 
-enum TypeReference: ASTEnum {
+public enum TypeReference: ASTEnum {
     case generic(GenericTypeReference)
     case function(FunctionTypeReference)
     
-    var node: ASTNode {
+    public var node: ASTNode {
         switch self {
         case .generic(let node as ASTNode),
              .function(let node as ASTNode):
@@ -25,7 +25,7 @@ enum TypeReference: ASTEnum {
     }
 }
 
-struct TypeAnnotation: ASTNode {
-    var colon: Token
-    var type: TypeReference
+public struct TypeAnnotation: ASTNode {
+    public var colon: Token
+    public var type: TypeReference
 }

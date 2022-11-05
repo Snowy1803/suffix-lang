@@ -12,13 +12,13 @@
 
 import Foundation
 
-enum SType {
+public enum SType {
     case primitive(PrimitiveType)
     case record(RecordType)
     case function(FunctionType)
 }
 
-enum PrimitiveType: String {
+public enum PrimitiveType: String {
     case int
     case bool
     case float
@@ -27,27 +27,27 @@ enum PrimitiveType: String {
     case any
 }
 
-struct FunctionType {
-    var arguments: [ArgumentSpec]
-    var returning: [ArgumentSpec]
+public struct FunctionType {
+    public var arguments: [ArgumentSpec]
+    public var returning: [ArgumentSpec]
     
-    struct ArgumentSpec {
-        var count: Count
-        var type: SType
+    public struct ArgumentSpec {
+        public var count: Count
+        public var type: SType
         
-        enum Count {
+        public enum Count {
             case infinite
             case exact(Int)
         }
     }
 }
 
-struct RecordType {
-    var name: String
-    var fields: [Field]
+public struct RecordType {
+    public var name: String
+    public var fields: [Field]
     
-    struct Field {
-        var name: String
-        var type: SType
+    public struct Field {
+        public var name: String
+        public var type: SType
     }
 }

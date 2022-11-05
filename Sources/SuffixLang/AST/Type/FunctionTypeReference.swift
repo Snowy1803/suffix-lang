@@ -12,27 +12,27 @@
 
 import Foundation
 
-struct FunctionTypeReference: ASTNode {
-    var arguments: Arguments
-    var returning: ReturnValues
+public struct FunctionTypeReference: ASTNode {
+    public var arguments: Arguments
+    public var returning: ReturnValues
     
-    struct Arguments: ASTNode {
-        var open: Token
-        var arguments: [Argument]
-        var close: Token
+    public struct Arguments: ASTNode {
+        public var open: Token
+        public var arguments: [Argument]
+        public var close: Token
     }
     
-    struct Argument: ASTNode {
-        var spec: Spec
-        var typeAnnotation: TypeAnnotation?
-        var trailingComma: Token?
+    public struct Argument: ASTNode {
+        public var spec: Spec
+        public var typeAnnotation: TypeAnnotation?
+        public var trailingComma: Token?
         
-        enum Spec: ASTEnum {
+        public enum Spec: ASTEnum {
             case count(IntegerValue)
             case unnamedVariadic(Variadic)
             case named(Named)
             
-            var node: ASTNode {
+            public var node: ASTNode {
                 switch self {
                 case .count(let node as ASTNode),
                      .unnamedVariadic(let node as ASTNode),
@@ -41,32 +41,32 @@ struct FunctionTypeReference: ASTNode {
                 }
             }
             
-            struct Variadic: ASTNode {
-                var token: Token
+            public struct Variadic: ASTNode {
+                public var token: Token
             }
             
-            struct Named: ASTNode {
-                var name: Token
-                var variadic: Variadic?
+            public struct Named: ASTNode {
+                public var name: Token
+                public var variadic: Variadic?
             }
         }
     }
     
-    struct ReturnValues: ASTNode {
-        var open: Token
-        var arguments: [ReturnValue]
-        var close: Token
+    public struct ReturnValues: ASTNode {
+        public var open: Token
+        public var arguments: [ReturnValue]
+        public var close: Token
     }
     
-    struct ReturnValue: ASTNode {
-        var spec: Spec
-        var trailingComma: Token?
+    public struct ReturnValue: ASTNode {
+        public var spec: Spec
+        public var trailingComma: Token?
         
-        enum Spec: ASTEnum {
+        public enum Spec: ASTEnum {
             case count(Count)
             case single(TypeReference)
             
-            var node: ASTNode {
+            public var node: ASTNode {
                 switch self {
                 case .count(let node as ASTNode),
                      .single(let node as ASTNode):
@@ -74,9 +74,9 @@ struct FunctionTypeReference: ASTNode {
                 }
             }
             
-            struct Count: ASTNode {
-                var count: IntegerValue
-                var typeAnnotation: TypeAnnotation?
+            public struct Count: ASTNode {
+                public var count: IntegerValue
+                public var typeAnnotation: TypeAnnotation?
             }
         }
     }

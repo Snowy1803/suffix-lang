@@ -12,18 +12,18 @@
 
 import Foundation
 
-struct BlockContent: ASTNode {
-    var instructions: [Instruction]
+public struct BlockContent: ASTNode {
+    public var instructions: [Instruction]
 }
 
-struct Block: ASTNode {
-    var open: Token
-    var content: BlockContent
-    var close: Token
+public struct Block: ASTNode {
+    public var open: Token
+    public var content: BlockContent
+    public var close: Token
 }
 
-struct RecordBlock: ASTNode {
-    var open: Token
-    var content: [BindInstruction]
-    var close: Token
+public struct RecordBlock: ASTNode {
+    public var open: Token
+    public var content: [BindInstruction]
+    public var close: Token
 }

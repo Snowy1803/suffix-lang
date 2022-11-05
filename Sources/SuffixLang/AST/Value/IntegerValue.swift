@@ -12,10 +12,10 @@
 
 import Foundation
 
-struct IntegerValue: ASTNode {
-    var token: Token
+public struct IntegerValue: ASTNode {
+    public var token: Token
     
-    var integer: Int {
+    public var integer: Int {
         if case .int(let int) = token.data {
             return int
         }

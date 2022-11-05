@@ -12,6 +12,6 @@
 
 import Foundation
 
-struct StringValue: ASTNode {
-    var token: Token
+public struct StringValue: ASTNode {
+    public var token: Token
 }

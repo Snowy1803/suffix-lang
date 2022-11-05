@@ -26,7 +26,7 @@ struct PrintASTCommand: ParsableCommand {
         let lexer = Lexer(document: try String(contentsOfFile: input, encoding: .utf8))
         let result = lexer.parseDocument()
         let parser = Parser(tokens: result)
-        let nodes = parser.parseAST()
+        let nodes = parser.parse()
         print(nodes.dumpAST())
         for diagnostic in parser.diagnostics {
             print(diagnostic.representNicely(filepath: input))
