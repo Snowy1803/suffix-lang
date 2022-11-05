@@ -14,7 +14,7 @@ import Foundation
 
 struct FunctionTypeReference: ASTNode {
     var arguments: Arguments
-    var returning: Arguments
+    var returning: ReturnValues
     
     struct Arguments: ASTNode {
         var open: Token
@@ -48,6 +48,35 @@ struct FunctionTypeReference: ASTNode {
             struct Named: ASTNode {
                 var name: Token
                 var variadic: Variadic?
+            }
+        }
+    }
+    
+    struct ReturnValues: ASTNode {
+        var open: Token
+        var arguments: [ReturnValue]
+        var close: Token
+    }
+    
+    struct ReturnValue: ASTNode {
+        var spec: Spec
+        var trailingComma: Token?
+        
+        enum Spec: ASTEnum {
+            case count(Count)
+            case single(TypeReference)
+            
+            var node: ASTNode {
+                switch self {
+                case .count(let node as ASTNode),
+                     .single(let node as ASTNode):
+                    return node
+                }
+            }
+            
+            struct Count: ASTNode {
+                var count: IntegerValue
+                var typeAnnotation: TypeAnnotation?
             }
         }
     }
