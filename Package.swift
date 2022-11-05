@@ -22,6 +22,9 @@ let package = Package(
         .target(
             name: "SuffixLang",
             dependencies: []),
+        .target(
+            name: "Sema",
+            dependencies: ["SuffixLang"]),
         .executableTarget(
             name: "Driver",
             dependencies: [
