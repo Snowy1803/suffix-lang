@@ -14,4 +14,8 @@ import Foundation
 
 class AnyType: NamedType {
     var name: String { "any" }
+    
+    func convertible(to other: SType) -> Bool {
+        false
+    }
 }

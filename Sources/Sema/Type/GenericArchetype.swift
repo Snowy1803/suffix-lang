@@ -18,6 +18,10 @@ class GenericArchetype: NamedType {
     init(name: String) {
         self.name = name
     }
+    
+    func convertible(to other: SType) -> Bool {
+        false // constrained generics are unsupported currently
+    }
 }
 
 extension GenericArchetype {

@@ -22,6 +22,10 @@ public class RecordType: NamedType {
         self.fields = fields
     }
     
+    public func convertible(to other: SType) -> Bool {
+        false
+    }
+    
     public struct Field {
         public var name: String
         public var type: SType

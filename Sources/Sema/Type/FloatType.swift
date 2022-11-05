@@ -14,4 +14,8 @@ import Foundation
 
 class FloatType: NamedType {
     var name: String { "float" }
+    
+    public func convertible(to other: SType) -> Bool {
+        false
+    }
 }

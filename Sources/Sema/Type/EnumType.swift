@@ -22,6 +22,10 @@ public class EnumType: NamedType {
         self.cases = cases
     }
     
+    public func convertible(to other: SType) -> Bool {
+        false
+    }
+    
     public struct Case {
         public var name: String
         public var source: BindInstruction? // nil if builtin

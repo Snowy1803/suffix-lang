@@ -13,9 +13,26 @@
 import Foundation
 
 public protocol SType: AnyObject {
-    
+    /// Returns true if this type can be converted to the different type `other`
+    /// This function need not return true if the types are the same or if the other type is `any`,
+    /// as this is handled in `canBeAssigned(to:)`
+    /// This function should not be called directly, use `canBeAssigned(to:)`
+    func convertible(to other: SType) -> Bool
 }
+
 public protocol NamedType: SType {
     var name: String { get }
 }
 
+extension SType {
+    func canBeAssigned(to type: SType) -> Bool {
+        if self === type {
+            return true
+        }
+        if type is AnyType {
+            return true
+        }
+        // we may need a type.canWrap(other: self) for optionals and move the condition for any
+        return self.convertible(to: type)
+    }
+}

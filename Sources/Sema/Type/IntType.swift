@@ -14,4 +14,8 @@ import Foundation
 
 class IntType: NamedType {
     var name: String { "int" }
+    
+    func convertible(to other: SType) -> Bool {
+        false
+    }
 }
