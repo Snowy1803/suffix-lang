@@ -12,6 +12,6 @@
 
 import Foundation
 
-class AnyType: SType {
+class AnyType: NamedType {
     var name: String { "any" }
 }

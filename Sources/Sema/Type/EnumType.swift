@@ -13,7 +13,7 @@
 import Foundation
 import SuffixLang
 
-public class EnumType: SType {
+public class EnumType: NamedType {
     public var name: String
     public var cases: [Case]
     
@@ -30,4 +30,12 @@ public class EnumType: SType {
 
 extension EnumType {
     static let bool = EnumType(name: "bool", cases: [Case(name: "false"), Case(name: "true")])
+}
+
+extension EnumType {
+    var caseBindings: [ParsingContext.Binding] {
+        cases.map {
+            ParsingContext.Binding(name: $0.name, type: self, source: $0.source.map { ParsingContext.Binding.Source.binding($0) } ?? .builtin)
+        }
+    }
 }

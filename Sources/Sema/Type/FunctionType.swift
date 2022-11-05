@@ -14,12 +14,10 @@ import Foundation
 import SuffixLang
 
 public class FunctionType: SType {
-    public var name: String
     public var arguments: [Argument]
     public var returning: [Argument]
     
-    init(name: String, arguments: [Argument], returning: [Argument]) {
-        self.name = name
+    init(arguments: [Argument], returning: [Argument]) {
         self.arguments = arguments
         self.returning = returning
     }

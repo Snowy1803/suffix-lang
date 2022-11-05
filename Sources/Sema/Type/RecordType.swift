@@ -13,7 +13,7 @@
 import Foundation
 import SuffixLang
 
-public class RecordType: SType {
+public class RecordType: NamedType {
     public var name: String
     public var fields: [Field]
     
@@ -26,5 +26,13 @@ public class RecordType: SType {
         public var name: String
         public var type: SType
         public var source: BindInstruction? // nil if builtin
+    }
+}
+
+extension RecordType {
+    var fieldBindings: [ParsingContext.Binding] {
+        fields.map {
+            ParsingContext.Binding(name: $0.name, type: $0.type, source: $0.source.map { ParsingContext.Binding.Source.binding($0) } ?? .builtin)
+        }
     }
 }

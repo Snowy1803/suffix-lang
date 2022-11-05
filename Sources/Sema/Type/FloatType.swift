@@ -12,6 +12,6 @@
 
 import Foundation
 
-class FloatType: SType {
+class FloatType: NamedType {
     var name: String { "float" }
 }

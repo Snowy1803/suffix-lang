@@ -12,6 +12,6 @@
 
 import Foundation
 
-class IntType: SType {
+class IntType: NamedType {
     var name: String { "int" }
 }

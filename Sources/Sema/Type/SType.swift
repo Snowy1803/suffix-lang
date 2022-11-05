@@ -13,6 +13,9 @@
 import Foundation
 
 public protocol SType: AnyObject {
+    
+}
+public protocol NamedType: SType {
     var name: String { get }
 }
 
