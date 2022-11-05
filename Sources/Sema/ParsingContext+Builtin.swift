@@ -33,6 +33,12 @@ extension ParsingContext {
             Binding(name: "print", type: FunctionType(
                 arguments: [.init(type: any, variadic: true)],
                 returning: []), source: .builtin),
+            GenericArchetype(name: "T")
+                .with { t in
+                    Binding(name: "select", type: FunctionType(
+                        arguments: [.init(type: bool), .init(type: t), .init(type: t)],
+                        returning: [.init(type: t)]), source: .builtin)
+                },
         ]
         return builtin
     }()
