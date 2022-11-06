@@ -32,12 +32,12 @@ public class FunctionType: SType {
         guard let other = other as? FunctionType,
               other.returning.count == self.returning.count,
               zip(self.returning, other.returning).allSatisfy({ mine, others in
-                  mine.type.convertible(to: others.type)
+                  mine.type.canBeAssigned(to: others.type)
               }) else {
             return false
         }
         func convertibleArgument(mine: Argument, others: Argument) -> Bool {
-            others.type.convertible(to: mine.type)
+            others.type.canBeAssigned(to: mine.type)
         }
         switch (self.variadicIndex, other.variadicIndex) {
         case (nil, nil):
@@ -52,7 +52,7 @@ public class FunctionType: SType {
                 return false
             }
             return zip(self.arguments[0..<variadicIndex], other.arguments[0..<variadicIndex]).allSatisfy(convertibleArgument) && other.arguments[variadicIndex..<(variadicIndex + packCount)].allSatisfy {
-                $0.type.convertible(to: self.arguments[variadicIndex].type)
+                $0.type.canBeAssigned(to: self.arguments[variadicIndex].type)
             } && zip(self.arguments[(variadicIndex + 1)...], other.arguments[(variadicIndex + packCount + 1)...]).allSatisfy(convertibleArgument)
         }
     }

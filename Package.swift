@@ -34,6 +34,6 @@ let package = Package(
             ]),
         .testTarget(
             name: "SuffixLangTests",
-            dependencies: ["SuffixLang"]),
+            dependencies: ["SuffixLang", "Sema"]),
     ]
 )
