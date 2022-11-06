@@ -34,9 +34,9 @@ public class RecordType: NamedType {
 }
 
 extension RecordType {
-    var fieldBindings: [ParsingContext.Binding] {
+    var fieldBindings: [Binding] {
         fields.map {
-            ParsingContext.Binding(name: $0.name, type: $0.type, source: $0.source.map { ParsingContext.Binding.Source.binding($0) } ?? .builtin)
+            Binding(name: $0.name, type: $0.type, source: $0.source.map { Binding.Source.binding($0) } ?? .builtin)
         }
     }
 }

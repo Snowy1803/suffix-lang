@@ -23,7 +23,7 @@ extension FunctionInstruction {
         // TODO: handle generics (has to be resolved)
         let resolved = resolve(context: parent)
         let function = Function(parent: parent.function, name: name.identifier, type: resolved.type, source: .instruction(self))
-        parent.bindings.append(ParsingContext.Binding(name: function.name, type: function.type, source: .function(self)))
+        parent.bindings.append(Binding(name: function.name, type: function.type, source: .function(self)))
         let subcontext = FunctionParsingContext(parent: parent, function: function)
         resolved.resolver(subcontext)
         return subcontext
@@ -57,18 +57,18 @@ extension FunctionTypeReference.Argument {
             }
             return (arguments: Array(repeating: FunctionType.Argument(type: inner), count: count), resolver: { context in
                 for _ in 0..<count {
-                    context.stack.append(ParsingContext.StackElement(type: inner, source: .argument(self)))
+                    context.stack.append(StackElement(type: inner, source: .argument(self)))
                 }
             })
         case .named(let name):
             return (arguments: [FunctionType.Argument(type: inner, variadic: name.variadic != nil)], resolver: { context in
                 // TODO: handle variadics
-                context.bindings.append(ParsingContext.Binding(name: name.name.identifier, type: inner, source: .argument(self)))
+                context.bindings.append(Binding(name: name.name.identifier, type: inner, source: .argument(self)))
             })
         case .unnamedVariadic(_):
             return (arguments: [FunctionType.Argument(type: inner, variadic: true)], resolver: { context in
                 // TODO: make variadic pack
-                context.stack.append(ParsingContext.StackElement(type: inner, source: .argument(self)))
+                context.stack.append(StackElement(type: inner, source: .argument(self)))
             })
         }
     }

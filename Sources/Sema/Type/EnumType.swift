@@ -37,9 +37,9 @@ extension EnumType {
 }
 
 extension EnumType {
-    var caseBindings: [ParsingContext.Binding] {
+    var caseBindings: [Binding] {
         cases.map {
-            ParsingContext.Binding(name: $0.name, type: self, source: $0.source.map { ParsingContext.Binding.Source.binding($0) } ?? .builtin)
+            Binding(name: $0.name, type: self, source: $0.source.map { Binding.Source.binding($0) } ?? .builtin)
         }
     }
 }
