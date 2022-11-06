@@ -29,6 +29,17 @@ class ParsingContext {
         return result
     }
     
+    func getType(name: String) -> NamedType? {
+        if let type = types.first(where: { $0.name == name }) {
+            return type
+        }
+        return parent?.getType(name: name)
+    }
+    
+    var typeChecker: TypeChecker! {
+        parent?.typeChecker
+    }
+    
     struct Binding {
         var name: String
         var type: SType

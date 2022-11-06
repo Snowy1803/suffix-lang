@@ -1,5 +1,5 @@
 //
-//  ParsingContext+Builtin.swift
+//  BuiltinParsingContext.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 23/10/2022.
@@ -13,20 +13,22 @@
 import Foundation
 import SuffixLang
 
-extension ParsingContext {
-    static let builtin: ParsingContext = {
-        let builtin = ParsingContext(parent: nil)
-        let any = AnyType()
+class BuiltinParsingContext: ParsingContext {
+    static let shared: BuiltinParsingContext = BuiltinParsingContext()
+    
+    private init() {
+        let any = AnyType.shared
         let bool = EnumType.bool
         let str = StringType()
-        builtin.types = [
+        super.init(parent: nil)
+        self.types = [
             any,
             IntType(),
             FloatType(),
             bool,
             str,
         ]
-        builtin.bindings = EnumType.bool.caseBindings + [
+        self.bindings = EnumType.bool.caseBindings + [
             Binding(name: "join", type: FunctionType(
                 arguments: [.init(type: str, variadic: true)],
                 returning: [.init(type: str)]), source: .builtin),
@@ -40,6 +42,5 @@ extension ParsingContext {
                         returning: [.init(type: t)]), source: .builtin)
                 },
         ]
-        return builtin
-    }()
+    }
 }

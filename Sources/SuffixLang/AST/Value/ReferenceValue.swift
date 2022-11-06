@@ -21,13 +21,15 @@ public struct ReferenceValue: ASTNode {
 public struct TypedIdentifier: ASTNode {
     public var literal: Token
     public var typeAnnotation: TypeAnnotation?
-    
-    public var identifier: String {
-        if case .identifier(let id) = literal.data {
+}
+
+public extension Token {
+    var identifier: String {
+        if case .identifier(let id) = data {
             return id
         }
         // happens in the case of a synthesized missing token
-        return literal.literal.description
+        return literal.description
     }
 }
 

@@ -1,8 +1,8 @@
 //
-//  AnyType.swift
+//  FunctionParsingContext.swift
 //  SuffixLang
 // 
-//  Created by Emil Pedersen on 05/11/2022.
+//  Created by Emil Pedersen on 06/11/2022.
 //  Copyright © 2022 Emil Pedersen (emil.codes). All rights reserved.
 // 
 //  This Source Code Form is subject to the terms of the Mozilla Public
@@ -11,14 +11,13 @@
 //
 
 import Foundation
+import SuffixLang
 
-class AnyType: NamedType {
-    var name: String { "any" }
+class FunctionParsingContext: ParsingContext {
+    var function: Function
     
-    static let shared = AnyType()
-    private init() {}
-    
-    func convertible(to other: SType) -> Bool {
-        false
+    init(parent: ParsingContext, function: Function) {
+        self.function = function
+        super.init(parent: parent)
     }
 }

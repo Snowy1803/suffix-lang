@@ -14,8 +14,8 @@ import Foundation
 import SuffixLang
 
 public class FunctionType: SType {
-    public var arguments: [Argument]
-    public var returning: [Argument]
+    public let arguments: [Argument]
+    public let returning: [Argument]
     
     init(arguments: [Argument], returning: [Argument]) {
         self.arguments = arguments

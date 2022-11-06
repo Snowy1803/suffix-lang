@@ -2,7 +2,7 @@ import XCTest
 @testable import Sema
 
 final class TypeConversionTests: XCTestCase {
-    let any = AnyType()
+    let any = AnyType.shared
     let bool = EnumType.bool
     let int = IntType()
     let float = FloatType()
