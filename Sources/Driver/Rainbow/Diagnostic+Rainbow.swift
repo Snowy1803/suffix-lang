@@ -33,7 +33,7 @@ extension Diagnostic {
         let base = token.position.getFullLine(document: token.literal.base)
         var msg = "\((filepath as NSString).lastPathComponent):\(token.position.line):\(token.position.char): \(severity.colorfulDescription): \(message)\n"
         msg += base.replacingOccurrences(of: "\t", with: " ")
-        msg += String(repeating: " ", count: token.position.char - 1)
+        msg += String(repeating: " ", count: max(0, token.position.char - 1))
         msg += "^" + String(repeating: "~", count: max(0, token.literal.count - 1))
         msg += "\n"
         for hint in hints {

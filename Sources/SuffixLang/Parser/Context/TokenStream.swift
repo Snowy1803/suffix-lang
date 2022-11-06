@@ -30,6 +30,15 @@ class TokenStream {
         tokens.first?.literal.base ?? ""
     }
     
+    var onePastEnd: Token {
+        let document = document
+        var position = tokens.last?.position ?? .missing
+        if position.line >= 0 {
+            position.advance(to: document.endIndex, in: document)
+        }
+        return Token(position: position, literal: document[document.endIndex..<document.endIndex], type: .unresolved)
+    }
+    
     func saveState() -> RestorableState {
         RestorableState(slice: slice, diagnostics: diagnostics)
     }
@@ -81,7 +90,7 @@ class TokenStream {
         if let correct = consumeOne(type: type, literal: literal) {
             return correct
         }
-        diagnostics.append(Diagnostic(token: slice.first ?? .onePastEnd(document: document), message: ParserDiagnosticMessage.expectedToken(literal: literal), severity: .error))
+        diagnostics.append(Diagnostic(token: slice.first ?? onePastEnd, message: ParserDiagnosticMessage.expectedToken(literal: literal), severity: .error))
         return Token(position: .missing, literal: literal[...], type: type)
     }
     
@@ -89,12 +98,12 @@ class TokenStream {
         if let correct = consumeOne(type: type) {
             return correct
         }
-        diagnostics.append(Diagnostic(token: slice.first ?? .onePastEnd(document: document), message: ParserDiagnosticMessage.expectedTokenType(type), severity: .error))
+        diagnostics.append(Diagnostic(token: slice.first ?? onePastEnd, message: ParserDiagnosticMessage.expectedTokenType(type), severity: .error))
         return Token(position: .missing, literal: recoveryDefault()[...], type: type)
     }
     
     func nextTokenForDiagnostics() -> Token {
-        peekNext() ?? .onePastEnd(document: document)
+        peekNext() ?? onePastEnd
     }
     
     func peekNext() -> Token? {
