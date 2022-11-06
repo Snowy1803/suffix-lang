@@ -14,14 +14,15 @@ import Foundation
 import SuffixLang
 
 extension FunctionInstruction {
-    private func resolve(context: FunctionParsingContext) -> (type: FunctionType, resolver: (FunctionParsingContext) -> ()) {
+    private func resolve(context: ParsingContext) -> (type: FunctionType, resolver: (FunctionParsingContext) -> ()) {
         let resolved = arguments.resolve(context: context)
         return (type: FunctionType(arguments: resolved.arguments, returning: returning.resolve(context: context)), resolved.resolver)
     }
     
     func createSubContext(parent: FunctionParsingContext) -> FunctionParsingContext {
-        // TODO: handle generics (has to be resolved)
-        let resolved = resolve(context: parent)
+        let partial = PartialFunctionParsingContext(parent: parent)
+        partial.types.append(contentsOf: generics?.generics.map { GenericArchetype(name: $0.name.identifier) } ?? [])
+        let resolved = resolve(context: partial)
         let function = Function(parent: parent.function, name: name.identifier, type: resolved.type, source: .instruction(self))
         parent.bindings.append(Binding(name: function.name, type: function.type, source: .function(self)))
         let subcontext = FunctionParsingContext(parent: parent, function: function)
@@ -31,7 +32,7 @@ extension FunctionInstruction {
 }
 
 extension FunctionTypeReference.Arguments {
-    func resolve(context: FunctionParsingContext) -> (arguments: [FunctionType.Argument], resolver: (FunctionParsingContext) -> ()) {
+    func resolve(context: ParsingContext) -> (arguments: [FunctionType.Argument], resolver: (FunctionParsingContext) -> ()) {
         let resolved = self.arguments.map {
             $0.resolve(context: context)
         }
@@ -46,7 +47,7 @@ extension FunctionTypeReference.Arguments {
 }
 
 extension FunctionTypeReference.Argument {
-    func resolve(context: FunctionParsingContext) -> (arguments: [FunctionType.Argument], resolver: (FunctionParsingContext) -> ()) {
+    func resolve(context: ParsingContext) -> (arguments: [FunctionType.Argument], resolver: (FunctionParsingContext) -> ()) {
         let inner = self.typeAnnotation?.type.resolve(context: context) ?? AnyType.shared
         switch spec {
         case .count(let int):
@@ -75,13 +76,13 @@ extension FunctionTypeReference.Argument {
 }
 
 extension FunctionTypeReference.ReturnValues {
-    func resolve(context: FunctionParsingContext) -> [FunctionType.Argument] {
+    func resolve(context: ParsingContext) -> [FunctionType.Argument] {
         arguments.flatMap { $0.resolve(context: context) }
     }
 }
 
 extension FunctionTypeReference.ReturnValue {
-    func resolve(context: FunctionParsingContext) -> [FunctionType.Argument] {
+    func resolve(context: ParsingContext) -> [FunctionType.Argument] {
         switch spec {
         case .count(let node):
             var count = node.count.integer

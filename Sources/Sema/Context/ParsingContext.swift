@@ -17,7 +17,6 @@ class ParsingContext {
     var parent: ParsingContext?
     var types: [NamedType] = []
     var bindings: [Binding] = []
-    var stack: [StackElement] = []
     
     init(parent: ParsingContext?) {
         self.parent = parent

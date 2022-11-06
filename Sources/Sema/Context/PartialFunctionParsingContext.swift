@@ -1,5 +1,5 @@
 //
-//  FunctionParsingContext.swift
+//  PartialFunctionParsingContext.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 06/11/2022.
@@ -13,12 +13,8 @@
 import Foundation
 import SuffixLang
 
-class FunctionParsingContext: ParsingContext {
-    var function: Function
-    var stack: [StackElement] = []
-    
-    init(parent: ParsingContext, function: Function) {
-        self.function = function
+class PartialFunctionParsingContext: ParsingContext {
+    init(parent: ParsingContext) {
         super.init(parent: parent)
     }
 }

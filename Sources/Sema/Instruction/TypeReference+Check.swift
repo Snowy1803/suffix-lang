@@ -14,7 +14,7 @@ import Foundation
 import SuffixLang
 
 extension TypeReference {
-    func resolve(context: FunctionParsingContext) -> SType {
+    func resolve(context: ParsingContext) -> SType {
         switch self {
         case .function(let function):
             return FunctionType(arguments: function.arguments.resolve(context: context).arguments, returning: function.returning.resolve(context: context))
