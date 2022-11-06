@@ -30,9 +30,24 @@ extension Instruction {
             function.block.content.instructions.forEach { inst in
                 inst.typeCheck(context: subcontext)
             }
-        case .record(_):
-            // TODO: implement
-            break
+        case .record(let record):
+            record.resolve(context: context)
         }
+    }
+}
+
+extension RecordInstruction {
+    func resolve(context: FunctionParsingContext) {
+        let record = RecordType(name: name.identifier, fields: block.content.map { (bind: BindInstruction) -> RecordType.Field in
+            let inner: SType
+            if let annotation = bind.value.typeAnnotation {
+                inner = annotation.type.resolve(context: context)
+            } else {
+                context.typeChecker.diagnostics.append(Diagnostic(token: bind.value.literal, message: TypeCheckDiagnosticMessage.missingTypeAnnotation, severity: .warning))
+                inner = AnyType.shared
+            }
+            return RecordType.Field(name: bind.value.literal.identifier, type: inner, source: bind)
+        })
+        context.types.append(record)
     }
 }

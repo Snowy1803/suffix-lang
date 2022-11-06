@@ -16,6 +16,7 @@ import SuffixLang
 enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case negativeArgumentCount(IntegerValue)
     case unknownType(String)
+    case missingTypeAnnotation
     
     var description: String {
         switch self {
@@ -23,6 +24,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Invalid argument multiplier: \(token.integer) is negative"
         case .unknownType(let name):
             return "Could not find type '\(name)' in scope"
+        case .missingTypeAnnotation:
+            return "Missing type annotation"
         }
     }
 }
