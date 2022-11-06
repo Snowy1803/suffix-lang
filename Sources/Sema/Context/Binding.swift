@@ -19,7 +19,7 @@ struct Binding {
     var source: Source
     
     enum Source {
-        /// This value is an explicit binding (includes record field accessor functions)
+        /// This value is an explicit binding
         case binding(BindInstruction)
         /// This value is a named argument
         case argument(FunctionTypeReference.Argument)
@@ -27,5 +27,9 @@ struct Binding {
         case function(FunctionInstruction)
         /// This value is built in the language
         case builtin
+        /// This value is the accessor function for a defined record's field
+        case recordFieldAccessor(RecordType, RecordInstruction, BindInstruction)
+        /// This value is the constructor function for a defined record
+        case recordConstructor(RecordType, RecordInstruction)
     }
 }

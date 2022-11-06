@@ -32,11 +32,3 @@ public class RecordType: NamedType {
         public var source: BindInstruction? // nil if builtin
     }
 }
-
-extension RecordType {
-    var fieldBindings: [Binding] {
-        fields.map {
-            Binding(name: $0.name, type: $0.type, source: $0.source.map { Binding.Source.binding($0) } ?? .builtin)
-        }
-    }
-}

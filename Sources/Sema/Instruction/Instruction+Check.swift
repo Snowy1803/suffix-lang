@@ -38,7 +38,8 @@ extension Instruction {
 
 extension RecordInstruction {
     func resolve(context: FunctionParsingContext) {
-        let record = RecordType(name: name.identifier, fields: block.content.map { (bind: BindInstruction) -> RecordType.Field in
+        let record = RecordType(name: name.identifier, fields: [])
+        record.fields = block.content.map { (bind: BindInstruction) -> RecordType.Field in
             let inner: SType
             if let annotation = bind.value.typeAnnotation {
                 inner = annotation.type.resolve(context: context)
@@ -46,8 +47,16 @@ extension RecordInstruction {
                 context.typeChecker.diagnostics.append(Diagnostic(token: bind.value.literal, message: .missingTypeAnnotation, severity: .warning))
                 inner = AnyType.shared
             }
+            context.bindings.append(Binding(
+                name: bind.value.literal.identifier,
+                type: FunctionType(arguments: [.init(type: record)], returning: [.init(type: inner)]),
+                source: .recordFieldAccessor(record, self, bind)))
             return RecordType.Field(name: bind.value.literal.identifier, type: inner, source: bind)
-        })
+        }
+        context.bindings.append(Binding(
+            name: "new \(name.identifier)",
+            type: FunctionType(arguments: record.fields.map { .init(type: $0.type) }, returning: [.init(type: record)]),
+            source: .recordConstructor(record, self)))
         context.types.append(record)
     }
 }
