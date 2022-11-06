@@ -43,7 +43,7 @@ extension RecordInstruction {
             if let annotation = bind.value.typeAnnotation {
                 inner = annotation.type.resolve(context: context)
             } else {
-                context.typeChecker.diagnostics.append(Diagnostic(token: bind.value.literal, message: TypeCheckDiagnosticMessage.missingTypeAnnotation, severity: .warning))
+                context.typeChecker.diagnostics.append(Diagnostic(token: bind.value.literal, message: .missingTypeAnnotation, severity: .warning))
                 inner = AnyType.shared
             }
             return RecordType.Field(name: bind.value.literal.identifier, type: inner, source: bind)

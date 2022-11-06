@@ -13,6 +13,12 @@
 import Foundation
 import SuffixLang
 
+extension Diagnostic {
+    init(token: Token, message: TypeCheckDiagnosticMessage, severity: Severity, hints: [Diagnostic] = []) {
+        self.init(token: token, message: message as DiagnosticMessage, severity: severity, hints: hints)
+    }
+}
+
 enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case negativeArgumentCount(IntegerValue)
     case unknownType(String)

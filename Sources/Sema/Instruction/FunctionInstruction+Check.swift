@@ -52,7 +52,7 @@ extension FunctionTypeReference.Argument {
         case .count(let int):
             var count = int.integer
             if count < 0 {
-                context.typeChecker.diagnostics.append(Diagnostic(token: int.token, message: TypeCheckDiagnosticMessage.negativeArgumentCount(int), severity: .error))
+                context.typeChecker.diagnostics.append(Diagnostic(token: int.token, message: .negativeArgumentCount(int), severity: .error))
                 count = 0
             }
             return (arguments: Array(repeating: FunctionType.Argument(type: inner), count: count), resolver: { context in
@@ -86,7 +86,7 @@ extension FunctionTypeReference.ReturnValue {
         case .count(let node):
             var count = node.count.integer
             if count < 0 {
-                context.typeChecker.diagnostics.append(Diagnostic(token: node.count.token, message: TypeCheckDiagnosticMessage.negativeArgumentCount(node.count), severity: .error))
+                context.typeChecker.diagnostics.append(Diagnostic(token: node.count.token, message: .negativeArgumentCount(node.count), severity: .error))
                 count = 0
             }
             return Array(repeating: .init(type: node.typeAnnotation?.type.resolve(context: context) ?? AnyType.shared), count: count)
