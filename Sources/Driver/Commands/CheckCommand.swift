@@ -1,5 +1,5 @@
 //
-//  CompileCommand.swift
+//  CheckCommand.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 21/10/2022.
@@ -13,10 +13,11 @@
 import Foundation
 import ArgumentParser
 import SuffixLang
+import Sema
 
-struct PrintASTCommand: ParsableCommand {
+struct CheckCommand: ParsableCommand {
     static var configuration: CommandConfiguration {
-        CommandConfiguration(commandName: "parse")
+        CommandConfiguration(commandName: "check")
     }
     
     @Argument(help: "The input file to read, as an utf8 encoded suffix source", completion: .file(extensions: ["suffix"]))
@@ -26,9 +27,13 @@ struct PrintASTCommand: ParsableCommand {
         let lexer = Lexer(document: try String(contentsOfFile: input, encoding: .utf8))
         let result = lexer.parseDocument()
         let parser = Parser(tokens: result)
-        let nodes = parser.parse()
-        print(nodes.dumpAST())
+        let rootBlock = parser.parse()
         for diagnostic in parser.diagnostics {
+            print(diagnostic.representNicely(filepath: input))
+        }
+        let typeChecker = TypeChecker(rootBlock: rootBlock)
+        typeChecker.typecheck()
+        for diagnostic in typeChecker.diagnostics {
             print(diagnostic.representNicely(filepath: input))
         }
         _ = lexer

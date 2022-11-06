@@ -19,7 +19,7 @@ struct PrintLexemesCommand: ParsableCommand {
         CommandConfiguration(commandName: "lex")
     }
     
-    @Argument(help: "The input file to read, as an utf8 encoded suffix source", completion: .file(extensions: ["grph"]))
+    @Argument(help: "The input file to read, as an utf8 encoded suffix source", completion: .file(extensions: ["suffix"]))
     var input: String
     
     func run() throws {

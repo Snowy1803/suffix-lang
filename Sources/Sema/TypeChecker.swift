@@ -15,16 +15,18 @@ import SuffixLang
 
 public class TypeChecker {
     var builtinContext = BuiltinParsingContext.shared
-    var rootContext: RootParsingContext?
+    var rootContext: RootParsingContext!
     var rootBlock: BlockContent
-    var diagnostics: [Diagnostic] = []
+    public var diagnostics: [Diagnostic] = []
     
-    init(rootBlock: BlockContent) {
+    public init(rootBlock: BlockContent) {
         self.rootBlock = rootBlock
         self.rootContext = RootParsingContext(typechecker: self, builtins: builtinContext)
     }
     
-    func typecheck() {
-        
+    public func typecheck() {
+        rootBlock.instructions.forEach {
+            $0.typeCheck(context: rootContext)
+        }
     }
 }

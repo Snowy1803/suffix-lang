@@ -29,6 +29,7 @@ let package = Package(
             name: "Driver",
             dependencies: [
                 "SuffixLang",
+                "Sema",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "Rainbow", package: "Rainbow"),
             ]),
