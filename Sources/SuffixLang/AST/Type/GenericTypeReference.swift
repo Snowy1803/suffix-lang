@@ -27,3 +27,14 @@ public struct GenericTypeArguments: ASTNode {
         public var trailingComma: Token?
     }
 }
+
+public struct GenericDefinition: ASTNode {
+    public var open: Token
+    public var generics: [Generic]
+    public var close: Token
+    
+    public struct Generic: ASTNode {
+        public var name: Token
+        public var trailingComma: Token?
+    }
+}

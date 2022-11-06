@@ -49,3 +49,29 @@ extension GenericTypeArguments.Generic {
         }
     }
 }
+
+extension GenericDefinition {
+    init?(stream: TokenStream) {
+        guard let open = stream.consumeOne(type: .bracketOpen) else {
+            return nil
+        }
+        self.open = open
+        self.generics = []
+        while let generic = Generic(stream: stream) {
+            self.generics.append(generic)
+        }
+        self.close = stream.consumeOne(assert: .bracketClose, recoveryDefault: "]")
+    }
+}
+
+extension GenericDefinition.Generic {
+    init?(stream: TokenStream) {
+        guard let type = stream.consumeOne(type: .identifier) else {
+            return nil
+        }
+        self.name = type
+        if let comma = stream.consumeOne(type: .comma) {
+            self.trailingComma = comma
+        }
+    }
+}
