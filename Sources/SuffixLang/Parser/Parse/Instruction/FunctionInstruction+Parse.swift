@@ -14,7 +14,7 @@ import Foundation
 
 extension FunctionInstruction {
     init?(stream: TokenStream) {
-        guard let op = stream.consumeOne(type: .keyword, literal: "func") else {
+        guard let op = stream.consumeOne(type: .funcKeyword) else {
             return nil
         }
         self.keyword = op

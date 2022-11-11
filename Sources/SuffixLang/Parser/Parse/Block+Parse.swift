@@ -14,9 +14,9 @@ import Foundation
 
 extension Block {
     init(stream: TokenStream) {
-        self.open = stream.consumeOne(assert: .curlyOpen, literal: "{")
+        self.open = stream.consumeOne(assert: .curlyOpen, recoveryDefault: "{")
         self.content = BlockContent(stream: stream)
-        self.close = stream.consumeOne(assert: .curlyClose, literal: "}")
+        self.close = stream.consumeOne(assert: .curlyClose, recoveryDefault: "}")
     }
 }
 
@@ -31,11 +31,11 @@ extension BlockContent {
 
 extension RecordBlock {
     init(stream: TokenStream) {
-        self.open = stream.consumeOne(assert: .curlyOpen, literal: "{")
+        self.open = stream.consumeOne(assert: .curlyOpen, recoveryDefault: "{")
         self.content = []
         while let instruction = BindInstruction(stream: stream) {
             content.append(instruction)
         }
-        self.close = stream.consumeOne(assert: .curlyClose, literal: "}")
+        self.close = stream.consumeOne(assert: .curlyClose, recoveryDefault: "}")
     }
 }

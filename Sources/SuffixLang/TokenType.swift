@@ -18,8 +18,17 @@ public enum TokenType {
     /// An ignoreable single line comment (starting with `#`)
     case comment
     
-    /// A keyword: `func` or `record`
-    case keyword
+    /// The `func` keyword, to define a function
+    case funcKeyword
+    /// The `record` keyword, to declare a record type
+    case recordKeyword
+    /// The `enum` keyword, to declare an enum type
+    case enumKeyword
+    /// The `typealias` keyword, to declare a type alias
+    case typealiasKeyword
+//    /// The `where` keyword, to add generic constraints
+//    case whereKeyword
+    
     /// An identifier. Matches `[ A-Za-z_/%*+-][ A-Za-z0-9_/%*+-]*`
     /// Associated data is the canonical identifier string
     case identifier

@@ -15,12 +15,12 @@ import Foundation
 extension AnonymousFunctionValue {
     init?(stream: TokenStream) {
         if stream.peekNext(type: .curlyOpen) {
-            self.keyword = Token(position: .missing, literal: "func", type: .keyword)
+            self.keyword = Token(position: .missing, literal: "func", type: .funcKeyword)
             self.arguments = .recovery
             self.returning = .recovery
             self.block = Block(stream: stream)
         } else {
-            guard let keyword = stream.consumeOne(type: .keyword, literal: "func") else {
+            guard let keyword = stream.consumeOne(type: .funcKeyword) else {
                 return nil
             }
             self.keyword = keyword

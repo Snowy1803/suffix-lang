@@ -82,18 +82,6 @@ class TokenStream {
         return consumeOne(if: { $0.type == type })
     }
     
-    func consumeOne(type: TokenType, literal: String) -> Token? {
-        return consumeOne(if: { $0.type == type && $0.literal == literal })
-    }
-    
-    func consumeOne(assert type: TokenType, literal: String) -> Token {
-        if let correct = consumeOne(type: type, literal: literal) {
-            return correct
-        }
-        diagnostics.append(Diagnostic(token: slice.first ?? onePastEnd, message: ParserDiagnosticMessage.expectedToken(literal: literal), severity: .error))
-        return Token(position: .missing, literal: literal[...], type: type)
-    }
-    
     func consumeOne(assert type: TokenType, recoveryDefault: @autoclosure () -> String) -> Token {
         if let correct = consumeOne(type: type) {
             return correct
