@@ -14,16 +14,22 @@ import Foundation
 import SuffixLang
 
 public class FunctionType: SType {
+    let generics: [GenericArchetype]
     public let arguments: [Argument]
     public let returning: [Argument]
     
-    init(arguments: [Argument], returning: [Argument]) {
+    init(generics: [GenericArchetype] = [], arguments: [Argument], returning: [Argument]) {
+        self.generics = generics
         self.arguments = arguments
         self.returning = returning
     }
     
     var variadicIndex: Int? {
         arguments.firstIndex(where: \.variadic)
+    }
+    
+    var isConcrete: Bool {
+        variadicIndex == nil && generics.isEmpty
     }
     
     // (str, any) (int) is convertible to (str, bool) (any)

@@ -24,6 +24,7 @@ public protocol NamedType: SType {
     var name: String { get }
 }
 
+/// A leaf type is a type which doesn't contain any other type or generics
 public protocol LeafType: SType {
     
 }

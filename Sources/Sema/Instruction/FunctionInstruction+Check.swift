@@ -14,15 +14,16 @@ import Foundation
 import SuffixLang
 
 extension FunctionInstruction {
-    private func resolve(context: ParsingContext) -> (type: FunctionType, resolver: (FunctionParsingContext) -> ()) {
+    private func resolve(context: ParsingContext, generics: [GenericArchetype]) -> (type: FunctionType, resolver: (FunctionParsingContext) -> ()) {
         let resolved = arguments.resolve(context: context)
-        return (type: FunctionType(arguments: resolved.arguments, returning: returning.resolve(context: context)), resolved.resolver)
+        return (type: FunctionType(generics: generics, arguments: resolved.arguments, returning: returning.resolve(context: context)), resolved.resolver)
     }
     
     func createSubContext(parent: FunctionParsingContext) -> FunctionParsingContext {
         let partial = PartialFunctionParsingContext(parent: parent)
-        partial.types.append(contentsOf: generics?.generics.map { GenericArchetype(name: $0.name.identifier) } ?? [])
-        let resolved = resolve(context: partial)
+        let genericArguments = generics?.generics.map { GenericArchetype(name: $0.name.identifier) } ?? []
+        partial.types.append(contentsOf: genericArguments)
+        let resolved = resolve(context: partial, generics: genericArguments)
         let function = Function(parent: parent.function, name: name.identifier, type: resolved.type, source: .instruction(self))
         parent.bindings.append(Binding(name: function.name, type: function.type, source: .function(self)))
         let subcontext = FunctionParsingContext(parent: parent, function: function)

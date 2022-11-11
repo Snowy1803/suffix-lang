@@ -38,6 +38,7 @@ class BuiltinParsingContext: ParsingContext {
             GenericArchetype(name: "T")
                 .with { t in
                     Binding(name: "select", type: FunctionType(
+                        generics: [t],
                         arguments: [.init(type: bool), .init(type: t), .init(type: t)],
                         returning: [.init(type: t)]), source: .builtin)
                 },
