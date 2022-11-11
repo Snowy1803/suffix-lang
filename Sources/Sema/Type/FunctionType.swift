@@ -63,6 +63,14 @@ public class FunctionType: SType {
         }
     }
     
+    public func map(with map: GenericMap) -> SType {
+        FunctionType(
+            generics: generics.filter { !map.contains(type: $0) },
+            arguments: arguments.map { Argument(type: $0.type.map(with: map), variadic: $0.variadic) },
+            returning: returning.map { Argument(type: $0.type.map(with: map), variadic: $0.variadic) }
+        )
+    }
+    
     public struct Argument {
         public var type: SType
         public var variadic: Bool = false

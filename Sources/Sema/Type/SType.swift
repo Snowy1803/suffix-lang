@@ -18,6 +18,9 @@ public protocol SType: AnyObject {
     /// as this is handled in `canBeAssigned(to:)`
     /// This function should not be called directly, use `canBeAssigned(to:)`
     func convertible(to other: SType) -> Bool
+    
+    /// Returns a modified type with the generic map applied
+    func map(with map: GenericMap) -> SType
 }
 
 public protocol NamedType: SType {
@@ -32,6 +35,10 @@ public protocol LeafType: SType {
 extension LeafType {
     public func convertible(to other: SType) -> Bool {
         false
+    }
+    
+    public func map(with map: GenericMap) -> SType {
+        self
     }
 }
 

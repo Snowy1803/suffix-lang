@@ -22,6 +22,10 @@ class GenericArchetype: NamedType {
     func convertible(to other: SType) -> Bool {
         false // constrained generics are unsupported currently
     }
+    
+    func map(with map: GenericMap) -> SType {
+        map.apply(type: self)
+    }
 }
 
 extension GenericArchetype {
