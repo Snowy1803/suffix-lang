@@ -13,17 +13,13 @@
 import Foundation
 import SuffixLang
 
-public class RecordType: NamedType {
+public class RecordType: NamedType, LeafType { // TODO: when generic records arrive, it won't be a leaf anymore
     public var name: String
     public var fields: [Field]
     
     init(name: String, fields: [Field]) {
         self.name = name
         self.fields = fields
-    }
-    
-    public func convertible(to other: SType) -> Bool {
-        false
     }
     
     public struct Field {

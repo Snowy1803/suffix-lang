@@ -12,10 +12,6 @@
 
 import Foundation
 
-class IntType: NamedType {
+class IntType: NamedType, LeafType {
     var name: String { "int" }
-    
-    func convertible(to other: SType) -> Bool {
-        false
-    }
 }

@@ -12,10 +12,6 @@
 
 import Foundation
 
-class FloatType: NamedType {
+class FloatType: NamedType, LeafType {
     var name: String { "float" }
-    
-    public func convertible(to other: SType) -> Bool {
-        false
-    }
 }

@@ -13,17 +13,13 @@
 import Foundation
 import SuffixLang
 
-public class EnumType: NamedType {
+public class EnumType: NamedType, LeafType {
     public var name: String
     public var cases: [Case]
     
     init(name: String, cases: [Case]) {
         self.name = name
         self.cases = cases
-    }
-    
-    public func convertible(to other: SType) -> Bool {
-        false
     }
     
     public struct Case {

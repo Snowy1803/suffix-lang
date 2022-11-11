@@ -24,6 +24,16 @@ public protocol NamedType: SType {
     var name: String { get }
 }
 
+public protocol LeafType: SType {
+    
+}
+
+extension LeafType {
+    public func convertible(to other: SType) -> Bool {
+        false
+    }
+}
+
 extension SType {
     func canBeAssigned(to type: SType) -> Bool {
         if self === type {

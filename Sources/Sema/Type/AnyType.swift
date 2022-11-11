@@ -12,13 +12,9 @@
 
 import Foundation
 
-class AnyType: NamedType {
+class AnyType: NamedType, LeafType {
     var name: String { "any" }
     
     static let shared = AnyType()
     private init() {}
-    
-    func convertible(to other: SType) -> Bool {
-        false
-    }
 }
