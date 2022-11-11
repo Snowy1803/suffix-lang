@@ -12,6 +12,9 @@
 
 import Foundation
 
-class FloatType: NamedType, LeafType {
-    var name: String { "float" }
+public final class FloatType: NamedType, LeafType {
+    public var name: String { "float" }
+    
+    public static let shared = FloatType()
+    private init() {}
 }

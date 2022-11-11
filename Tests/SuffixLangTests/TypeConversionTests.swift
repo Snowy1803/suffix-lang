@@ -4,9 +4,9 @@ import XCTest
 final class TypeConversionTests: XCTestCase {
     let any = AnyType.shared
     let bool = EnumType.bool
-    let int = IntType()
-    let float = FloatType()
-    let str = StringType()
+    let int = IntType.shared
+    let float = FloatType.shared
+    let str = StringType.shared
     
     func testMiscConversion() {
         XCTAssertTrue(bool.canBeAssigned(to: bool))

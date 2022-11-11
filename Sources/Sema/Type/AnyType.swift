@@ -12,9 +12,9 @@
 
 import Foundation
 
-class AnyType: NamedType, LeafType {
-    var name: String { "any" }
+public final class AnyType: NamedType, LeafType {
+    public var name: String { "any" }
     
-    static let shared = AnyType()
+    public static let shared = AnyType()
     private init() {}
 }

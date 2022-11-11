@@ -12,6 +12,9 @@
 
 import Foundation
 
-class IntType: NamedType, LeafType {
-    var name: String { "int" }
+public final class IntType: NamedType, LeafType {
+    public var name: String { "int" }
+    
+    public static let shared = IntType()
+    private init() {}
 }

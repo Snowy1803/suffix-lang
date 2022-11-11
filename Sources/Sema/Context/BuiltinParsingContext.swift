@@ -19,12 +19,12 @@ class BuiltinParsingContext: ParsingContext {
     private init() {
         let any = AnyType.shared
         let bool = EnumType.bool
-        let str = StringType()
+        let str = StringType.shared
         super.init(parent: nil)
         self.types = [
             any,
-            IntType(),
-            FloatType(),
+            IntType.shared,
+            FloatType.shared,
             bool,
             str,
         ]
