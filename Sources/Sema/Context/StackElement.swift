@@ -13,9 +13,14 @@
 import Foundation
 import SuffixLang
 
-struct StackElement {
-    var type: SType
-    var source: Source
+class StackElement {
+    var type: SType // if we want backwards inference, we may not be sure about the type until later
+    let source: Source
+    
+    init(type: SType, source: Source) {
+        self.type = type
+        self.source = source
+    }
     
     enum Source {
         /// This value was pushed explicitly

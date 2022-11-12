@@ -13,10 +13,16 @@
 import Foundation
 import SuffixLang
 
-struct Binding {
-    var name: String
-    var type: SType
-    var source: Source
+class Binding {
+    let name: String
+    let type: SType
+    let source: Source
+    
+    init(name: String, type: SType, source: Source) {
+        self.name = name
+        self.type = type
+        self.source = source
+    }
     
     enum Source {
         /// This value is an explicit binding
