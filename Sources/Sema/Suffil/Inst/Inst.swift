@@ -21,6 +21,8 @@ enum Inst {
     case rename(RenameInst)
     /// A return, at the end of the function
     case ret(RetInst)
+    /// The specialisation of a generic function
+    case specialise(SpecialiseInst)
 }
 
 protocol InstProtocol: AnyObject, CustomStringConvertible {
@@ -32,7 +34,8 @@ extension Inst {
         switch self {
         case .call(let inst as InstProtocol),
              .rename(let inst as InstProtocol),
-             .ret(let inst as InstProtocol):
+             .ret(let inst as InstProtocol),
+             .specialise(let inst as InstProtocol):
             return inst
         }
     }

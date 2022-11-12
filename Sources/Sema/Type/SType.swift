@@ -12,7 +12,7 @@
 
 import Foundation
 
-public protocol SType: AnyObject {
+public protocol SType: AnyObject, CustomStringConvertible {
     /// Returns true if this type can be converted to the different type `other`
     /// This function need not return true if the types are the same or if the other type is `any`,
     /// as this is handled in `canBeAssigned(to:)`
@@ -30,6 +30,12 @@ public protocol NamedType: SType {
 /// A leaf type is a type which doesn't contain any other type or generics
 public protocol LeafType: SType {
     
+}
+
+extension NamedType {
+    public var description: String {
+        name
+    }
 }
 
 extension LeafType {

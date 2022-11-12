@@ -71,8 +71,22 @@ public class FunctionType: SType {
         )
     }
     
-    public struct Argument {
+    public var description: String {
+        var desc = ""
+        if !generics.isEmpty {
+            desc += "[\(generics.map(\.description).joined(separator: ", "))] "
+        }
+        desc += "(\(arguments.map(\.description).joined(separator: ", "))) "
+        desc += "(\(returning.map(\.description).joined(separator: ", ")))"
+        return desc
+    }
+    
+    public struct Argument: CustomStringConvertible {
         public var type: SType
         public var variadic: Bool = false
+        
+        public var description: String {
+            "1: \(type)\(variadic ? "..." : "")"
+        }
     }
 }
