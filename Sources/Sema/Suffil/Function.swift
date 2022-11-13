@@ -32,11 +32,37 @@ public class Function {
         self.instructions = []
     }
     
+    var isSynthesized: Bool {
+        if case .synthesized = source {
+            return true
+        }
+        return false
+    }
+    
     enum Source {
         case instruction(FunctionInstruction)
         case anonymous(AnonymousFunctionValue)
         case main
         case builtin
         case synthesized
+    }
+}
+
+extension Function: CustomStringConvertible {
+    public var description: String {
+        let sig = "suffil .\(name)\(type.generics.isEmpty ? "" : " [\(type.generics.map(\.description).joined(separator: ", "))]")"
+        let arguments = (isSynthesized ? type.arguments : arguments as [CustomStringConvertible]).map(\.description).joined(separator: ", ")
+        let returning = type.returning.map(\.description).joined(separator: ", ")
+        let sign = "\(sig) (\(arguments)) (\(returning))"
+        if isSynthesized {
+            return "\(sign)\n"
+        } else {
+            var desc = "\(sign) {\n"
+            for inst in instructions {
+                desc += "    " + inst.wrapped.description + "\n"
+            }
+            desc += "}\n"
+            return desc
+        }
     }
 }

@@ -23,6 +23,9 @@ struct CheckCommand: ParsableCommand {
     @Argument(help: "The input file to read, as an utf8 encoded suffix source", completion: .file(extensions: ["suffix"]))
     var input: String
     
+    @Flag(help: "Prints the suffil representation of the code")
+    var emitSuffil = false
+    
     func run() throws {
         let lexer = Lexer(document: try String(contentsOfFile: input, encoding: .utf8))
         let result = lexer.parseDocument()
@@ -35,6 +38,9 @@ struct CheckCommand: ParsableCommand {
         typeChecker.typecheck()
         for diagnostic in typeChecker.diagnostics {
             print(diagnostic.representNicely(filepath: input))
+        }
+        if emitSuffil {
+            print(typeChecker.getSuffil())
         }
         _ = lexer
     }

@@ -38,4 +38,13 @@ public class TypeChecker {
             $0()
         }
     }
+    
+    func prepareSuffilForPrinting() {
+        // TODO: uniquify names
+    }
+    
+    public func getSuffil() -> String {
+        prepareSuffilForPrinting()
+        return functions.map(\.description).joined(separator: "\n")
+    }
 }
