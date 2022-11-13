@@ -28,20 +28,24 @@ class BuiltinParsingContext: ParsingContext {
             bool,
             str,
         ]
-        self.bindings = EnumType.bool.caseBindings + [
-            Binding(name: "join", type: FunctionType(
-                arguments: [.init(type: str, variadic: true)],
-                returning: [.init(type: str)]), source: .builtin),
-            Binding(name: "print", type: FunctionType(
-                arguments: [.init(type: any, variadic: true)],
-                returning: []), source: .builtin),
-            GenericArchetype(name: "T")
-                .with { t in
-                    Binding(name: "select", type: FunctionType(
-                        generics: [t],
-                        arguments: [.init(type: bool), .init(type: t), .init(type: t)],
-                        returning: [.init(type: t)]), source: .builtin)
-                },
-        ]
+        self.bindings = EnumType.bool.caseBindings
+        createBuiltinFunction(name: "join", type: FunctionType(
+            arguments: [.init(type: str, variadic: true)],
+            returning: [.init(type: str)]))
+        createBuiltinFunction(name: "print", type: FunctionType(
+            arguments: [.init(type: any, variadic: true)],
+            returning: []))
+        createBuiltinFunction(name: "select", type: GenericArchetype(name: "T")
+            .with { t in
+                FunctionType(
+                    generics: [t],
+                    arguments: [.init(type: bool), .init(type: t), .init(type: t)],
+                    returning: [.init(type: t)])
+            })
+    }
+    
+    func createBuiltinFunction(name: String, type: FunctionType) {
+        let function = Function(parent: nil, name: name, type: type, source: .builtin)
+        self.bindings.append(Binding(name: name, type: type, source: .builtin, ref: .function(function)))
     }
 }

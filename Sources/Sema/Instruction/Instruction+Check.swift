@@ -47,16 +47,22 @@ extension RecordInstruction {
                 context.typeChecker.diagnostics.append(Diagnostic(token: bind.value.literal, message: .missingTypeAnnotation, severity: .warning))
                 inner = AnyType.shared
             }
+            let name = bind.value.literal.identifier
+            let type = FunctionType(arguments: [.init(type: record)], returning: [.init(type: inner)])
             context.bindings.append(Binding(
-                name: bind.value.literal.identifier,
-                type: FunctionType(arguments: [.init(type: record)], returning: [.init(type: inner)]),
-                source: .recordFieldAccessor(record, self, bind)))
+                name: name,
+                type: type,
+                source: .recordFieldAccessor(record, self, bind),
+                ref: .function(Function(parent: context.function, name: name, type: type, source: .synthesized))))
             return RecordType.Field(name: bind.value.literal.identifier, type: inner, source: bind)
         }
+        let constructorName = "new \(name.identifier)"
+        let constructorType = FunctionType(arguments: record.fields.map { .init(type: $0.type) }, returning: [.init(type: record)])
         context.bindings.append(Binding(
-            name: "new \(name.identifier)",
-            type: FunctionType(arguments: record.fields.map { .init(type: $0.type) }, returning: [.init(type: record)]),
-            source: .recordConstructor(record, self)))
+            name: constructorName,
+            type: constructorType,
+            source: .recordConstructor(record, self),
+            ref: .function(Function(parent: context.function, name: constructorName, type: constructorType, source: .synthesized))))
         context.types.append(record)
     }
 }

@@ -25,7 +25,7 @@ extension FunctionInstruction {
         partial.types.append(contentsOf: genericArguments)
         let resolved = resolve(context: partial, generics: genericArguments)
         let function = Function(parent: parent.function, name: name.identifier, type: resolved.type, source: .instruction(self))
-        parent.bindings.append(Binding(name: function.name, type: function.type, source: .function(self)))
+        parent.bindings.append(Binding(name: function.name, type: function.type, source: .function(self), ref: .function(function)))
         let subcontext = FunctionParsingContext(parent: parent, function: function)
         resolved.resolver(subcontext)
         return subcontext
@@ -59,18 +59,24 @@ extension FunctionTypeReference.Argument {
             }
             return (arguments: Array(repeating: FunctionType.Argument(type: inner), count: count), resolver: { context in
                 for _ in 0..<count {
-                    context.stack.append(StackElement(type: inner, source: .argument(self)))
+                    let ref = LocalRef(givenName: "", type: inner)
+                    context.function.arguments.append(ref)
+                    context.stack.append(StackElement(type: inner, source: .argument(self), ref: .local(ref)))
                 }
             })
         case .named(let name):
             return (arguments: [FunctionType.Argument(type: inner, variadic: name.variadic != nil)], resolver: { context in
                 // TODO: handle variadics
-                context.bindings.append(Binding(name: name.name.identifier, type: inner, source: .argument(self)))
+                let ref = LocalRef(givenName: name.name.identifier, type: inner)
+                context.function.arguments.append(ref)
+                context.bindings.append(Binding(name: name.name.identifier, type: inner, source: .argument(self), ref: .local(ref)))
             })
         case .unnamedVariadic(_):
             return (arguments: [FunctionType.Argument(type: inner, variadic: true)], resolver: { context in
                 // TODO: make variadic pack
-                context.stack.append(StackElement(type: inner, source: .argument(self)))
+                let ref = LocalRef(givenName: "", type: inner)
+                context.function.arguments.append(ref)
+                context.stack.append(StackElement(type: inner, source: .argument(self), ref: .local(ref)))
             })
         }
     }

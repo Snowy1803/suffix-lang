@@ -14,14 +14,20 @@ import Foundation
 import SuffixLang
 
 class Binding {
+    /// The name of the binding
     let name: String
+    /// The type of the value (which also helps between overloads)
     let type: SType
+    /// The source mapping for this binding, for diagnostics
     let source: Source
+    /// The underlying value
+    let ref: Ref
     
-    init(name: String, type: SType, source: Source) {
+    init(name: String, type: SType, source: Source, ref: Ref) {
         self.name = name
         self.type = type
         self.source = source
+        self.ref = ref
     }
     
     enum Source {

@@ -34,8 +34,8 @@ extension EnumType {
 
 extension EnumType {
     var caseBindings: [Binding] {
-        cases.map {
-            Binding(name: $0.name, type: self, source: $0.source.map { Binding.Source.binding($0) } ?? .builtin)
+        cases.enumerated().map { i, c in
+            Binding(name: c.name, type: self, source: c.source.map { Binding.Source.binding($0) } ?? .builtin, ref: .intLiteral(i))
         }
     }
 }

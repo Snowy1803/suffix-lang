@@ -14,12 +14,17 @@ import Foundation
 import SuffixLang
 
 class StackElement {
-    var type: SType // if we want backwards inference, we may not be sure about the type until later
+    /// The type of the value
+    let type: SType // if we want backwards inference, we may not be sure about the type until later
+    /// The source mapping for this binding, for diagnostics
     let source: Source
+    /// The underlying value
+    let ref: Ref
     
-    init(type: SType, source: Source) {
+    init(type: SType, source: Source, ref: Ref) {
         self.type = type
         self.source = source
+        self.ref = ref
     }
     
     enum Source {

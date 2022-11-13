@@ -20,11 +20,11 @@ enum Ref {
     /// A binding usually
     case local(LocalRef)
     /// An integer literal
-    case intLiteral(IntegerValue)
+    case intLiteral(Int)
     /// An float literal
-    case floatLiteral(FloatValue)
+    case floatLiteral(Double)
     /// A constant string literal
-    case strLiteral(StringValue)
+    case strLiteral(String)
 }
 
 extension Ref: CustomStringConvertible {
@@ -35,11 +35,11 @@ extension Ref: CustomStringConvertible {
         case .local(let localRef):
             return localRef.description
         case .intLiteral(let integerValue):
-            return "&\(integerValue.integer): int"
+            return "&\(integerValue): int"
         case .floatLiteral(let floatValue):
-            return "&\(floatValue.float): float"
+            return "&\(floatValue): float"
         case .strLiteral(let stringValue):
-            return "&\(stringValue.token.literal): str"
+            return "&\(stringValue.debugDescription): str"
         }
     }
 }

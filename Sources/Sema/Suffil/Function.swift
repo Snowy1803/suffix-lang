@@ -19,17 +19,24 @@ class Function {
     var type: FunctionType
     var source: Source
     
+    // these are empty if builtin or synthesized
+    var arguments: [LocalRef]
+    var instructions: [Inst]
+    
     init(parent: Function?, name: String, type: FunctionType, source: Source) {
         self.parent = parent
         self.name = name
         self.type = type
         self.source = source
+        self.arguments = [] // this is populated by the resolver
+        self.instructions = []
     }
     
     enum Source {
         case instruction(FunctionInstruction)
         case anonymous(AnonymousFunctionValue)
-        case builtin
         case main
+        case builtin
+        case synthesized
     }
 }
