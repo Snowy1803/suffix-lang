@@ -72,4 +72,117 @@ final class SuffixLangTests: XCTestCase {
             XCTFail("Expected to parse a string literal")
         }
     }
+    
+    func testParsingReference() {
+        parseReference(text: " hello ", expectedName: "hello")
+        parseReference(text: " hello      world", expectedName: "hello world")
+        parseReference(text: "hello\nworld", expectedName: "hello world")
+        parseReference(text: "print (2)", expectedName: "print", expectedArgumentCount: 2)
+        parseReference(text: " print all(37)", expectedName: "print all", expectedArgumentCount: 37)
+        parseReference(text: " select [int]", expectedName: "select") { ref in
+            XCTAssertEqual(ref.generics?.generics.count, 1)
+            if case .generic(let gen) = ref.generics?.generics[0].type {
+                XCTAssertEqual(gen.name.identifier, "int")
+                XCTAssertNil(gen.generics)
+            } else {
+                XCTFail()
+            }
+            XCTAssertNil(ref.identifier.typeAnnotation)
+        }
+        parseReference(text: " select [array [int]]", expectedName: "select") { ref in
+            XCTAssertEqual(ref.generics?.generics.count, 1)
+            if case .generic(let gen) = ref.generics?.generics[0].type {
+                XCTAssertEqual(gen.name.identifier, "array")
+                XCTAssertEqual(gen.generics?.generics.count, 1)
+                if case .generic(let gen) = gen.generics?.generics[0].type {
+                    XCTAssertEqual(gen.name.identifier, "int")
+                    XCTAssertNil(gen.generics)
+                } else {
+                    XCTFail()
+                }
+            } else {
+                XCTFail()
+            }
+            XCTAssertNil(ref.identifier.typeAnnotation)
+        }
+        parseReference(text: "select[int](3)", expectedName: "select", expectedArgumentCount: 3) { ref in
+            XCTAssertEqual(ref.generics?.generics.count, 1)
+            if case .generic(let gen) = ref.generics?.generics[0].type {
+                XCTAssertEqual(gen.name.identifier, "int")
+                XCTAssertNil(gen.generics)
+            } else {
+                XCTFail()
+            }
+            XCTAssertNil(ref.identifier.typeAnnotation)
+        }
+        parseReference(text: "cut: stroke type", expectedName: "cut") { ref in
+            XCTAssertNil(ref.generics)
+            if case .generic(let gen) = ref.identifier.typeAnnotation?.type {
+                XCTAssertEqual(gen.name.identifier, "stroke type")
+                XCTAssertNil(gen.generics)
+            } else {
+                XCTFail()
+            }
+        }
+        parseReference(text: "argv : array [str]", expectedName: "argv") { ref in
+            XCTAssertNil(ref.generics)
+            if case .generic(let gen) = ref.identifier.typeAnnotation?.type {
+                XCTAssertEqual(gen.name.identifier, "array")
+                XCTAssertEqual(gen.generics?.generics.count, 1)
+                if case .generic(let gen) = gen.generics?.generics[0].type {
+                    XCTAssertEqual(gen.name.identifier, "str")
+                    XCTAssertNil(gen.generics)
+                } else {
+                        XCTFail()
+                }
+            } else {
+                XCTFail()
+            }
+        }
+        parseReference(text: "if: (cond: bool, block: () (),) ()", expectedName: "if") { ref in
+            XCTAssertNil(ref.generics)
+            if case .function(let fun) = ref.identifier.typeAnnotation?.type {
+                XCTAssertEqual(fun.arguments.arguments.count, 2)
+                XCTAssertEqual(fun.returning.arguments.count, 0)
+                if case .generic(let gen) = fun.arguments.arguments[0].typeAnnotation?.type {
+                    XCTAssertEqual(gen.name.identifier, "bool")
+                    XCTAssertNil(gen.generics)
+                } else {
+                    XCTFail()
+                }
+                if case .function(let cnt) = fun.arguments.arguments[1].typeAnnotation?.type {
+                    XCTAssertEqual(cnt.arguments.arguments.count, 0)
+                    XCTAssertEqual(cnt.returning.arguments.count, 0)
+                } else {
+                    XCTFail()
+                }
+            } else {
+                XCTFail()
+            }
+        }
+    }
+    
+    func parseReference(text: String,
+                        expectedName: String,
+                        expectedArgumentCount: Int? = nil,
+                        additionalExpectations: ((ReferenceValue) -> ())? = nil) {
+        let lexer = Lexer(document: text)
+        let stream = TokenStream(tokens: lexer.parseDocument())
+        let value = Value(stream: stream)
+        
+        XCTAssert(stream.isExhausted)
+        XCTAssert(stream.diagnostics.isEmpty)
+        if case .reference(let ref) = value {
+            XCTAssertEqual(ref.identifier.literal.identifier, expectedName)
+            XCTAssertEqual(ref.argumentCount?.count.integer, expectedArgumentCount)
+            if let additionalExpectations {
+                additionalExpectations(ref)
+            } else {
+                XCTAssertNil(ref.generics)
+                XCTAssertNil(ref.identifier.typeAnnotation)
+            }
+        } else {
+            XCTFail("Expected to parse a string literal")
+        }
+    }
 }
