@@ -40,7 +40,9 @@ public class TypeChecker {
     }
     
     func prepareSuffilForPrinting() {
-        // TODO: uniquify names
+        for function in functions {
+            function.prepareSuffilForPrinting()
+        }
     }
     
     public func getSuffil() -> String {

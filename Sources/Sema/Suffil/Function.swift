@@ -66,3 +66,17 @@ extension Function: CustomStringConvertible {
         }
     }
 }
+
+extension Function {
+    func prepareSuffilForPrinting() {
+        var numberer = LocalRefNumberer()
+        for argument in arguments {
+            argument.assignNumber(with: &numberer)
+        }
+        for instruction in instructions {
+            for ref in instruction.wrapped.definingRefs {
+                ref.assignNumber(with: &numberer)
+            }
+        }
+    }
+}

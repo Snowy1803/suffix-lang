@@ -15,15 +15,34 @@ import Foundation
 class LocalRef {
     let givenName: String
     let type: SType
+    var seqNumber: Int?
     
     init(givenName: String, type: SType) {
         self.givenName = givenName
         self.type = type
     }
+    
+    func assignNumber(with numberer: inout LocalRefNumberer) {
+        seqNumber = numberer.getNumber(givenName: givenName)
+    }
 }
 
 extension LocalRef: CustomStringConvertible {
     var description: String {
-        "%\(givenName): \(type)"
+        "%\(givenName)\(seqNumber.map(String.init) ?? ""): \(type)"
+    }
+}
+
+struct LocalRefNumberer {
+    var numbers: [String: Int]
+    
+    init() {
+        self.numbers = ["": 0]
+    }
+    
+    mutating func getNumber(givenName: String) -> Int? {
+        let number = numbers[givenName]
+        numbers[givenName] = (number ?? 1) + 1
+        return number
     }
 }
