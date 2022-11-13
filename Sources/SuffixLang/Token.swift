@@ -33,7 +33,7 @@ extension Token {
 }
 
 extension Token {
-    public enum StringComponent {
+    public enum StringComponent: Equatable {
         /// Literal text
         case literal(Substring)
         /// An escaped char, such as `\n`. Always starts with `\`

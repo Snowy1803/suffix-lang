@@ -13,13 +13,6 @@
 import Foundation
 
 public class Lexer {
-    static let keywords: [String: KeywordType] = [
-        "func": .func,
-        "record": .record,
-        "enum": .enum,
-        "typealias": .typealias,
-//        "where": .whereKeyword, // this would actually be contextual
-    ]
     var document: String
     var result: [Token] = []
     
