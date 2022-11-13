@@ -13,7 +13,7 @@
 import Foundation
 import SuffixLang
 
-class Function {
+public class Function {
     var parent: Function?
     var name: String
     var type: FunctionType

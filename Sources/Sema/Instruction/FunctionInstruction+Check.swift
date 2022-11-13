@@ -24,7 +24,7 @@ extension FunctionInstruction {
         let genericArguments = generics?.generics.map { GenericArchetype(name: $0.name.identifier) } ?? []
         partial.types.append(contentsOf: genericArguments)
         let resolved = resolve(context: partial, generics: genericArguments)
-        let function = Function(parent: parent.function, name: name.identifier, type: resolved.type, source: .instruction(self))
+        let function = parent.createFunction(name: name.identifier, type: resolved.type, source: .instruction(self))
         parent.bindings.append(Binding(name: function.name, type: function.type, source: .function(self), ref: .function(function)))
         let subcontext = FunctionParsingContext(parent: parent, function: function)
         resolved.resolver(subcontext)
