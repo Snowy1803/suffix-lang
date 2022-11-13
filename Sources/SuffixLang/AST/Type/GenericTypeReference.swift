@@ -13,7 +13,7 @@
 import Foundation
 
 public struct GenericTypeReference: ASTNode {
-    public var name: Token
+    public var name: Identifier
     public var generics: GenericTypeArguments?
 }
 
@@ -34,7 +34,7 @@ public struct GenericDefinition: ASTNode {
     public var close: Token
     
     public struct Generic: ASTNode {
-        public var name: Token
+        public var name: Identifier
         public var trailingComma: Token?
     }
 }

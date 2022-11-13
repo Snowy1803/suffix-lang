@@ -30,7 +30,7 @@ public enum TokenType {
 //    case whereKeyword
     
     /// An identifier. Matches `[ A-Za-z_/%*+-][ A-Za-z0-9_/%*+-]*`
-    /// Associated data is the canonical identifier string
+    /// Associated data is the canonical identifier
     case identifier
     /// An integer literal. Matches `[0-9][0-9 _]*`
     /// Associated data is the integer value

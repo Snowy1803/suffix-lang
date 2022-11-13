@@ -1,8 +1,8 @@
 //
-//  RecordInstruction+Parse.swift
+//  Identifier+Parse.swift
 //  SuffixLang
 // 
-//  Created by Emil Pedersen on 23/10/2022.
+//  Created by Emil Pedersen on 31/10/2022.
 //  Copyright © 2022 Emil Pedersen (emil.codes). All rights reserved.
 // 
 //  This Source Code Form is subject to the terms of the Mozilla Public
@@ -12,13 +12,15 @@
 
 import Foundation
 
-extension RecordInstruction {
+extension Identifier {
     init?(stream: TokenStream) {
-        guard let op = stream.consumeOne(type: .recordKeyword) else {
+        guard let token = stream.consumeOne(type: .identifier) else {
             return nil
         }
-        self.keyword = op
-        self.name = Identifier(assert: stream)
-        self.block = RecordBlock(stream: stream)
+        self.token = token
+    }
+    
+    init(assert stream: TokenStream) {
+        self.token = stream.consumeOne(assert: .identifier, recoveryDefault: "")
     }
 }

@@ -24,9 +24,7 @@ extension ReferenceValue {
 
 extension TypedIdentifier {
     init(stream: TokenStream) {
-        self.literal = stream.consumeOne(
-            assert: .identifier,
-            recoveryDefault: "missing " + UUID().uuidString)
+        self.literal = Identifier(assert: stream)
         self.typeAnnotation = TypeAnnotation(stream: stream)
     }
 }
@@ -55,7 +53,7 @@ extension TypeAnnotation {
             self.type = ref
         } else {
             stream.diagnostics.append(Diagnostic(token: colon, message: ParserDiagnosticMessage.expectedNode(TypeReference.self), severity: .error))
-            self.type = .generic(.init(name: Token(position: .missing, literal: "any", type: .identifier)))
+            self.type = .generic(.init(name: Identifier(token: Token(position: .missing, literal: "any", type: .identifier))))
         }
     }
 }

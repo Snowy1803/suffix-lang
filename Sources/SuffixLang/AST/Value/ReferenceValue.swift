@@ -19,18 +19,8 @@ public struct ReferenceValue: ASTNode {
 }
 
 public struct TypedIdentifier: ASTNode {
-    public var literal: Token
+    public var literal: Identifier
     public var typeAnnotation: TypeAnnotation?
-}
-
-public extension Token {
-    var identifier: String {
-        if case .identifier(let id) = data {
-            return id
-        }
-        // happens in the case of a synthesized missing token
-        return literal.description
-    }
 }
 
 public struct TakenArgumentCount: ASTNode {

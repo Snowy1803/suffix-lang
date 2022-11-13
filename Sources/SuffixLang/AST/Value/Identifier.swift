@@ -1,5 +1,5 @@
 //
-//  FunctionInstruction.swift
+//  Identifier.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 22/10/2022.
@@ -12,11 +12,14 @@
 
 import Foundation
 
-public struct FunctionInstruction: ASTNode {
-    public var keyword: Token
-    public var name: Identifier
-    public var generics: GenericDefinition?
-    public var arguments: FunctionTypeReference.Arguments
-    public var returning: FunctionTypeReference.ReturnValues
-    public var block: Block
+public struct Identifier: ASTNode {
+    public var token: Token
+    
+    public var identifier: String {
+        if case .identifier(let id) = token.data {
+            return id
+        }
+        // happens in the case of a synthesized missing token (will probs be empty str)
+        return token.literal.description
+    }
 }

@@ -14,6 +14,6 @@ import Foundation
 
 public struct RecordInstruction: ASTNode {
     public var keyword: Token
-    public var name: Token
+    public var name: Identifier
     public var block: RecordBlock
 }

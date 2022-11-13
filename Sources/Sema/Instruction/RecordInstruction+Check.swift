@@ -21,7 +21,7 @@ extension RecordInstruction {
             if let annotation = bind.value.typeAnnotation {
                 inner = annotation.type.resolve(context: context)
             } else {
-                context.typeChecker.diagnostics.append(Diagnostic(token: bind.value.literal, message: .missingTypeAnnotation, severity: .warning))
+                context.typeChecker.diagnostics.append(Diagnostic(token: bind.value.literal.token, message: .missingTypeAnnotation, severity: .warning))
                 inner = AnyType.shared
             }
             let name = bind.value.literal.identifier

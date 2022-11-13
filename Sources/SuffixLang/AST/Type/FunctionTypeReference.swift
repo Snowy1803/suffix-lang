@@ -46,7 +46,7 @@ public struct FunctionTypeReference: ASTNode {
             }
             
             public struct Named: ASTNode {
-                public var name: Token
+                public var name: Identifier
                 public var variadic: Variadic?
             }
         }

@@ -78,7 +78,7 @@ extension FunctionTypeReference.Argument.Spec.Variadic {
 
 extension FunctionTypeReference.Argument.Spec.Named {
     init?(stream: TokenStream) {
-        guard let token = stream.consumeOne(type: .identifier) else {
+        guard let token = Identifier(stream: stream) else {
             return nil
         }
         self.name = token
