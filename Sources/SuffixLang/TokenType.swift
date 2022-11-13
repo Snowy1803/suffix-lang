@@ -12,22 +12,14 @@
 
 import Foundation
 
-public enum TokenType {
+public enum TokenType: Equatable {
     /// Insignificant whitespace
     case whitespace
     /// An ignoreable single line comment (starting with `#`)
     case comment
     
-    /// The `func` keyword, to define a function
-    case funcKeyword
-    /// The `record` keyword, to declare a record type
-    case recordKeyword
-    /// The `enum` keyword, to declare an enum type
-    case enumKeyword
-    /// The `typealias` keyword, to declare a type alias
-    case typealiasKeyword
-//    /// The `where` keyword, to add generic constraints
-//    case whereKeyword
+    /// A keyword
+    case keyword(KeywordType)
     
     /// An identifier. Matches `[ A-Za-z_/%*+-][ A-Za-z0-9_/%*+-]*`
     /// Associated data is the canonical identifier
@@ -74,4 +66,21 @@ public enum TokenType {
     case twoDots
     /// Anything unknown, out of normal, errored
     case unresolved
+}
+
+public enum KeywordType {
+    /// Used to define a function
+    case `func`
+    /// Used to declare a record type
+    case record
+    /// Used to declare an enum type
+    case `enum`
+    /// Used to declare a type alias
+    case `typealias`
+    /// Used to add generic constraints to a declaration
+    case `where`
+    /// Used to declare a trait
+    case `trait`
+    /// Used to conform a type to an explicit trait
+    case `conform`
 }

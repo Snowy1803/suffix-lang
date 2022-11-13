@@ -14,7 +14,7 @@ import Foundation
 
 extension RecordInstruction {
     init?(stream: TokenStream) {
-        guard let op = stream.consumeOne(type: .recordKeyword) else {
+        guard let op = stream.consumeOne(type: .keyword(.record)) else {
             return nil
         }
         self.keyword = op

@@ -13,11 +13,11 @@
 import Foundation
 
 public class Lexer {
-    static let keywords: [String: TokenType] = [
-        "func": .funcKeyword,
-        "record": .recordKeyword,
-        "enum": .enumKeyword,
-        "typealias": .typealiasKeyword,
+    static let keywords: [String: KeywordType] = [
+        "func": .func,
+        "record": .record,
+        "enum": .enum,
+        "typealias": .typealias,
 //        "where": .whereKeyword, // this would actually be contextual
     ]
     var document: String
@@ -80,7 +80,7 @@ public class Lexer {
             return .newToken
         case .pushOperator, .bindOperator, .coercingOperator, .variadic, .curlyOpen, .curlyClose, .parenOpen, .parenClose, .bracketOpen, .bracketClose, .comma, .unresolved:
             return .newToken
-        case .floatLiteral, .funcKeyword, .recordKeyword, .enumKeyword, .typealiasKeyword:
+        case .floatLiteral, .keyword:
             print("shouldn't happen")
             return .newToken
         }
@@ -224,10 +224,10 @@ public class Lexer {
                     }
                 }
                 for (i, word) in words.enumerated() {
-                    if let tokenType = Self.keywords[String(word)] {
+                    if let keywordType = Self.keywords[String(word)] {
                         commit(i)
                         pos.advance(to: word.startIndex, in: document)
-                        result.append(Token(position: pos, literal: word, type: tokenType))
+                        result.append(Token(position: pos, literal: word, type: .keyword(keywordType)))
                         start = i + 1
                         let end = start == words.count ? last.literal.endIndex : words[start].startIndex
                         if word.endIndex != end {
