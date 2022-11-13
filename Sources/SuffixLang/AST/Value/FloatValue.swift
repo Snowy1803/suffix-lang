@@ -13,12 +13,6 @@
 import Foundation
 
 public struct FloatValue: ASTNode {
-    public var token: Token
-    
-    public var float: Double {
-        if case .float(let float) = token.data {
-            return float
-        }
-        return 0
-    }
+    public var tokens: [Token]
+    public var float: Double
 }

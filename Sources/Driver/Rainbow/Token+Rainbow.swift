@@ -22,12 +22,6 @@ extension Token {
 extension Token.AssociatedData {
     var dumped: String {
         switch self {
-        case .identifier(let value):
-            return value.debugDescription.red
-        case .int(let value):
-            return "\(value)".blue
-        case .float(let value):
-            return "\(value)".blue
         case .interpolation(let array):
             return array.map({
                 switch $0 {

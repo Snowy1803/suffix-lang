@@ -14,18 +14,37 @@ import Foundation
 
 extension IntegerValue {
     init?(stream: TokenStream) {
-        guard let token = stream.consumeOne(type: .integerLiteral) else {
+        guard let first = stream.consumeOne(type: .number) else {
             return nil
         }
-        self.token = token
+        self.tokens = [first]
+        while let next = stream.consumeOne(type: .number) {
+            self.tokens.append(next)
+        }
+        self.integer = Int(self.tokens.map(\.literal.description).joined().filter(\.isNumber)) ?? 0
     }
 }
 
 extension FloatValue {
     init?(stream: TokenStream) {
-        guard let token = stream.consumeOne(type: .floatLiteral) else {
+        let state = stream.saveState()
+        guard let first = stream.consumeOne(type: .number) else {
             return nil
         }
-        self.token = token
+        self.tokens = [first]
+        while let next = stream.consumeOne(type: .number) {
+            self.tokens.append(next)
+        }
+        guard let dot = stream.consumeOne(type: .dotOperator),
+              let decimal = stream.consumeOne(type: .number) else {
+            stream.restore(state: state)
+            return nil
+        }
+        self.tokens.append(dot)
+        self.tokens.append(decimal)
+        while let next = stream.consumeOne(type: .number) {
+            self.tokens.append(next)
+        }
+        self.float = Double(self.tokens.map(\.literal.description).joined().filter { $0.isNumber || $0 == "." }) ?? 0
     }
 }

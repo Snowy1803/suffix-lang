@@ -18,7 +18,7 @@ extension RecordInstruction {
             return nil
         }
         self.keyword = op
-        self.name = Identifier(assert: stream)
+        self.name = Identifier(assert: stream, allow: .inTypeName)
         self.block = RecordBlock(stream: stream)
     }
 }

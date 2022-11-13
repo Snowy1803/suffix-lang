@@ -18,7 +18,7 @@ extension FunctionInstruction {
             return nil
         }
         self.keyword = op
-        self.name = Identifier(assert: stream)
+        self.name = Identifier(assert: stream, allow: .inBinding)
         self.generics = GenericDefinition(stream: stream)
         self.arguments = FunctionTypeReference.Arguments(assert: stream)
         self.returning = FunctionTypeReference.ReturnValues(assert: stream)

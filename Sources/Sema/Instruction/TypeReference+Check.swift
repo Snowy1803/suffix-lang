@@ -23,7 +23,7 @@ extension TypeReference {
             if let named = context.getType(name: generic.name.identifier) {
                 return named
             }
-            context.typeChecker.diagnostics.append(Diagnostic(token: generic.name.token, message: .unknownType(generic.name.identifier), severity: .error))
+            context.typeChecker.diagnostics.append(Diagnostic(tokens: generic.name.tokens, message: .unknownType(generic.name.identifier), severity: .error))
             return AnyType.shared
         }
     }

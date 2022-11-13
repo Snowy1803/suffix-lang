@@ -14,7 +14,7 @@ import Foundation
 
 extension GenericTypeReference {
     init?(stream: TokenStream) {
-        guard let identifier = Identifier(stream: stream) else {
+        guard let identifier = Identifier(stream: stream, allow: .inTypeName) else {
             return nil
         }
         self.name = identifier
@@ -66,7 +66,7 @@ extension GenericDefinition {
 
 extension GenericDefinition.Generic {
     init?(stream: TokenStream) {
-        guard let type = Identifier(stream: stream) else {
+        guard let type = Identifier(stream: stream, allow: .inTypeName) else {
             return nil
         }
         self.name = type

@@ -28,9 +28,6 @@ public struct Token {
 
 extension Token {
     public enum AssociatedData {
-        case identifier(String)
-        case int(Int)
-        case float(Double)
         case interpolation([StringComponent])
     }
 }

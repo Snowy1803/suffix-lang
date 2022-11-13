@@ -13,14 +13,36 @@
 import Foundation
 
 extension Identifier {
-    init?(stream: TokenStream) {
-        guard let token = stream.consumeOne(type: .identifier) else {
+    init?(stream: TokenStream, allow: IdentifierAllowList) {
+        guard let first = stream.consumeOne(if: { allow.asFirst.contains($0.type) }) else {
             return nil
         }
-        self.token = token
+        self.init(stream: stream, first: first, allow: allow)
     }
     
-    init(assert stream: TokenStream) {
-        self.token = stream.consumeOne(assert: .identifier, recoveryDefault: "")
+    init(assert stream: TokenStream, allow: IdentifierAllowList) {
+        let first = stream.consumeOne(if: { allow.asFirst.contains($0.type) }) ?? stream.consumeOne(assert: .word, recoveryDefault: "")
+        self.init(stream: stream, first: first, allow: allow)
     }
+    
+    private init(stream: TokenStream, first: Token, allow: IdentifierAllowList) {
+        self.tokens = [first]
+        while let next = stream.consumeOne(if: { allow.next.contains($0.type) }) {
+            self.tokens.append(next)
+        }
+        self.identifier = self.tokens.map(\.literal).joined(separator: " ")
+    }
+}
+
+struct IdentifierAllowList {
+    var asFirst: [TokenType]
+    var next: [TokenType]
+}
+
+extension IdentifierAllowList {
+    private static let basicFirst: [TokenType] = [.word, .numberPrefixedWord]
+    private static let basicNext: [TokenType] = basicFirst + [.number]
+    
+    static let inBinding = IdentifierAllowList(asFirst: basicFirst + [.keyword(.where)], next: basicNext + [.keyword(.where)])
+    static let inTypeName = IdentifierAllowList(asFirst: basicFirst, next: basicNext)
 }

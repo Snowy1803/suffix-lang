@@ -13,12 +13,6 @@
 import Foundation
 
 public struct IntegerValue: ASTNode {
-    public var token: Token
-    
-    public var integer: Int {
-        if case .int(let int) = token.data {
-            return int
-        }
-        return 0
-    }
+    public var tokens: [Token]
+    public var integer: Int
 }

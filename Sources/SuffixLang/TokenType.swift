@@ -18,20 +18,17 @@ public enum TokenType: Equatable {
     /// An ignoreable single line comment (starting with `#`)
     case comment
     
-    /// A keyword
+    /// A known keyword or contextual keyword
     case keyword(KeywordType)
     
-    /// An identifier. Matches `[ A-Za-z_/%*+-][ A-Za-z0-9_/%*+-]*`
-    /// Associated data is the canonical identifier
-    case identifier
-    /// An integer literal. Matches `[0-9][0-9 _]*`
-    /// Associated data is the integer value
-    case integerLiteral
-    /// A float literal. Matches `[0-9][0-9 _]*(,[0-9 _]*)?(f|F)?`
-    /// Associated data is the float value
-    case floatLiteral
+    /// A basic word. Matches `[A-Za-z_/%*+-][A-Za-z0-9_/%*+-]*`
+    case word
+    /// A number word. Matches `[0-9][0-9_]*`
+    case number
+    /// A word starting with a number. Matches `[0-9][A-Za-z0-9_/%*+-]*`
+    case numberPrefixedWord
     /// A string literal, in double quotes.
-    /// Associated data is the string value
+    /// Associated data contains the string components
     case stringLiteral
 
     /// The `.` function call operator
@@ -68,7 +65,7 @@ public enum TokenType: Equatable {
     case unresolved
 }
 
-public enum KeywordType {
+public enum KeywordType: String {
     /// Used to define a function
     case `func`
     /// Used to declare a record type

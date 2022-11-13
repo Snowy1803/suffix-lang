@@ -43,10 +43,17 @@ public class Lexer {
             return char.isWhitespace ? .satisfies : .newToken
         case .comment:
             return char.isNewline ? .satisfiesAndTerminates : .satisfies
-        case .identifier:
-            return char.isLetter || char.isNumber || char.isWhitespace || "_/%*+-".contains(char) ? .satisfies : .newToken
-        case .integerLiteral:
-            return char.isNumber || char.isWhitespace || char == "_" ? .satisfies : .newToken
+        case .word, .numberPrefixedWord:
+            return char.isLetter || char.isNumber || "_/%*+-".contains(char) ? .satisfies : .newToken
+        case .number:
+            if (char.isNumber && char.isASCII) || char == "_" {
+                return .satisfies
+            }
+            if char.isLetter || "_/%*+-".contains(char) {
+                type = .numberPrefixedWord
+                return .satisfies
+            }
+            return .newToken
         case .stringLiteral:
             if isEscaped {
                 isEscaped = false
@@ -80,7 +87,7 @@ public class Lexer {
             return .newToken
         case .pushOperator, .bindOperator, .coercingOperator, .variadic, .curlyOpen, .curlyClose, .parenOpen, .parenClose, .bracketOpen, .bracketClose, .comma, .unresolved:
             return .newToken
-        case .floatLiteral, .keyword:
+        case .keyword:
             print("shouldn't happen")
             return .newToken
         }
@@ -91,11 +98,11 @@ public class Lexer {
         if char.isWhitespace {
             return .whitespace
         }
-        if char.isNumber {
-            return .integerLiteral
+        if char.isNumber && char.isASCII {
+            return .number
         }
         if char.isLetter || "_/%*+-".contains(char) {
-            return .identifier
+            return .word
         }
         switch char {
         case "#":
@@ -165,78 +172,18 @@ public class Lexer {
     func didAddToken() {
         // resolves literals
         do {
-            let literal = Array(result.suffix(3))
-            if literal.count == 3,
-               literal[0].type == .integerLiteral,
-               literal[1].type == .dotOperator,
-               literal[2].type == .integerLiteral {
-                result.removeLast(3)
-                result.append(Token(
-                    position: literal[0].position,
-                    literal: document[literal[0].literal.startIndex..<literal[2].literal.endIndex],
-                    type: .floatLiteral))
-            }
             if var last = result.last {
                 defer { result[result.endIndex - 1] = last }
                 switch last.type {
-                case .integerLiteral:
-                    last.data = .int(Int(last.literal.filter({ $0.isNumber })) ?? 0)
-                case .floatLiteral:
-                    last.data = .float(Double(last.literal.filter({ $0.isNumber || $0 == "." })) ?? 0)
                 case .stringLiteral:
                     last.data = .interpolation(parseStringLiteral(token: last))
+                case .word:
+                    if let type = KeywordType(rawValue: last.literal.description) {
+                        last.type = .keyword(type)
+                    }
                 default:
                     break
                 }
-            }
-            if let last = result.last,
-               last.type == .identifier {
-                let source = last.literal
-                var words: [Substring] = []
-                var current: Substring = source[source.startIndex..<source.startIndex]
-                var isSpaced = false
-                for (index, char) in zip(source.indices, source) {
-                    if char.isWhitespace {
-                        isSpaced = true
-                        continue
-                    }
-                    if isSpaced {
-                        words.append(current)
-                        current = source[index...index]
-                        isSpaced = false
-                    }
-                    current = source[current.startIndex...index]
-                }
-                words.append(current)
-                var start = 0
-                var pos = last.position
-                result.removeLast()
-                func commit(_ i: Int) {
-                    if i != start {
-                        let end = i == words.count ? last.literal.endIndex : words[i].startIndex
-                        let firstWord = words[start]
-                        pos.advance(to: firstWord.startIndex, in: document)
-                        result.append(
-                            Token(position: pos,
-                                  literal: document[firstWord.startIndex..<end],
-                                  type: .identifier,
-                                  data: .identifier(words[start..<i].joined(separator: " "))))
-                    }
-                }
-                for (i, word) in words.enumerated() {
-                    if let keywordType = Self.keywords[String(word)] {
-                        commit(i)
-                        pos.advance(to: word.startIndex, in: document)
-                        result.append(Token(position: pos, literal: word, type: .keyword(keywordType)))
-                        start = i + 1
-                        let end = start == words.count ? last.literal.endIndex : words[start].startIndex
-                        if word.endIndex != end {
-                            pos.advance(to: word.endIndex, in: document)
-                            result.append(Token(position: pos, literal: document[word.endIndex..<end], type: .whitespace))
-                        }
-                    }
-                }
-                commit(words.count)
             }
         }
     }

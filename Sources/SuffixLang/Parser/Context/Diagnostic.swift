@@ -13,16 +13,39 @@
 import Foundation
 
 public struct Diagnostic {
-    public var token: Token
+    var tokens: [Token]
     public var message: DiagnosticMessage
     public var severity: Severity
     public var hints: [Diagnostic]
     
     public init(token: Token, message: DiagnosticMessage, severity: Severity, hints: [Diagnostic] = []) {
-        self.token = token
+        self.init(tokens: [token], message: message, severity: severity, hints: hints)
+    }
+    
+    public init(tokens: [Token], message: DiagnosticMessage, severity: Severity, hints: [Diagnostic] = []) {
+        assert(tokens.count >= 0)
+        self.tokens = tokens
         self.message = message
         self.severity = severity
         self.hints = hints
+    }
+    
+    public var document: String {
+        tokens[0].literal.base
+    }
+    
+    public var startPosition: TokenPosition {
+        tokens[0].position
+    }
+    
+    public var endPosition: TokenPosition {
+        var pos = startPosition
+        pos.advance(to: tokens.last!.literal.endIndex, in: document)
+        return pos
+    }
+    
+    public var literal: Substring {
+        document[startPosition.index..<endPosition.index]
     }
     
     public enum Severity: Comparable {

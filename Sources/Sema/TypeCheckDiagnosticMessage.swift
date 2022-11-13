@@ -17,6 +17,10 @@ extension Diagnostic {
     init(token: Token, message: TypeCheckDiagnosticMessage, severity: Severity, hints: [Diagnostic] = []) {
         self.init(token: token, message: message as DiagnosticMessage, severity: severity, hints: hints)
     }
+    
+    init(tokens: [Token], message: TypeCheckDiagnosticMessage, severity: Severity, hints: [Diagnostic] = []) {
+        self.init(tokens: tokens, message: message as DiagnosticMessage, severity: severity, hints: hints)
+    }
 }
 
 enum TypeCheckDiagnosticMessage: DiagnosticMessage {

@@ -14,10 +14,10 @@ import Foundation
 
 extension Value {
     init(stream: TokenStream) {
-        if let value = IntegerValue(stream: stream) {
-            self = .int(value)
-        } else if let value = FloatValue(stream: stream) {
+        if let value = FloatValue(stream: stream) {
             self = .float(value)
+        } else if let value = IntegerValue(stream: stream) {
+            self = .int(value)
         } else if let value = StringValue(stream: stream) {
             self = .string(value)
         } else if let value = AnonymousFunctionValue(stream: stream) {

@@ -24,7 +24,7 @@ extension ReferenceValue {
 
 extension TypedIdentifier {
     init(stream: TokenStream) {
-        self.literal = Identifier(assert: stream)
+        self.literal = Identifier(assert: stream, allow: .inBinding)
         self.typeAnnotation = TypeAnnotation(stream: stream)
     }
 }
@@ -36,8 +36,8 @@ extension TakenArgumentCount {
         }
         self.open = open
         self.count = IntegerValue(stream: stream) ?? {
-            stream.diagnostics.append(Diagnostic(token: stream.nextTokenForDiagnostics(), message: ParserDiagnosticMessage.expectedTokenType(.integerLiteral), severity: .error))
-            return IntegerValue(token: Token(position: .missing, literal: "0", type: .integerLiteral, data: .int(0)))
+            stream.diagnostics.append(Diagnostic(token: stream.nextTokenForDiagnostics(), message: ParserDiagnosticMessage.expectedTokenType(.number), severity: .error))
+            return IntegerValue(tokens: [Token(position: .missing, literal: "0", type: .number)], integer: 0)
         }()
         self.close = stream.consumeOne(assert: .parenClose, recoveryDefault: ")")
     }
@@ -53,7 +53,7 @@ extension TypeAnnotation {
             self.type = ref
         } else {
             stream.diagnostics.append(Diagnostic(token: colon, message: ParserDiagnosticMessage.expectedNode(TypeReference.self), severity: .error))
-            self.type = .generic(.init(name: Identifier(token: Token(position: .missing, literal: "any", type: .identifier))))
+            self.type = .generic(.init(name: Identifier(tokens: [Token(position: .missing, literal: "any", type: .word)], identifier: "any")))
         }
     }
 }

@@ -13,13 +13,6 @@
 import Foundation
 
 public struct Identifier: ASTNode {
-    public var token: Token
-    
-    public var identifier: String {
-        if case .identifier(let id) = token.data {
-            return id
-        }
-        // happens in the case of a synthesized missing token (will probs be empty str)
-        return token.literal.description
-    }
+    public var tokens: [Token]
+    public var identifier: String
 }
