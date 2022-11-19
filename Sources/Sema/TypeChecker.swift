@@ -30,13 +30,7 @@ public class TypeChecker {
     }
     
     public func typecheck() {
-        rootBlock.instructions.map {
-            // first stage: find declarations
-            $0.typeCheck(context: rootContext)
-        }.forEach {
-            // second stage: generate suffil for instructions
-            $0()
-        }
+        rootBlock.typecheckContent(context: rootContext)
     }
     
     func prepareSuffilForPrinting() {

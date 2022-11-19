@@ -14,8 +14,21 @@ import Foundation
 import SuffixLang
 
 extension RecordInstruction {
-    func resolve(context: FunctionParsingContext) {
-        let record = RecordType(name: name.identifier, fields: [])
+    func registerTypeDeclaration(context: FunctionParsingContext) {
+        let record = RecordType(name: name.identifier, fields: [], source: .instruction(self))
+        context.types.append(record)
+    }
+    
+    func registerGlobalBindings(context: FunctionParsingContext) {
+        guard let record = context.types.compactMap({ $0 as? RecordType }).first(where: { (type: RecordType) in
+            if case .instruction(let inst) = type.source {
+                return inst === self
+            }
+            return false
+        }) else {
+            assertionFailure()
+            return
+        }
         record.fields = block.content.map { (bind: BindInstruction) -> RecordType.Field in
             let inner: SType
             if let annotation = bind.value.typeAnnotation {
@@ -40,6 +53,5 @@ extension RecordInstruction {
             type: constructorType,
             source: .recordConstructor(record, self),
             ref: .function(context.createFunction(name: constructorName, type: constructorType, source: .synthesized))))
-        context.types.append(record)
     }
 }

@@ -12,11 +12,20 @@
 
 import Foundation
 
-public struct FunctionInstruction: ASTNode {
-    public var keyword: Token
-    public var name: Identifier
-    public var generics: GenericDefinition?
-    public var arguments: FunctionTypeReference.Arguments
-    public var returning: FunctionTypeReference.ReturnValues
-    public var block: Block
+public class FunctionInstruction: ASTNode {
+    public let keyword: Token
+    public let name: Identifier
+    public let generics: GenericDefinition?
+    public let arguments: FunctionTypeReference.Arguments
+    public let returning: FunctionTypeReference.ReturnValues
+    public let block: Block
+    
+    init(keyword: Token, name: Identifier, generics: GenericDefinition?, arguments: FunctionTypeReference.Arguments, returning: FunctionTypeReference.ReturnValues, block: Block) {
+        self.keyword = keyword
+        self.name = name
+        self.generics = generics
+        self.arguments = arguments
+        self.returning = returning
+        self.block = block
+    }
 }

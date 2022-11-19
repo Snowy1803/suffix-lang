@@ -14,34 +14,47 @@ import Foundation
 import SuffixLang
 
 extension Instruction {
-    /// The type check is two stages: first, resolve and create functions and records (global stuff),
-    /// then, resolve and create insts
-    /// This function executes the first stage, and returns a function that executes the second
-    func typeCheck(context: FunctionParsingContext) -> () -> Void {
+    func registerTypeDeclaration(context: FunctionParsingContext) {
         switch self {
-        case .push(_):
-            // TODO: implement
+        case .record(let recordInstruction):
+            recordInstruction.registerTypeDeclaration(context: context)
+        case .push, .call, .bind, .function:
             break
-        case .call(_):
-            // TODO: implement
-            break
-        case .bind(_):
-            // TODO: implement
-            break
-        case .function(let function):
-            let subcontext = function.createSubContext(parent: context)
-            let next = function.block.content.instructions.map { inst in
-                inst.typeCheck(context: subcontext)
-            }
-            return {
-                next.forEach {
-                    $0()
-                }
-            }
-        case .record(let record):
-            record.resolve(context: context)
-            return {} // nothing to do
         }
-        return {} // not implemented
+    }
+    
+    func registerGlobalBindings(context: FunctionParsingContext) {
+        switch self {
+        case .record(let recordInstruction):
+            recordInstruction.registerGlobalBindings(context: context)
+        case .function(let functionInstruction):
+            functionInstruction.registerGlobalBindings(parent: context)
+        case .push, .call, .bind:
+            break
+        }
+    }
+    
+    func typecheckInstruction(context: FunctionParsingContext) {
+        switch self {
+        case .push(let pushInstruction):
+            break
+        case .call(let callInstruction):
+            break
+        case .bind(let bindInstruction):
+            break
+        case .function, .record:
+            break
+        }
+    }
+    
+    func typecheckNestedFunctions(context: FunctionParsingContext) {
+        switch self {
+        case .function(let functionInstruction):
+            let subcontext = functionInstruction.createSubContext(parent: context)
+            functionInstruction.registerLocalBindings(subcontext: subcontext)
+            functionInstruction.block.content.typecheckContent(context: subcontext)
+        case .push, .call, .bind, .record:
+            break
+        }
     }
 }

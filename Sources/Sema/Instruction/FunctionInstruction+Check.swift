@@ -14,41 +14,50 @@ import Foundation
 import SuffixLang
 
 extension FunctionInstruction {
-    private func resolve(context: ParsingContext, generics: [GenericArchetype]) -> (type: FunctionType, resolver: (FunctionParsingContext) -> ()) {
+    private func resolve(context: ParsingContext, generics: [GenericArchetype]) -> FunctionType {
         let resolved = arguments.resolve(context: context)
-        return (type: FunctionType(generics: generics, arguments: resolved.arguments, returning: returning.resolve(context: context)), resolved.resolver)
+        return FunctionType(generics: generics, arguments: resolved, returning: returning.resolve(context: context))
     }
     
-    func createSubContext(parent: FunctionParsingContext) -> FunctionParsingContext {
+    func registerGlobalBindings(parent: FunctionParsingContext) {
         let partial = PartialFunctionParsingContext(parent: parent)
         let genericArguments = generics?.generics.map { GenericArchetype(name: $0.name.identifier) } ?? []
         partial.types.append(contentsOf: genericArguments)
         let resolved = resolve(context: partial, generics: genericArguments)
-        let function = parent.createFunction(name: name.identifier, type: resolved.type, source: .instruction(self))
+        let function = parent.createFunction(name: name.identifier, type: resolved, source: .instruction(self))
         parent.bindings.append(Binding(name: function.name, type: function.type, source: .function(self), ref: .function(function)))
+    }
+    
+    func createSubContext(parent: FunctionParsingContext) -> FunctionParsingContext {
+        guard let binding = parent.bindings.first(where: { binding in
+            if case .function(let inst) = binding.source {
+                return inst === self
+            }
+            return false
+        }),
+              case .function(let function) = binding.ref else {
+            preconditionFailure()
+        }
         let subcontext = FunctionParsingContext(parent: parent, function: function)
-        resolved.resolver(subcontext)
+        subcontext.types.append(contentsOf: function.type.generics)
         return subcontext
+    }
+    
+    func registerLocalBindings(subcontext: FunctionParsingContext) {
+        arguments.arguments.forEach {
+            $0.registerLocalBindings(context: subcontext)
+        }
     }
 }
 
 extension FunctionTypeReference.Arguments {
-    func resolve(context: ParsingContext) -> (arguments: [FunctionType.Argument], resolver: (FunctionParsingContext) -> ()) {
-        let resolved = self.arguments.map {
-            $0.resolve(context: context)
-        }
-        let arguments = resolved.flatMap(\.arguments)
-        func resolver(context: FunctionParsingContext) {
-            resolved.map(\.resolver).forEach { resolver in
-                resolver(context)
-            }
-        }
-        return (arguments, resolver(context:))
+    func resolve(context: ParsingContext) -> [FunctionType.Argument] {
+        arguments.flatMap { $0.resolveArgument(context: context) }
     }
 }
 
 extension FunctionTypeReference.Argument {
-    func resolve(context: ParsingContext) -> (arguments: [FunctionType.Argument], resolver: (FunctionParsingContext) -> ()) {
+    func resolveArgument(context: ParsingContext) -> [FunctionType.Argument] {
         let inner = self.typeAnnotation?.type.resolve(context: context) ?? AnyType.shared
         switch spec {
         case .count(let int):
@@ -57,27 +66,37 @@ extension FunctionTypeReference.Argument {
                 context.typeChecker.diagnostics.append(Diagnostic(tokens: int.tokens, message: .negativeArgumentCount(int), severity: .error))
                 count = 0
             }
-            return (arguments: Array(repeating: FunctionType.Argument(type: inner), count: count), resolver: { context in
-                for _ in 0..<count {
-                    let ref = LocalRef(givenName: "", type: inner)
-                    context.function.arguments.append(ref)
-                    context.stack.append(StackElement(type: inner, source: .argument(self), ref: .local(ref)))
-                }
-            })
+            return Array(repeating: FunctionType.Argument(type: inner), count: count)
         case .named(let name):
-            return (arguments: [FunctionType.Argument(type: inner, variadic: name.variadic != nil)], resolver: { context in
-                // TODO: handle variadics
-                let ref = LocalRef(givenName: name.name.identifier, type: inner)
-                context.function.arguments.append(ref)
-                context.bindings.append(Binding(name: name.name.identifier, type: inner, source: .argument(self), ref: .local(ref)))
-            })
+            return [FunctionType.Argument(type: inner, variadic: name.variadic != nil)]
         case .unnamedVariadic(_):
-            return (arguments: [FunctionType.Argument(type: inner, variadic: true)], resolver: { context in
-                // TODO: make variadic pack
+            return [FunctionType.Argument(type: inner, variadic: true)]
+        }
+    }
+    
+    func registerLocalBindings(context: FunctionParsingContext) {
+        let inner = self.typeAnnotation?.type.resolve(context: context) ?? AnyType.shared
+        switch spec {
+        case .count(let int):
+            var count = int.integer
+            if count < 0 {
+                count = 0
+            }
+            for _ in 0..<count {
                 let ref = LocalRef(givenName: "", type: inner)
                 context.function.arguments.append(ref)
                 context.stack.append(StackElement(type: inner, source: .argument(self), ref: .local(ref)))
-            })
+            }
+        case .named(let name):
+            // TODO: handle variadics
+            let ref = LocalRef(givenName: name.name.identifier, type: inner)
+            context.function.arguments.append(ref)
+            context.bindings.append(Binding(name: name.name.identifier, type: inner, source: .argument(self), ref: .local(ref)))
+        case .unnamedVariadic(_):
+            // TODO: make variadic pack
+            let ref = LocalRef(givenName: "", type: inner)
+            context.function.arguments.append(ref)
+            context.stack.append(StackElement(type: inner, source: .argument(self), ref: .local(ref)))
         }
     }
 }

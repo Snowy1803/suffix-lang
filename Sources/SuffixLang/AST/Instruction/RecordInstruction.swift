@@ -12,8 +12,14 @@
 
 import Foundation
 
-public struct RecordInstruction: ASTNode {
-    public var keyword: Token
-    public var name: Identifier
-    public var block: RecordBlock
+public class RecordInstruction: ASTNode {
+    public let keyword: Token
+    public let name: Identifier
+    public let block: RecordBlock
+    
+    init(keyword: Token, name: Identifier, block: RecordBlock) {
+        self.keyword = keyword
+        self.name = name
+        self.block = block
+    }
 }

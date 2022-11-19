@@ -13,12 +13,14 @@
 import Foundation
 
 extension RecordInstruction {
-    init?(stream: TokenStream) {
+    convenience init?(stream: TokenStream) {
         guard let op = stream.consumeOne(type: .keyword(.record)) else {
             return nil
         }
-        self.keyword = op
-        self.name = Identifier(assert: stream, allow: .inTypeName)
-        self.block = RecordBlock(stream: stream)
+        self.init(
+            keyword: op,
+            name: Identifier(assert: stream, allow: .inTypeName),
+            block: RecordBlock(stream: stream)
+        )
     }
 }

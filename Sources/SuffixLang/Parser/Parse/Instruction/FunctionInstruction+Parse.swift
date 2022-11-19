@@ -13,15 +13,17 @@
 import Foundation
 
 extension FunctionInstruction {
-    init?(stream: TokenStream) {
+    convenience init?(stream: TokenStream) {
         guard let op = stream.consumeOne(type: .keyword(.func)) else {
             return nil
         }
-        self.keyword = op
-        self.name = Identifier(assert: stream, allow: .inBinding)
-        self.generics = GenericDefinition(stream: stream)
-        self.arguments = FunctionTypeReference.Arguments(assert: stream)
-        self.returning = FunctionTypeReference.ReturnValues(assert: stream)
-        self.block = Block(stream: stream)
+        self.init(
+            keyword: op,
+            name: Identifier(assert: stream, allow: .inBinding),
+            generics: GenericDefinition(stream: stream),
+            arguments: FunctionTypeReference.Arguments(assert: stream),
+            returning: FunctionTypeReference.ReturnValues(assert: stream),
+            block: Block(stream: stream)
+        )
     }
 }
