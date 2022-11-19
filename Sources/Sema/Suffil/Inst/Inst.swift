@@ -23,6 +23,8 @@ enum Inst {
     case ret(RetInst)
     /// The specialisation of a generic function
     case specialise(SpecialiseInst)
+    /// Create an array (for variadic functions usually)
+    case array(ArrayInst)
 }
 
 protocol InstProtocol: AnyObject, CustomStringConvertible {
@@ -35,7 +37,8 @@ extension Inst {
         case .call(let inst as InstProtocol),
              .rename(let inst as InstProtocol),
              .ret(let inst as InstProtocol),
-             .specialise(let inst as InstProtocol):
+             .specialise(let inst as InstProtocol),
+             .array(let inst as InstProtocol):
             return inst
         }
     }
