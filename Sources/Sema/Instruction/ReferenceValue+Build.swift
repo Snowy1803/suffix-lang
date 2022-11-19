@@ -19,7 +19,7 @@ extension ReferenceValue {
         if let type = identifier.typeAnnotation?.type.resolve(context: context) {
             bindings = bindings.filter({ $0.type.canBeAssigned(to: type) })
         }
-        // TODO: resolve generics and stuff
+        // TODO: resolve generics and count
         // canBeAssigned has to go
         guard let binding = bindings.last else {
             context.typeChecker.diagnostics.append(Diagnostic(tokens: identifier.literal.tokens, message: .noViableBinding(identifier.literal.identifier), severity: .error))

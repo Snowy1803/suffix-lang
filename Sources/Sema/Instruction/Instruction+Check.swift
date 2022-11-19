@@ -39,7 +39,7 @@ extension Instruction {
         case .push(let pushInstruction):
             pushInstruction.buildInstruction(context: context)
         case .call(let callInstruction):
-            break
+            callInstruction.buildInstruction(context: context)
         case .bind(let bindInstruction):
             bindInstruction.buildInstruction(context: context)
         case .function, .record:

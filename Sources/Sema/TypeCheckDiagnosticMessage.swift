@@ -30,6 +30,7 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case poppingEmptyStack
     case invalidStringEscapeSequence(Substring)
     case noViableBinding(String)
+    case callNonCallable(String, SType)
     
     var description: String {
         switch self {
@@ -45,6 +46,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Unknown escape sequence '\(str)' in string"
         case .noViableBinding(let str):
             return "Could not find a viable binding named '\(str)'"
+        case .callNonCallable(let str, let type):
+            return "Cannot call value '\(str)' of non-function type '\(type)'"
         }
     }
 }

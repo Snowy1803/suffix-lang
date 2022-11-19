@@ -29,10 +29,19 @@ class SuffilBuilder {
         return .local(inst.array)
     }
     
+    @available(*, deprecated)
     func buildCall(function: Function, parameters: [Ref]) -> [Ref] {
         let inst = CallInst(
             returning: function.type.returning.map { arg in LocalRef(givenName: "", type: arg.type) },
             function: .function(function), parameters: parameters)
+        insert(inst: .call(inst))
+        return inst.returning.map { .local($0) }
+    }
+    
+    func buildCall(value: Ref, type: FunctionType, parameters: [Ref]) -> [Ref] {
+        let inst = CallInst(
+            returning: type.returning.map { arg in LocalRef(givenName: "", type: arg.type) },
+            function: value, parameters: parameters)
         insert(inst: .call(inst))
         return inst.returning.map { .local($0) }
     }
