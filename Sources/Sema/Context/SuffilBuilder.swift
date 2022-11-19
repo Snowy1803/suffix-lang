@@ -42,4 +42,10 @@ class SuffilBuilder {
         insert(inst: .copy(inst))
         return .local(inst.copy)
     }
+    
+    func buildRename(value: Ref, type: SType, name: String) -> Ref {
+        let inst = RenameInst(newName: LocalRef(givenName: name, type: type), oldName: value)
+        insert(inst: .rename(inst))
+        return .local(inst.newName)
+    }
 }

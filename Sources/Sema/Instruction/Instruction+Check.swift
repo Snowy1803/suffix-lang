@@ -41,7 +41,7 @@ extension Instruction {
         case .call(let callInstruction):
             break
         case .bind(let bindInstruction):
-            break
+            bindInstruction.buildInstruction(context: context)
         case .function, .record:
             break
         }
