@@ -50,6 +50,30 @@ extension FunctionInstruction {
     }
 }
 
+extension AnonymousFunctionValue {
+    private func resolve(context: ParsingContext, generics: [GenericArchetype]) -> FunctionType {
+        let resolved = arguments.resolve(context: context)
+        return FunctionType(generics: generics, arguments: resolved, returning: returning.resolve(context: context))
+    }
+    
+    func createAnonymousFunctionContext(parent: FunctionParsingContext) -> FunctionParsingContext {
+        let partial = PartialFunctionParsingContext(parent: parent)
+        let genericArguments = generics?.generics.map { GenericArchetype(name: $0.name.identifier) } ?? []
+        partial.types.append(contentsOf: genericArguments)
+        let resolved = resolve(context: partial, generics: genericArguments)
+        let function = parent.createFunction(name: "anonymous function", type: resolved, source: .anonymous(self))
+        let subcontext = FunctionParsingContext(parent: parent, function: function)
+        subcontext.types.append(contentsOf: function.type.generics)
+        return subcontext
+    }
+    
+    func registerLocalBindings(subcontext: FunctionParsingContext) {
+        arguments.arguments.forEach {
+            $0.registerLocalBindings(context: subcontext)
+        }
+    }
+}
+
 extension FunctionTypeReference.Arguments {
     func resolve(context: ParsingContext) -> [FunctionType.Argument] {
         arguments.flatMap { $0.resolveArgument(context: context) }

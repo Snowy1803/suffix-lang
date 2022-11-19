@@ -50,13 +50,22 @@ extension Token {
             }
             set {
                 switch self {
-                case .literal(_):
+                case .literal:
                     self = .literal(newValue)
-                case .escaped(_):
+                case .escaped:
                     self = .escaped(newValue)
-                case .percent(_):
+                case .percent:
                     self = .percent(newValue)
                 }
+            }
+        }
+        
+        public var popCount: Int {
+            switch self {
+            case .literal, .escaped:
+                return 0
+            case .percent:
+                return 1
             }
         }
     }

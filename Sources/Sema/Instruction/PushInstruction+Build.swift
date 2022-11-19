@@ -1,8 +1,8 @@
 //
-//  StringValue.swift
+//  PushInstruction+Build.swift
 //  SuffixLang
 // 
-//  Created by Emil Pedersen on 22/10/2022.
+//  Created by Emil Pedersen on 19/11/2022.
 //  Copyright © 2022 Emil Pedersen (emil.codes). All rights reserved.
 // 
 //  This Source Code Form is subject to the terms of the Mozilla Public
@@ -11,14 +11,11 @@
 //
 
 import Foundation
+import SuffixLang
 
-public struct StringValue: ASTNode {
-    public var token: Token
-    
-    public var components: [Token.StringComponent] {
-        if case .interpolation(let components) = token.data {
-            return components
-        }
-        return []
+extension PushInstruction {
+    func buildInstruction(context: FunctionParsingContext) {
+        let (ref, type) = value.buildValue(context: context)
+        context.stack.append(StackElement(type: type, source: .push(self), ref: ref))
     }
 }

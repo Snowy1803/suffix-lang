@@ -25,6 +25,8 @@ enum Inst {
     case specialise(SpecialiseInst)
     /// Create an array (for variadic functions usually)
     case array(ArrayInst)
+    /// Copy a value (retain if reference counting is needed, otherwise no op)
+    case copy(CopyInst)
 }
 
 protocol InstProtocol: AnyObject, CustomStringConvertible {
@@ -38,7 +40,8 @@ extension Inst {
              .rename(let inst as InstProtocol),
              .ret(let inst as InstProtocol),
              .specialise(let inst as InstProtocol),
-             .array(let inst as InstProtocol):
+             .array(let inst as InstProtocol),
+             .copy(let inst as InstProtocol):
             return inst
         }
     }

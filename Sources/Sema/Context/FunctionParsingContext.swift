@@ -16,9 +16,11 @@ import SuffixLang
 class FunctionParsingContext: ParsingContext {
     var function: Function
     var stack: [StackElement] = []
+    var builder: SuffilBuilder
     
     init(parent: ParsingContext, function: Function) {
         self.function = function
+        self.builder = SuffilBuilder(function: function)
         super.init(parent: parent)
     }
     
@@ -26,5 +28,17 @@ class FunctionParsingContext: ParsingContext {
         let fn = Function(parent: self.function, name: name, type: type, source: source)
         typeChecker.functions.append(fn)
         return fn
+    }
+    
+    func pop(count: Int, source: @autoclosure () -> [Token]) -> [StackElement] {
+        let result = Array(stack.suffix(count))
+        if result.count == count {
+            stack.removeLast(count)
+            return result
+        } else {
+            typeChecker.diagnostics.append(Diagnostic(tokens: source(), message: .poppingEmptyStack, severity: .error))
+            stack.removeAll()
+            return result
+        }
     }
 }

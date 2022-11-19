@@ -24,7 +24,7 @@ extension AnonymousFunctionValue {
                 return nil
             }
             self.keyword = keyword
-            self.generics = GenericTypeArguments(stream: stream)
+            self.generics = GenericDefinition(stream: stream)
             self.arguments = FunctionTypeReference.Arguments(assert: stream)
             self.returning = FunctionTypeReference.ReturnValues(assert: stream)
             self.block = Block(stream: stream)
