@@ -33,7 +33,7 @@ class TokenStream {
     var onePastEnd: Token {
         let document = document
         var position = tokens.last?.position ?? .missing
-        if position.line >= 0 {
+        if position.isValid {
             position.advance(to: document.endIndex, in: document)
         }
         return Token(position: position, literal: document[document.endIndex..<document.endIndex], type: .unresolved)

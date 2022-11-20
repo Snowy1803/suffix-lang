@@ -23,6 +23,7 @@ public struct Diagnostic {
     }
     
     public init(tokens: [Token], message: DiagnosticMessage, severity: Severity, hints: [Diagnostic] = []) {
+        let tokens = tokens.filter { $0.position.isValid }
         assert(tokens.count >= 0)
         self.tokens = tokens
         self.message = message

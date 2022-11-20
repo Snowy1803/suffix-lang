@@ -30,6 +30,10 @@ public struct TokenPosition {
         self.lineStart = index
     }
     
+    public var isValid: Bool {
+        line > 0 && char > 0
+    }
+    
     public func getFullLine(document: String) -> Substring {
         var lineEnd = self
         while index < document.endIndex && line == lineEnd.line {
