@@ -57,4 +57,9 @@ class SuffilBuilder {
         insert(inst: .rename(inst))
         return .local(inst.newName)
     }
+    
+    func buildRet(values: [Ref]) {
+        let inst = RetInst(values: values)
+        insert(inst: .ret(inst))
+    }
 }

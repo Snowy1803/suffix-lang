@@ -34,7 +34,7 @@ extension Instruction {
         }
     }
     
-    func typecheckInstruction(context: FunctionParsingContext) {
+    func buildInstruction(context: FunctionParsingContext) {
         switch self {
         case .push(let pushInstruction):
             pushInstruction.buildInstruction(context: context)

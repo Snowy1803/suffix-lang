@@ -17,6 +17,7 @@ public protocol ASTNode {
     var nodeData: String? { get }
     var nodePosition: TokenPosition? { get }
     var nodeChildren: [ASTElement] { get }
+    var nodeAllTokens: [Token] { get }
 }
 
 public protocol ASTEnum: ASTNode {
@@ -58,6 +59,10 @@ public extension ASTNode {
         }
         return result
     }
+    
+    var nodeAllTokens: [Token] {
+        nodeChildren.flatMap(\.value).flatMap(\.nodeAllTokens)
+    }
 }
 
 extension Token: ASTNode {
@@ -78,6 +83,7 @@ extension Token: ASTNode {
     }
     
     public var nodeChildren: [ASTElement] { [] }
+    public var nodeAllTokens: [Token] { [self] }
 }
 
 extension Array: ASTArray where Element: ASTNode {

@@ -31,6 +31,10 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case invalidStringEscapeSequence(Substring)
     case noViableBinding(String)
     case callNonCallable(String, SType)
+    case returningTooMuch(expected: [SType], actual: [SType])
+    case returnMissing(expected: [SType], actual: [SType])
+    case returningFromMain
+    case hintReturnHere(SType)
     
     var description: String {
         switch self {
@@ -48,6 +52,14 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Could not find a viable binding named '\(str)'"
         case .callNonCallable(let str, let type):
             return "Cannot call value '\(str)' of non-function type '\(type)'"
+        case .returningTooMuch(expected: let expected, actual: let actual):
+            return "Returning too many values: expected to get (\(expected.map(\.description).joined(separator: ", "))) but found  (\(actual.map(\.description).joined(separator: ", ")))"
+        case .returnMissing(expected: let expected, actual: let actual):
+            return "Missing return values: expected to get (\(expected.map(\.description).joined(separator: ", "))) but found  (\(actual.map(\.description).joined(separator: ", ")))"
+        case .returningFromMain:
+            return "Unused value in main function"
+        case .hintReturnHere(let type):
+            return "Value of type '\(type)' returned here"
         }
     }
 }
