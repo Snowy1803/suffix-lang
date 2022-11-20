@@ -52,6 +52,8 @@ public extension ASTNode {
                 result.append(ASTElement(name: label ?? "unnamed", value: node))
             case let array as ASTArray:
                 result.append(ASTElement(name: label ?? "unnamed", value: array.nodes))
+            case is String, is Int, is Double:
+                break
             default:
                 print("unknown type: \(type(of: value))")
                 break

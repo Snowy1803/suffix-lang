@@ -20,13 +20,13 @@ extension CallInstruction {
         guard let type = type as? FunctionType else {
             let postErrorCount = context.typeChecker.diagnostics.lazy.filter({ $0.severity >= .error }).count
             if postErrorCount == preErrorCount {
-                context.typeChecker.diagnostics.append(Diagnostic(tokens: [self.op] + self.value.identifier.literal.tokens, message: .callNonCallable(self.value.identifier.literal.identifier, type), severity: .error))
+                context.typeChecker.diagnostics.append(Diagnostic(tokens: nodeAllTokens, message: .callNonCallable(self.value.identifier.literal.identifier, type), severity: .error))
             } // else there is already a diagnostic there
             return
         }
 //        assert(type.isConcrete) // TODO: make it non-variadic in ReferenceValue.buildValue
         let count = type.arguments.count
-        let parameters = context.pop(count: count, source: [self.op] + self.value.identifier.literal.tokens)
+        let parameters = context.pop(count: count, source: nodeAllTokens)
         // TODO: typecheck arguments (and resolve generics / specialise and stuff)
         let result = context.builder.buildCall(value: value, type: type, parameters: parameters.map(\.ref))
         for (ref, type) in zip(result, type.returning) {

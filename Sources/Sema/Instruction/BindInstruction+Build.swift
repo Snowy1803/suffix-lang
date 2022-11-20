@@ -15,7 +15,7 @@ import SuffixLang
 
 extension BindInstruction {
     func buildInstruction(context: FunctionParsingContext) {
-        guard let value = context.pop(count: 1, source: [op]).first else {
+        guard let value = context.pop(count: 1, source: nodeAllTokens).first else {
             return
         }
         // TODO: create inst for converting to appropriate type
