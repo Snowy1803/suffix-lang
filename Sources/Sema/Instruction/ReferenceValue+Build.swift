@@ -16,14 +16,15 @@ import SuffixLang
 extension ReferenceValue {
     func buildValue(context: FunctionParsingContext) -> (Ref, SType) {
         var bindings = context.getBindings(name: identifier.literal.identifier)
-        if let type = identifier.typeAnnotation?.type.resolve(context: context) {
+        let type = identifier.typeAnnotation?.type.resolve(context: context)
+        if let type {
             bindings = bindings.filter({ $0.type.canBeAssigned(to: type) })
         }
         // TODO: resolve generics and count
         // canBeAssigned has to go
         guard let binding = bindings.last else {
             context.typeChecker.diagnostics.append(Diagnostic(tokens: identifier.literal.tokens, message: .noViableBinding(identifier.literal.identifier), severity: .error))
-            return (.intLiteral(0), IntType.shared) // TODO: this may make additional unwanted errors
+            return (.intLiteral(0), type ?? AnyType.shared) // this may make additional unwanted errors
         }
         return (context.builder.buildCopy(value: binding.ref, type: binding.type), binding.type)
     }

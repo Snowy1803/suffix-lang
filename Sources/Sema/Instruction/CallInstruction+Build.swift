@@ -15,9 +15,13 @@ import SuffixLang
 
 extension CallInstruction {
     func buildInstruction(context: FunctionParsingContext) {
+        let preErrorCount = context.typeChecker.diagnostics.lazy.filter({ $0.severity >= .error }).count
         let (value, type) = value.buildValue(context: context)
         guard let type = type as? FunctionType else {
-            context.typeChecker.diagnostics.append(Diagnostic(tokens: [self.op] + self.value.identifier.literal.tokens, message: .callNonCallable(self.value.identifier.literal.identifier, type), severity: .error))
+            let postErrorCount = context.typeChecker.diagnostics.lazy.filter({ $0.severity >= .error }).count
+            if postErrorCount == preErrorCount {
+                context.typeChecker.diagnostics.append(Diagnostic(tokens: [self.op] + self.value.identifier.literal.tokens, message: .callNonCallable(self.value.identifier.literal.identifier, type), severity: .error))
+            } // else there is already a diagnostic there
             return
         }
 //        assert(type.isConcrete) // TODO: make it non-variadic in ReferenceValue.buildValue
