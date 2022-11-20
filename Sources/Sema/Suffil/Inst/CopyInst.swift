@@ -28,4 +28,5 @@ extension CopyInst: InstProtocol {
     }
     
     var definingRefs: [LocalRef] { [copy] }
+    var usingRefs: [Ref] { [original] }
 }

@@ -31,6 +31,7 @@ enum Inst {
 
 protocol InstProtocol: AnyObject, CustomStringConvertible {
     var definingRefs: [LocalRef] { get }
+    var usingRefs: [Ref] { get }
 }
 
 extension Inst {

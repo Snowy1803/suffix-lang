@@ -30,4 +30,5 @@ extension ArrayInst: InstProtocol {
     }
     
     var definingRefs: [LocalRef] { [array] }
+    var usingRefs: [Ref] { elements }
 }

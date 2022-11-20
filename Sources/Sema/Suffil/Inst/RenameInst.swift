@@ -28,4 +28,5 @@ extension RenameInst: InstProtocol {
     }
     
     var definingRefs: [LocalRef] { [newName] }
+    var usingRefs: [Ref] { [oldName] }
 }

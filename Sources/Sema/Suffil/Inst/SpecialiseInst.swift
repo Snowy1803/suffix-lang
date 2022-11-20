@@ -30,4 +30,5 @@ extension SpecialiseInst: InstProtocol {
     }
     
     var definingRefs: [LocalRef] { [name] }
+    var usingRefs: [Ref] { [function] }
 }

@@ -30,4 +30,5 @@ extension CallInst: InstProtocol {
     }
     
     var definingRefs: [LocalRef] { returning }
+    var usingRefs: [Ref] { [function] + parameters }
 }

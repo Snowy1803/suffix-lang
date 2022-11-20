@@ -26,4 +26,5 @@ extension RetInst: InstProtocol {
     }
     
     var definingRefs: [LocalRef] { [] }
+    var usingRefs: [Ref] { values }
 }
