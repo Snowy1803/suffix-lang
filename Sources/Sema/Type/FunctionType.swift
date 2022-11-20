@@ -81,6 +81,9 @@ public class FunctionType: SType {
         return desc
     }
     
+    // ???: Currently unused
+    public var genericArchetypesInDefinition: [GenericArchetype] { generics }
+    
     public struct Argument: CustomStringConvertible {
         public var type: SType
         public var variadic: Bool = false

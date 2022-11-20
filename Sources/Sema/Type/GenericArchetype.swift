@@ -12,20 +12,23 @@
 
 import Foundation
 
-class GenericArchetype: NamedType {
-    var name: String
+/// The GenericArchetype is a generic placeholder type, used inside function/type declarations and replaced with a concrete or placeholder when the function or type is actually used
+public class GenericArchetype: NamedType {
+    public var name: String
     
-    init(name: String) {
+    public init(name: String) {
         self.name = name
     }
     
-    func convertible(to other: SType) -> Bool {
+    public func convertible(to other: SType) -> Bool {
         false // constrained generics are unsupported currently
     }
     
-    func map(with map: GenericMap) -> SType {
+    public func map(with map: GenericMap) -> SType {
         map.apply(type: self)
     }
+    
+    public var genericArchetypesInDefinition: [GenericArchetype] { [] }
 }
 
 extension GenericArchetype {

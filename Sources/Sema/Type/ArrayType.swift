@@ -34,4 +34,11 @@ public final class ArrayType: NamedType {
     public func map(with map: GenericMap) -> SType {
         ArrayType(element: element.map(with: map))
     }
+    
+    public var genericArchetypesInDefinition: [GenericArchetype] {
+        if let element = element as? GenericArchetype {
+            return [element]
+        }
+        return []
+    }
 }

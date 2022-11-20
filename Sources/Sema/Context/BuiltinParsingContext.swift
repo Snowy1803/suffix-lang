@@ -27,6 +27,9 @@ class BuiltinParsingContext: ParsingContext {
             FloatType.shared,
             bool,
             str,
+            GenericArchetype(name: "Element").with {
+                ArrayType(element: $0)
+            },
         ]
         self.bindings = EnumType.bool.caseBindings
         createBuiltinFunction(name: "join", type: FunctionType(

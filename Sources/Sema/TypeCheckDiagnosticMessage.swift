@@ -35,6 +35,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case returnMissing(expected: [SType], actual: [SType])
     case returningFromMain
     case hintReturnHere(SType)
+    case genericTypeParameterCountInvalid(expected: Int, actual: Int)
+    case genericTypeParameterMissing(expected: Int)
     
     var description: String {
         switch self {
@@ -60,6 +62,10 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Unused value in main function"
         case .hintReturnHere(let type):
             return "Value of type '\(type)' returned here"
+        case .genericTypeParameterCountInvalid(expected: let expected, actual: let actual):
+            return "Expected \(expected) type parameter\(expected > 1 ? "s" : ""), but found \(actual)"
+        case .genericTypeParameterMissing(let expected):
+            return "Generic type must be parameterized, expected \(expected) type parameter\(expected > 1 ? "s" : "")"
         }
     }
 }
