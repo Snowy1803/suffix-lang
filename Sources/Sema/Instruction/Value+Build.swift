@@ -35,12 +35,12 @@ extension Value {
                 }
             }
             // TODO: define that function
-            guard let ref = context.getBindings(name: "interpolate string literal").last(where: { $0.type.canBeAssigned(to: FunctionType(arguments: [.init(type: ArrayType(element: AnyType.shared))], returning: [.init(type: StringType.shared)]))})?.ref,
-                  case .function(let fn) = ref else {
+            let ftype = FunctionType(arguments: [.init(type: ArrayType(element: AnyType.shared))], returning: [.init(type: StringType.shared)])
+            guard let ref = context.getBindings(name: "interpolate string literal").last(where: { $0.type.canBeAssigned(to: ftype) })?.ref else {
                 context.typeChecker.diagnostics.append(Diagnostic(token: str.token, message: .noViableBinding("interpolate string literal"), severity: .error))
                 return (.strLiteral(""), StringType.shared)
             }
-            return (context.builder.buildCall(function: fn, parameters: [context.builder.buildArray(elementType: AnyType.shared, elements: interpolation)])[0], StringType.shared)
+            return (context.builder.buildCall(value: ref, type: ftype, parameters: [context.builder.buildArray(elementType: AnyType.shared, elements: interpolation)])[0], StringType.shared)
         case .reference(let ref):
             return ref.buildValue(context: context)
         case .anonymousFunc(let fn):
