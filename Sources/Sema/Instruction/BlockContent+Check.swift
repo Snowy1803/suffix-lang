@@ -17,8 +17,7 @@ extension BlockContent {
     /// The type checker acts in multiple passes:
     /// - parse type declarations
     /// - parse global bindings (type fields and function signatures)
-    /// - parse instructions
-    /// - typecheck the content of nested functions recursively
+    /// - parse instructions and their content
     func typecheckContent(context: FunctionParsingContext) {
         instructions.forEach {
             $0.registerTypeDeclaration(context: context)
@@ -30,9 +29,6 @@ extension BlockContent {
             $0.buildInstruction(context: context)
         }
         buildRet(context: context)
-        instructions.forEach {
-            $0.typecheckNestedFunctions(context: context)
-        }
     }
     
     func buildRet(context: FunctionParsingContext) {

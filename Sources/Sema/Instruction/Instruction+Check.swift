@@ -42,18 +42,11 @@ extension Instruction {
             callInstruction.buildInstruction(context: context)
         case .bind(let bindInstruction):
             bindInstruction.buildInstruction(context: context)
-        case .function, .record:
-            break
-        }
-    }
-    
-    func typecheckNestedFunctions(context: FunctionParsingContext) {
-        switch self {
         case .function(let functionInstruction):
             let subcontext = functionInstruction.createSubContext(parent: context)
             functionInstruction.registerLocalBindings(subcontext: subcontext)
             functionInstruction.block.content.typecheckContent(context: subcontext)
-        case .push, .call, .bind, .record:
+        case .record:
             break
         }
     }
