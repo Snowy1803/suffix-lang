@@ -27,6 +27,8 @@ final class TypeConversionTests: XCTestCase {
         let test3 = FunctionType(arguments: [.init(type: str), .init(type: bool)], returning: [.init(type: int)])
         let noret = FunctionType(arguments: [.init(type: str), .init(type: any)], returning: [])
         let less0 = FunctionType(arguments: [.init(type: str)], returning: [.init(type: int)])
+        let arrSd = FunctionType(arguments: [.init(type: ArrayType(element: any))], returning: [.init(type: str)])
+        let arrS2 = FunctionType(arguments: [.init(type: ArrayType(element: any))], returning: [.init(type: str)])
         
         XCTAssertTrue(test0.canBeAssigned(to: copy0))
         XCTAssertTrue(test0.canBeAssigned(to: test1))
@@ -37,6 +39,7 @@ final class TypeConversionTests: XCTestCase {
         XCTAssertFalse(test3.canBeAssigned(to: test0))
         XCTAssertFalse(test0.canBeAssigned(to: noret))
         XCTAssertFalse(test3.canBeAssigned(to: less0))
+        XCTAssertTrue(arrSd.canBeAssigned(to: arrS2))
     }
     
     // (str, any..., int) (int) is convertible to (str, bool, int, float, int) (any)
@@ -77,4 +80,18 @@ final class TypeConversionTests: XCTestCase {
         XCTAssertFalse(less.canBeAssigned(to: variadic0))
         XCTAssertTrue(variadic0.canBeAssigned(to: minimum))
     }
+    
+    func testArrayConversion() {
+        let anyArr = ArrayType(element: any)
+        let strArr = ArrayType(element: str)
+        let anyAr2 = ArrayType(element: any)
+        
+        XCTAssertTrue(strArr.canBeAssigned(to: anyArr))
+        XCTAssertTrue(anyArr.canBeAssigned(to: anyArr))
+        XCTAssertTrue(anyArr.canBeAssigned(to: anyAr2))
+        XCTAssertFalse(anyArr.canBeAssigned(to: strArr))
+        XCTAssertFalse(strArr.canBeAssigned(to: str))
+        XCTAssertFalse(str.canBeAssigned(to: strArr))
+    }
+    
 }

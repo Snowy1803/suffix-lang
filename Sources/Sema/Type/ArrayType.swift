@@ -28,7 +28,7 @@ public final class ArrayType: NamedType {
         guard let other = other as? ArrayType else {
             return false
         }
-        return element.canBeAssigned(to: other)
+        return element.canBeAssigned(to: other.element)
     }
     
     public func map(with map: GenericMap) -> SType {
