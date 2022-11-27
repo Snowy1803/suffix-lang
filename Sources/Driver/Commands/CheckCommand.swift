@@ -26,6 +26,9 @@ struct CheckCommand: ParsableCommand {
     @Flag(help: "Prints the suffil representation of the code")
     var emitSuffil = false
     
+    @Flag(help: "Prints extra information when running")
+    var verbose = false
+    
     func run() throws {
         let lexer = Lexer(document: try String(contentsOfFile: input, encoding: .utf8))
         let result = lexer.parseDocument()
@@ -35,6 +38,7 @@ struct CheckCommand: ParsableCommand {
             print(diagnostic.representNicely(filepath: input))
         }
         let typeChecker = TypeChecker(rootBlock: rootBlock)
+        typeChecker.verbose = verbose
         typeChecker.typecheck()
         for diagnostic in typeChecker.diagnostics {
             print(diagnostic.representNicely(filepath: input))
