@@ -19,6 +19,8 @@ public class Function {
     var type: FunctionType
     var source: Source
     
+    var captures: [Capture]
+    
     // these are empty if builtin or synthesized
     var arguments: [LocalRef]
     var instructions: [Inst]
@@ -28,6 +30,7 @@ public class Function {
         self.name = name
         self.type = type
         self.source = source
+        self.captures = []
         self.arguments = [] // this is populated by the resolver
         self.instructions = []
     }
@@ -46,14 +49,24 @@ public class Function {
         case builtin
         case synthesized
     }
+    
+    struct Capture {
+        /// The original binding for the capture
+        var binding: Binding
+        /// The created value
+        var ref: LocalRef
+        /// The ref it refers to in the parent's context
+        var parentRef: Ref
+    }
 }
 
 extension Function: CustomStringConvertible {
     public var description: String {
         let sig = "suffil .\(name)\(type.generics.isEmpty ? "" : " [\(type.generics.map(\.description).joined(separator: ", "))]")"
+        let captures = captures.map(\.ref.description).joined(separator: ", ")
         let arguments = (isSynthesized ? type.arguments : arguments as [CustomStringConvertible]).map(\.description).joined(separator: ", ")
         let returning = type.returning.map(\.description).joined(separator: ", ")
-        let sign = "\(sig) (\(arguments)) (\(returning))"
+        let sign = "\(sig) (\(captures)) (\(arguments)) (\(returning))"
         if isSynthesized {
             return "\(sign)\n"
         } else {
@@ -70,6 +83,9 @@ extension Function: CustomStringConvertible {
 extension Function {
     func prepareSuffilForPrinting() {
         var numberer = LocalRefNumberer()
+        for capture in captures {
+            capture.ref.assignNumber(with: &numberer)
+        }
         for argument in arguments {
             argument.assignNumber(with: &numberer)
         }

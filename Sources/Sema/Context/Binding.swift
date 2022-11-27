@@ -21,7 +21,8 @@ class Binding {
     /// The source mapping for this binding, for diagnostics
     let source: Source
     /// The underlying value
-    let ref: Ref
+    /// - Note:  it is only modified for functions to close them on the first use
+    var ref: Ref
     
     init(name: String, type: SType, source: Source, ref: Ref) {
         self.name = name

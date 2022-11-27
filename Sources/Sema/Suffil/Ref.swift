@@ -43,3 +43,21 @@ extension Ref: CustomStringConvertible {
         }
     }
 }
+
+extension Ref {
+    var isConstant: Bool {
+        switch self {
+        case .function(let function):
+            switch function.source {
+            case .builtin, .synthesized:
+                return true
+            case .anonymous, .instruction, .main:
+                return false
+            }
+        case .local:
+            return false
+        case .intLiteral, .floatLiteral, .strLiteral:
+            return true
+        }
+    }
+}

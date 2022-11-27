@@ -47,7 +47,8 @@ extension Value {
             let subcontext = fn.createAnonymousFunctionContext(parent: context)
             fn.registerLocalBindings(subcontext: subcontext)
             fn.block.content.typecheckContent(context: subcontext)
-            return (.function(subcontext.function), subcontext.function.type)
+            let closure = context.builder.buildClosure(function: subcontext.function)
+            return (closure, subcontext.function.type)
         }
     }
 }

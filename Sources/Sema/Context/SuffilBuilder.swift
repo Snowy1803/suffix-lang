@@ -38,6 +38,9 @@ class SuffilBuilder {
     }
     
     func buildCopy(value: Ref, type: SType) -> Ref {
+        if value.isConstant {
+            return value
+        }
         let inst = CopyInst(copy: LocalRef(givenName: "", type: type), original: value)
         insert(inst: .copy(inst))
         return .local(inst.copy)
@@ -47,6 +50,16 @@ class SuffilBuilder {
         let inst = RenameInst(newName: LocalRef(givenName: name, type: type), oldName: value)
         insert(inst: .rename(inst))
         return .local(inst.newName)
+    }
+    
+    func buildClosure(function: Function) -> Ref {
+        let const = Ref.function(function)
+        if const.isConstant {
+            return const
+        }
+        let inst = ClosureInst(name: LocalRef(givenName: "\(function.name) closure", type: function.type), function: const)
+        insert(inst: .closure(inst))
+        return .local(inst.name)
     }
     
     func buildRet(values: [Ref]) {

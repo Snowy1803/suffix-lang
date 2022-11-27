@@ -80,11 +80,11 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "parse"
+            argument = "check"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/emil/iCloud\ Drive\ (Archive)/Suffix/records.suffix"
+            argument = "/Users/emil/iCloud\ Drive\ (Archive)/Suffix/print\ countdown.suffix"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -28,6 +28,14 @@ class ParsingContext {
         return result
     }
     
+    func capture(binding: Binding) -> Ref! {
+        // see FunctionParsingContext.capture(binding:)
+        if bindings.contains(where: { $0 === binding }) {
+            return binding.ref
+        }
+        return parent?.capture(binding: binding)
+    }
+    
     func getType(name: String) -> NamedType? {
         if let type = types.first(where: { $0.name == name }) {
             return type

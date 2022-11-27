@@ -18,6 +18,9 @@ class FunctionParsingContext: ParsingContext {
     var stack: [StackElement] = []
     var builder: SuffilBuilder
     
+    // map of FunctionInstruction: Function
+    var registeredFunctions: [ObjectIdentifier: Function] = [:]
+    
     init(parent: ParsingContext, function: Function) {
         self.function = function
         self.builder = SuffilBuilder(function: function)
@@ -40,5 +43,24 @@ class FunctionParsingContext: ParsingContext {
             stack.removeAll()
             return result
         }
+    }
+    
+    override func capture(binding: Binding) -> Ref! {
+        if binding.ref.isConstant || bindings.contains(where: { $0 === binding }) {
+            if case .function(let fn) = binding.ref,
+               case .instruction = fn.source {
+                binding.ref = builder.buildClosure(function: fn)
+            }
+            return binding.ref
+        }
+        if let match = function.captures.first(where: { $0.binding === binding }) {
+            return .local(match.ref)
+        }
+        guard let toCapture = parent?.capture(binding: binding) else {
+            return nil
+        }
+        let capture = LocalRef(givenName: binding.name, type: binding.type)
+        function.captures.append(Function.Capture(binding: binding, ref: capture, parentRef: toCapture))
+        return .local(capture)
     }
 }
