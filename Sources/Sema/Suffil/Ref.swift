@@ -48,12 +48,9 @@ extension Ref {
     var isConstant: Bool {
         switch self {
         case .function(let function):
-            switch function.source {
-            case .builtin, .synthesized:
-                return true
-            case .anonymous, .instruction, .main:
-                return false
-            }
+            // If the function hasn't been parsed yet, the captures will always be empty
+            // If there is captures, an error will be raised in ClosurePass
+            return function.captures.isEmpty
         case .local:
             return false
         case .intLiteral, .floatLiteral, .strLiteral:

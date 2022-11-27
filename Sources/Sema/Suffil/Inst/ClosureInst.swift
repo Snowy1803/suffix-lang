@@ -14,10 +14,12 @@ import Foundation
 
 class ClosureInst {
     let name: LocalRef
-    let function: Ref
+    let function: Function
     var captures: [Ref] = []
     
-    init(name: LocalRef, function: Ref) {
+    var functionRef: Ref { .function(function) }
+    
+    init(name: LocalRef, function: Function) {
         self.name = name
         self.function = function
     }
@@ -25,9 +27,9 @@ class ClosureInst {
 
 extension ClosureInst: InstProtocol {
     var description: String {
-        "\(name) = closure \(function) (\(captures.map(\.description).joined(separator: ", ")))"
+        "\(name) = closure \(functionRef) (\(captures.map(\.description).joined(separator: ", ")))"
     }
     
     var definingRefs: [LocalRef] { [name] }
-    var usingRefs: [Ref] { [function] + captures }
+    var usingRefs: [Ref] { [functionRef] + captures }
 }

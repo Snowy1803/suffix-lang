@@ -57,7 +57,7 @@ class SuffilBuilder {
         if const.isConstant {
             return const
         }
-        let inst = ClosureInst(name: LocalRef(givenName: "\(function.name) closure", type: function.type), function: const)
+        let inst = ClosureInst(name: LocalRef(givenName: "\(function.name) closure", type: function.type), function: function)
         insert(inst: .closure(inst))
         return .local(inst.name)
     }

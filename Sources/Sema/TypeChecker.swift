@@ -17,7 +17,9 @@ public class TypeChecker {
     var builtinContext = BuiltinParsingContext.shared
     var rootContext: RootParsingContext!
     var rootBlock: BlockContent
-    public var passes: [TypeCheckingPass] = []
+    public var passes: [TypeCheckingPass] = [
+        ClosurePass(),
+    ]
     public var verbose = false
     
     // output
@@ -32,7 +34,9 @@ public class TypeChecker {
     }
     
     func checkPasses() {
-        
+        if !(passes.first is ClosurePass) {
+            print("warning: invalid passes: expected closure resolution to be the first pass")
+        }
     }
     
     public func typecheck() {

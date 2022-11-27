@@ -46,7 +46,10 @@ class FunctionParsingContext: ParsingContext {
     }
     
     override func capture(binding: Binding) -> Ref! {
-        if binding.ref.isConstant || bindings.contains(where: { $0 === binding }) {
+        if binding.ref.isConstant {
+            return binding.ref
+        }
+        if bindings.contains(where: { $0 === binding }) {
             if case .function(let fn) = binding.ref,
                case .instruction = fn.source {
                 binding.ref = builder.buildClosure(function: fn)
