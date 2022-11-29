@@ -28,6 +28,9 @@ extension BlockContent {
         instructions.forEach {
             $0.buildInstruction(context: context)
         }
+        context.bindings.forEach {
+            context.builder.buildDestroy(value: $0.ref)
+        }
         buildRet(context: context)
     }
     

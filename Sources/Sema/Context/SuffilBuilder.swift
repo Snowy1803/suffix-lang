@@ -62,6 +62,14 @@ class SuffilBuilder {
         return .local(inst.name)
     }
     
+    func buildDestroy(value: Ref) {
+        if value.isConstant {
+            return
+        }
+        let inst = DestroyInst(value: value)
+        insert(inst: .destroy(inst))
+    }
+    
     func buildRet(values: [Ref]) {
         let inst = RetInst(values: values)
         insert(inst: .ret(inst))
