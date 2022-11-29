@@ -29,6 +29,8 @@ enum Inst {
     case copy(CopyInst)
     /// Capture some bindings to put into a closure
     case closure(ClosureInst)
+    /// Destroys a value (release if reference counted, otherwise no op)
+    case destroy(DestroyInst)
 }
 
 protocol InstProtocol: AnyObject, CustomStringConvertible {
@@ -45,7 +47,8 @@ extension Inst {
              .specialise(let inst as InstProtocol),
              .array(let inst as InstProtocol),
              .copy(let inst as InstProtocol),
-             .closure(let inst as InstProtocol):
+             .closure(let inst as InstProtocol),
+             .destroy(let inst as InstProtocol):
             return inst
         }
     }

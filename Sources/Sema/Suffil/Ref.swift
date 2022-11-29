@@ -17,7 +17,7 @@ import SuffixLang
 enum Ref {
     /// A ref to a function
     case function(Function)
-    /// A binding usually
+    /// A value defined in another inst
     case local(LocalRef)
     /// An integer literal
     case intLiteral(Int)
