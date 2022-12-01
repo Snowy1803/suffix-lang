@@ -14,7 +14,7 @@ import Foundation
 import SuffixLang
 
 extension ReferenceValue {
-    func buildValue(context: FunctionParsingContext) -> (Ref, SType) {
+    func buildValue(context: FunctionParsingContext) -> (LocatedRef, SType) {
         var bindings = context.getBindings(name: identifier.literal.identifier)
         let type = identifier.typeAnnotation?.type.resolve(context: context)
         if let type {
@@ -24,9 +24,9 @@ extension ReferenceValue {
         // canBeAssigned has to go
         guard let binding = bindings.last else {
             context.typeChecker.diagnostics.append(Diagnostic(tokens: identifier.literal.tokens, message: .noViableBinding(identifier.literal.identifier), severity: .error))
-            return (.intLiteral(0), type ?? AnyType.shared) // this may make additional unwanted errors
+            return (Ref.intLiteral(0).noLocation, type ?? AnyType.shared) // this may make additional unwanted errors
         }
-        let ref: Ref = context.capture(binding: binding)
-        return (context.builder.buildCopy(value: ref, type: binding.type), binding.type)
+        let ref: Ref = context.capture(binding: binding, node: self)
+        return (LocatedRef(value: context.builder.buildCopy(value: LocatedRef(value: ref, node: self, binding: binding), type: binding.type), node: self), binding.type)
     }
 }

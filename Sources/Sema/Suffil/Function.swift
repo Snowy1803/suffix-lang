@@ -91,7 +91,7 @@ extension Function {
         }
         for instruction in instructions {
             for ref in instruction.wrapped.definingRefs {
-                ref.assignNumber(with: &numberer)
+                ref.value.assignNumber(with: &numberer)
             }
         }
     }

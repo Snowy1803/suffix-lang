@@ -29,7 +29,7 @@ extension BlockContent {
             $0.buildInstruction(context: context)
         }
         context.bindings.forEach {
-            context.builder.buildDestroy(value: $0.ref)
+            context.builder.buildDestroy(value: LocatedRef(value: $0.ref, binding: $0))
         }
         buildRet(context: context)
     }
@@ -95,7 +95,7 @@ extension BlockContent {
             ))
         } else {
             // TODO: check types
-            context.builder.buildRet(values: context.stack.map(\.ref))
+            context.builder.buildRet(values: context.stack.map(\.ref).map(\.noLocation))
         }
     }
 }

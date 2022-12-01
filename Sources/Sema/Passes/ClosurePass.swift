@@ -34,16 +34,17 @@ class ClosurePass: TypeCheckingPass {
     
     func run(closure inst: ClosureInst, typechecker: TypeChecker) {
         assert(inst.captures.isEmpty, "Closure resolution ran twice")
-        for capture in inst.function.captures {
-            inst.captures.append(capture.parentRef)
+        for capture in inst.function.value.captures {
+            inst.captures.append(LocatedRef(value: capture.parentRef, binding: capture.binding))
         }
     }
     
     func checkFunctionsAreConstant(inst: Inst, typechecker: TypeChecker) {
         for used in inst.wrapped.usingRefs {
-            if case .function(let function) = used,
-                !function.captures.isEmpty {
-                typechecker.diagnostics.append(Diagnostic(tokens: [], message: .useFunctionWithCapturesBeforeDefinition(function.name), severity: .error))
+            if case .function(let function) = used.value,
+                !function.captures.isEmpty,
+               let tokens = used.node?.nodeAllTokens {
+                typechecker.diagnostics.append(Diagnostic(tokens: tokens, message: .useFunctionWithCapturesBeforeDefinition(function.name), severity: .error))
             }
         }
     }

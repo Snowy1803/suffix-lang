@@ -45,21 +45,21 @@ class FunctionParsingContext: ParsingContext {
         }
     }
     
-    override func capture(binding: Binding) -> Ref! {
+    override func capture(binding: Binding, node: ASTNode) -> Ref! {
         if binding.ref.isConstant {
             return binding.ref
         }
         if bindings.contains(where: { $0 === binding }) {
             if case .function(let fn) = binding.ref,
                case .instruction = fn.source {
-                binding.ref = builder.buildClosure(function: fn)
+                binding.ref = builder.buildClosure(function: LocatedFunction(value: fn, node: node, binding: binding))
             }
             return binding.ref
         }
         if let match = function.captures.first(where: { $0.binding === binding }) {
             return .local(match.ref)
         }
-        guard let toCapture = parent?.capture(binding: binding) else {
+        guard let toCapture = parent?.capture(binding: binding, node: node) else {
             return nil
         }
         let capture = LocalRef(givenName: binding.name, type: binding.type)

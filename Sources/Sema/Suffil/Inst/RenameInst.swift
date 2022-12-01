@@ -13,10 +13,10 @@
 import Foundation
 
 class RenameInst {
-    let newName: LocalRef
-    let oldName: Ref
+    let newName: LocatedLocalRef
+    let oldName: LocatedRef
     
-    init(newName: LocalRef, oldName: Ref) {
+    init(newName: LocatedLocalRef, oldName: LocatedRef) {
         self.newName = newName
         self.oldName = oldName
     }
@@ -27,6 +27,6 @@ extension RenameInst: InstProtocol {
         "\(newName) = \(oldName)"
     }
     
-    var definingRefs: [LocalRef] { [newName] }
-    var usingRefs: [Ref] { [oldName] }
+    var definingRefs: [LocatedLocalRef] { [newName] }
+    var usingRefs: [LocatedRef] { [oldName] }
 }

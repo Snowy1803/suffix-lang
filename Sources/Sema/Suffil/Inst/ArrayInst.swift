@@ -13,11 +13,11 @@
 import Foundation
 
 class ArrayInst {
-    let array: LocalRef
+    let array: LocatedLocalRef
     let elementType: SType
-    let elements: [Ref]
+    let elements: [LocatedRef]
     
-    init(array: LocalRef, elementType: SType, elements: [Ref]) {
+    init(array: LocatedLocalRef, elementType: SType, elements: [LocatedRef]) {
         self.array = array
         self.elementType = elementType
         self.elements = elements
@@ -29,6 +29,6 @@ extension ArrayInst: InstProtocol {
         "\(array) = array [\(elementType)] (\(elements.map(\.description).joined(separator: ", ")))"
     }
     
-    var definingRefs: [LocalRef] { [array] }
-    var usingRefs: [Ref] { elements }
+    var definingRefs: [LocatedLocalRef] { [array] }
+    var usingRefs: [LocatedRef] { elements }
 }

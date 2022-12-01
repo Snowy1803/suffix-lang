@@ -13,9 +13,9 @@
 import Foundation
 
 class RetInst {
-    let values: [Ref]
+    let values: [LocatedRef]
     
-    init(values: [Ref]) {
+    init(values: [LocatedRef]) {
         self.values = values
     }
 }
@@ -25,6 +25,6 @@ extension RetInst: InstProtocol {
         "ret (\(values.map(\.description).joined(separator: ", ")))"
     }
     
-    var definingRefs: [LocalRef] { [] }
-    var usingRefs: [Ref] { values }
+    var definingRefs: [LocatedLocalRef] { [] }
+    var usingRefs: [LocatedRef] { values }
 }

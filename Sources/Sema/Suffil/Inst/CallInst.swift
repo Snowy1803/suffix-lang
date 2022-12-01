@@ -13,11 +13,11 @@
 import Foundation
 
 class CallInst {
-    let returning: [LocalRef]
-    let function: Ref
-    let parameters: [Ref]
+    var returning: [LocatedLocalRef]
+    let function: LocatedRef
+    let parameters: [LocatedRef]
     
-    init(returning: [LocalRef], function: Ref, parameters: [Ref]) {
+    init(returning: [LocatedLocalRef], function: LocatedRef, parameters: [LocatedRef]) {
         self.returning = returning
         self.function = function
         self.parameters = parameters
@@ -29,6 +29,6 @@ extension CallInst: InstProtocol {
         "(\(returning.map(\.description).joined(separator: ", "))) = call \(function) (\(parameters.map(\.description).joined(separator: ", ")))"
     }
     
-    var definingRefs: [LocalRef] { returning }
-    var usingRefs: [Ref] { [function] + parameters }
+    var definingRefs: [LocatedLocalRef] { returning }
+    var usingRefs: [LocatedRef] { [function] + parameters }
 }

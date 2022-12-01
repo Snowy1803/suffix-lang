@@ -13,13 +13,13 @@
 import Foundation
 
 class ClosureInst {
-    let name: LocalRef
-    let function: Function
-    var captures: [Ref] = []
+    let name: LocatedLocalRef
+    let function: LocatedFunction
+    var captures: [LocatedRef] = []
     
-    var functionRef: Ref { .function(function) }
+    var functionRef: LocatedRef { function.map({ .function($0) }) }
     
-    init(name: LocalRef, function: Function) {
+    init(name: LocatedLocalRef, function: LocatedFunction) {
         self.name = name
         self.function = function
     }
@@ -30,6 +30,6 @@ extension ClosureInst: InstProtocol {
         "\(name) = closure \(functionRef) (\(captures.map(\.description).joined(separator: ", ")))"
     }
     
-    var definingRefs: [LocalRef] { [name] }
-    var usingRefs: [Ref] { [functionRef] + captures }
+    var definingRefs: [LocatedLocalRef] { [name] }
+    var usingRefs: [LocatedRef] { [functionRef] + captures }
 }

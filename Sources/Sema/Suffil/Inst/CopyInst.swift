@@ -13,10 +13,10 @@
 import Foundation
 
 class CopyInst {
-    let copy: LocalRef
-    let original: Ref
+    let copy: LocatedLocalRef
+    let original: LocatedRef
     
-    init(copy: LocalRef, original: Ref) {
+    init(copy: LocatedLocalRef, original: LocatedRef) {
         self.copy = copy
         self.original = original
     }
@@ -27,6 +27,6 @@ extension CopyInst: InstProtocol {
         "\(copy) = copy \(original)"
     }
     
-    var definingRefs: [LocalRef] { [copy] }
-    var usingRefs: [Ref] { [original] }
+    var definingRefs: [LocatedLocalRef] { [copy] }
+    var usingRefs: [LocatedRef] { [original] }
 }

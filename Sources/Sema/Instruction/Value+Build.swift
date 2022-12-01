@@ -14,16 +14,16 @@ import Foundation
 import SuffixLang
 
 extension Value {
-    func buildValue(context: FunctionParsingContext) -> (Ref, SType) {
+    func buildValue(context: FunctionParsingContext) -> (LocatedRef, SType) {
         switch self {
         case .int(let integer):
-            return (.intLiteral(integer.integer), IntType.shared)
+            return (LocatedRef(value: .intLiteral(integer.integer), node: integer), IntType.shared)
         case .float(let float):
-            return (.floatLiteral(float.float), FloatType.shared)
+            return (LocatedRef(value: .floatLiteral(float.float), node: float), FloatType.shared)
         case .string(let str):
             let elements = context.pop(count: str.components.map(\.popCount).reduce(0, +), source: [str.token])
             if elements.isEmpty {
-                return (.strLiteral(str.components.map { $0.resolveStatic(token: str.token, context: context) }.joined()), StringType.shared)
+                return (LocatedRef(value: .strLiteral(str.components.map { $0.resolveStatic(token: str.token, context: context) }.joined()), node: str), StringType.shared)
             }
             var element = elements.makeIterator()
             let interpolation = str.components.flatMap { (component) -> [Ref] in
@@ -38,17 +38,19 @@ extension Value {
             let ftype = FunctionType(arguments: [.init(type: ArrayType(element: AnyType.shared))], returning: [.init(type: StringType.shared)])
             guard let ref = context.getBindings(name: "interpolate string literal").last(where: { $0.type.canBeAssigned(to: ftype) })?.ref else {
                 context.typeChecker.diagnostics.append(Diagnostic(token: str.token, message: .noViableBinding("interpolate string literal"), severity: .error))
-                return (.strLiteral(""), StringType.shared)
+                return (LocatedRef(value: .strLiteral(""), node: str), StringType.shared)
             }
-            return (context.builder.buildCall(value: ref, type: ftype, parameters: [context.builder.buildArray(elementType: AnyType.shared, elements: interpolation)])[0], StringType.shared)
+            let interpolationArgs = context.builder.buildArray(elementType: AnyType.shared, elements: interpolation.map(\.noLocation))
+            let interpolationCall = context.builder.buildCall(value: ref.noLocation, type: ftype, parameters: [interpolationArgs.noLocation])
+            return (LocatedRef(value: interpolationCall[0], node: str), StringType.shared)
         case .reference(let ref):
             return ref.buildValue(context: context)
         case .anonymousFunc(let fn):
             let subcontext = fn.createAnonymousFunctionContext(parent: context)
             fn.registerLocalBindings(subcontext: subcontext)
             fn.block.content.typecheckContent(context: subcontext)
-            let closure = context.builder.buildClosure(function: subcontext.function)
-            return (closure, subcontext.function.type)
+            let closure = context.builder.buildClosure(function: LocatedFunction(value: subcontext.function, node: fn))
+            return (LocatedRef(value: closure, node: fn), subcontext.function.type)
         }
     }
 }

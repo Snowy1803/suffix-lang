@@ -16,6 +16,6 @@ import SuffixLang
 extension PushInstruction {
     func buildInstruction(context: FunctionParsingContext) {
         let (ref, type) = value.buildValue(context: context)
-        context.stack.append(StackElement(type: type, source: .push(self), ref: ref))
+        context.stack.append(StackElement(type: type, source: .push(self), ref: ref.value))
     }
 }

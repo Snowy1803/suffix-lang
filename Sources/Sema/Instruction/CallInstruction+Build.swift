@@ -28,9 +28,14 @@ extension CallInstruction {
         let count = type.arguments.count
         let parameters = context.pop(count: count, source: nodeAllTokens)
         // TODO: typecheck arguments (and resolve generics / specialise and stuff)
-        let result = context.builder.buildCall(value: value, type: type, parameters: parameters.map(\.ref))
-        for (ref, type) in zip(result, type.returning) {
-            context.stack.append(StackElement(type: type.type, source: .returnValue(self), ref: ref))
+        let inst = context.builder.buildCallReturnInst(value: value, type: type, parameters: parameters.map({ param in
+            LocatedRef(value: param.ref, stackElement: param)
+        }))
+        let result = inst.returning
+        for ((i, ref), type) in zip(zip(result.indices, result), type.returning) {
+            let elem = StackElement(type: type.type, source: .returnValue(self), ref: .local(ref.value))
+            context.stack.append(elem)
+            inst.returning[i].stackElement = elem
         }
     }
 }

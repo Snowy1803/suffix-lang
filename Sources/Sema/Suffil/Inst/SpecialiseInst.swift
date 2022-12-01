@@ -13,11 +13,11 @@
 import Foundation
 
 class SpecialiseInst {
-    let name: LocalRef
-    let function: Ref
+    let name: LocatedLocalRef
+    let function: LocatedRef
     let types: [SType]
     
-    init(name: LocalRef, function: Ref, types: [SType]) {
+    init(name: LocatedLocalRef, function: LocatedRef, types: [SType]) {
         self.name = name
         self.function = function
         self.types = types
@@ -29,6 +29,6 @@ extension SpecialiseInst: InstProtocol {
         "\(name) = specialise \(function) [\(types.map(\.description).joined(separator: ", "))]"
     }
     
-    var definingRefs: [LocalRef] { [name] }
-    var usingRefs: [Ref] { [function] }
+    var definingRefs: [LocatedLocalRef] { [name] }
+    var usingRefs: [LocatedRef] { [function] }
 }

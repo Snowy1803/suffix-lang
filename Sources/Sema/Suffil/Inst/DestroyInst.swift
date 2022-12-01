@@ -13,9 +13,9 @@
 import Foundation
 
 class DestroyInst {
-    let value: Ref
+    let value: LocatedRef
     
-    init(value: Ref) {
+    init(value: LocatedRef) {
         self.value = value
     }
 }
@@ -25,6 +25,6 @@ extension DestroyInst: InstProtocol {
         "destroy \(value)"
     }
     
-    var definingRefs: [LocalRef] { [] }
-    var usingRefs: [Ref] { [value] }
+    var definingRefs: [LocatedLocalRef] { [] }
+    var usingRefs: [LocatedRef] { [value] }
 }
