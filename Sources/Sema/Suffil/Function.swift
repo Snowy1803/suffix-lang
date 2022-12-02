@@ -57,6 +57,8 @@ public class Function {
         var ref: LocalRef
         /// The ref it refers to in the parent's context
         var parentRef: Ref
+        /// The location of the first time it was captured
+        var firstLocation: LocationInfo
     }
 }
 

@@ -63,7 +63,7 @@ class FunctionParsingContext: ParsingContext {
             return nil
         }
         let capture = LocalRef(givenName: binding.name, type: binding.type)
-        function.captures.append(Function.Capture(binding: binding, ref: capture, parentRef: toCapture))
+        function.captures.append(Function.Capture(binding: binding, ref: capture, parentRef: toCapture, firstLocation: LocationInfo(value: (), node: node, binding: binding)))
         return .local(capture)
     }
 }

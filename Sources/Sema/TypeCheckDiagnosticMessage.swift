@@ -38,6 +38,7 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case genericTypeParameterCountInvalid(expected: Int, actual: Int)
     case genericTypeParameterMissing(expected: Int)
     case useFunctionWithCapturesBeforeDefinition(String)
+    case hintCaptureHere(String)
     
     var description: String {
         switch self {
@@ -69,6 +70,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Generic type must be parameterized, expected \(expected) type parameter\(expected > 1 ? "s" : "")"
         case .useFunctionWithCapturesBeforeDefinition(let function):
             return "Cannot use function '\(function)' before it is defined as it captures values"
+        case .hintCaptureHere(let name):
+            return "Binding '\(name)' captured here"
         }
     }
 }

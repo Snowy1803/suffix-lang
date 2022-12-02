@@ -44,7 +44,16 @@ class ClosurePass: TypeCheckingPass {
             if case .function(let function) = used.value,
                 !function.captures.isEmpty,
                let tokens = used.node?.nodeAllTokens {
-                typechecker.diagnostics.append(Diagnostic(tokens: tokens, message: .useFunctionWithCapturesBeforeDefinition(function.name), severity: .error))
+                typechecker.diagnostics.append(Diagnostic(
+                    tokens: tokens,
+                    message: .useFunctionWithCapturesBeforeDefinition(function.name),
+                    severity: .error,
+                    hints: function.captures.compactMap { cap -> Diagnostic? in
+                        guard let tokens = cap.firstLocation.node?.nodeAllTokens else {
+                            return nil
+                        }
+                        return Diagnostic(tokens: tokens, message: .hintCaptureHere(cap.binding.name), severity: .hint)
+                    }))
             }
         }
     }
