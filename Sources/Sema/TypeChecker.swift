@@ -19,6 +19,7 @@ public class TypeChecker {
     var rootBlock: BlockContent
     public var passes: [TypeCheckingPass] = [
         ClosurePass(),
+        DeadCodePass(),
     ]
     public var verbose = false
     

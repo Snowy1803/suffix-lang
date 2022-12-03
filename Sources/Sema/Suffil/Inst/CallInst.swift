@@ -31,4 +31,8 @@ extension CallInst: InstProtocol {
     
     var definingRefs: [LocatedLocalRef] { returning }
     var usingRefs: [LocatedRef] { [function] + parameters }
+    var isPure: Bool {
+        // TODO: function should have pure/impure trait
+        false
+    }
 }
