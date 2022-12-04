@@ -14,7 +14,7 @@ import Foundation
 import SuffixLang
 
 /// A reference to a previous instruction, for composition in `Inst`
-enum Ref {
+enum Ref: Equatable {
     /// A ref to a function
     case function(Function)
     /// A value defined in another inst

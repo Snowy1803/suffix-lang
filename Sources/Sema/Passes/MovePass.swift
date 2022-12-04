@@ -43,7 +43,7 @@ class MovePass: TypeCheckingPass {
         for inst in function.instructions {
             func removeUsed() {
                 for used in inst.wrapped.usingRefs {
-                    copies.removeAll(where: { $0.original.value.isLocalSame(other: used.value) })
+                    copies.removeAll(where: { $0.original.value == used.value })
                 }
             }
             switch inst {
@@ -51,7 +51,7 @@ class MovePass: TypeCheckingPass {
                 removeUsed()
                 copies.append(copyInst)
             case .destroy(let destroyInst):
-                if let copyIndex = copies.firstIndex(where: { destroyInst.value.value.isLocalSame(other: $0.original.value) }) {
+                if let copyIndex = copies.firstIndex(where: { destroyInst.value.value == $0.original.value }) {
                     let copy = copies.remove(at: copyIndex)
                     // replace the copy with the original, making it into a 'move' operation
                     copiesToReplace.insert(ObjectIdentifier(copy))
@@ -76,12 +76,3 @@ class MovePass: TypeCheckingPass {
     }
 }
 
-extension Ref {
-    func isLocalSame(other: Ref) -> Bool {
-        if case .local(let me) = self,
-           case .local(let other) = other {
-            return me === other
-        }
-        return false
-    }
-}

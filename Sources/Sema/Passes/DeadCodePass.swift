@@ -23,25 +23,25 @@ class DeadCodePass: TypeCheckingPass {
     }
     
     func run(function: Function, typechecker: TypeChecker) {
-        var uses: [ObjectIdentifier: Int] = [:]
+        var uses: [LocalRef: Int] = [:]
         for inst in function.instructions {
             for def in inst.wrapped.definingRefs {
                 if case .call(let callInst) = inst,
                    !callInst.isPure {
                     continue // impure calls can never be removed
                 }
-                uses[ObjectIdentifier(def.value)] = 0
+                uses[def.value] = 0
             }
             for used in inst.wrapped.usingRefs {
                 if case .destroy = inst {
                     continue // a destroy isn't really a 'use'
                 }
                 if case .local(let local) = used.value {
-                    uses[ObjectIdentifier(local)]? += 1
+                    uses[local]? += 1
                 }
             }
         }
-        let toRemove = uses.compactMap({ id, count -> ObjectIdentifier? in
+        let toRemove = uses.compactMap({ id, count -> LocalRef? in
             if count == 0 {
                 return id
             } else {
@@ -51,20 +51,11 @@ class DeadCodePass: TypeCheckingPass {
         function.instructions = function.instructions.filter { inst in
             !(
                 inst.wrapped.usingRefs.contains(where: { usedRef in
-                    toRemove.contains(where: { usedRef.value.isEqualTo(localId: $0) })
+                    toRemove.lazy.map { Ref.local($0) }.contains(usedRef.value)
                 }) || inst.wrapped.definingRefs.contains(where: { usedRef in
-                    toRemove.contains(where: { ObjectIdentifier(usedRef.value) == $0 })
+                    toRemove.contains(usedRef.value)
                 })
             )
         }
-    }
-}
-
-extension Ref {
-    func isEqualTo(localId: ObjectIdentifier) -> Bool {
-        if case .local(let current) = self {
-            return ObjectIdentifier(current) == localId
-        }
-        return false
     }
 }

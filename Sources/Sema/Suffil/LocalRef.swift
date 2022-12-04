@@ -12,7 +12,7 @@
 
 import Foundation
 
-class LocalRef {
+final class LocalRef {
     let givenName: String
     let type: SType
     var seqNumber: Int?
@@ -30,6 +30,16 @@ class LocalRef {
 extension LocalRef: CustomStringConvertible {
     var description: String {
         "%\(givenName)\(seqNumber.map(String.init) ?? ""): \(type)"
+    }
+}
+
+extension LocalRef: Equatable, Hashable {
+    static func ==(_ lhs: LocalRef, _ rhs: LocalRef) -> Bool {
+        lhs === rhs
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
     }
 }
 

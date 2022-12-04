@@ -13,7 +13,7 @@
 import Foundation
 import SuffixLang
 
-public class Function {
+public final class Function {
     var parent: Function?
     var name: String
     var type: FunctionType
@@ -79,6 +79,16 @@ extension Function: CustomStringConvertible {
             desc += "}\n"
             return desc
         }
+    }
+}
+
+extension Function: Equatable, Hashable {
+    public static func ==(_ lhs: Function, _ rhs: Function) -> Bool {
+        lhs === rhs
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
     }
 }
 
