@@ -24,30 +24,38 @@ public struct FunctionTypeReference: ASTNode {
     
     public struct Argument: ASTNode {
         public var spec: Spec
-        public var typeAnnotation: TypeAnnotation?
         public var trailingComma: Token?
         
         public enum Spec: ASTEnum {
-            case count(IntegerValue)
+            case count(Count)
             case unnamedVariadic(Variadic)
+            case unnamedSingle(TypeReference)
             case named(Named)
             
             public var node: ASTNode {
                 switch self {
                 case .count(let node as ASTNode),
                      .unnamedVariadic(let node as ASTNode),
+                     .unnamedSingle(let node as ASTNode),
                      .named(let node as ASTNode):
                     return node
                 }
             }
             
+            public struct Count: ASTNode {
+                public var count: IntegerValue
+                public var typeAnnotation: TypeAnnotation
+            }
+            
             public struct Variadic: ASTNode {
                 public var token: Token
+                public var typeAnnotation: TypeAnnotation
             }
             
             public struct Named: ASTNode {
                 public var name: Identifier
-                public var variadic: Variadic?
+                public var variadic: Token?
+                public var typeAnnotation: TypeAnnotation
             }
         }
     }

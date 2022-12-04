@@ -77,42 +77,50 @@ extension FunctionTypeReference.Arguments {
 
 extension FunctionTypeReference.Argument {
     func resolveArgument(context: ParsingContext) -> [FunctionType.Argument] {
-        let inner = self.typeAnnotation?.type.resolve(context: context) ?? AnyType.shared
         switch spec {
         case .count(let int):
-            var count = int.integer
+            var count = int.count.integer
             if count < 0 {
-                context.typeChecker.diagnostics.append(Diagnostic(tokens: int.tokens, message: .negativeArgumentCount(int), severity: .error))
+                context.typeChecker.diagnostics.append(Diagnostic(tokens: int.count.tokens, message: .negativeArgumentCount(int.count), severity: .error))
                 count = 0
             }
-            return Array(repeating: FunctionType.Argument(type: inner), count: count)
+            return Array(repeating: FunctionType.Argument(type: int.typeAnnotation.type.resolve(context: context)), count: count)
         case .named(let name):
-            return [FunctionType.Argument(type: inner, variadic: name.variadic != nil)]
-        case .unnamedVariadic(_):
-            return [FunctionType.Argument(type: inner, variadic: true)]
+            return [FunctionType.Argument(type: name.typeAnnotation.type.resolve(context: context), variadic: name.variadic != nil)]
+        case .unnamedVariadic(let variadic):
+            return [FunctionType.Argument(type: variadic.typeAnnotation.type.resolve(context: context), variadic: true)]
+        case .unnamedSingle(let type):
+            return [FunctionType.Argument(type: type.resolve(context: context))]
         }
     }
     
     func registerLocalBindings(context: FunctionParsingContext) {
-        let inner = self.typeAnnotation?.type.resolve(context: context) ?? AnyType.shared
         switch spec {
         case .count(let int):
-            var count = int.integer
+            var count = int.count.integer
             if count < 0 {
                 count = 0
             }
+            let inner = int.typeAnnotation.type.resolve(context: context)
             for _ in 0..<count {
                 let ref = LocalRef(givenName: "", type: inner)
                 context.function.arguments.append(ref)
                 context.stack.append(StackElement(type: inner, source: .argument(self), ref: .local(ref)))
             }
         case .named(let name):
+            let inner = name.typeAnnotation.type.resolve(context: context)
             // TODO: handle variadics
             let ref = LocalRef(givenName: name.name.identifier, type: inner)
             context.function.arguments.append(ref)
             context.bindings.append(Binding(name: name.name.identifier, type: inner, source: .argument(self), ref: .local(ref)))
-        case .unnamedVariadic(_):
+        case .unnamedVariadic(let variadic):
+            let inner = variadic.typeAnnotation.type.resolve(context: context)
             // TODO: make variadic pack
+            let ref = LocalRef(givenName: "", type: inner)
+            context.function.arguments.append(ref)
+            context.stack.append(StackElement(type: inner, source: .argument(self), ref: .local(ref)))
+        case .unnamedSingle(let type):
+            let inner = type.resolve(context: context)
             let ref = LocalRef(givenName: "", type: inner)
             context.function.arguments.append(ref)
             context.stack.append(StackElement(type: inner, source: .argument(self), ref: .local(ref)))

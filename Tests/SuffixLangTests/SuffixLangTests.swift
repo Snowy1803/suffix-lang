@@ -144,13 +144,38 @@ final class SuffixLangTests: XCTestCase {
             if case .function(let fun) = ref.identifier.typeAnnotation?.type {
                 XCTAssertEqual(fun.arguments.arguments.count, 2)
                 XCTAssertEqual(fun.returning.arguments.count, 0)
-                if case .generic(let gen) = fun.arguments.arguments[0].typeAnnotation?.type {
+                if case .named(let named) = fun.arguments.arguments[0].spec,
+                   case .generic(let gen) = named.typeAnnotation.type {
                     XCTAssertEqual(gen.name.identifier, "bool")
                     XCTAssertNil(gen.generics)
                 } else {
                     XCTFail()
                 }
-                if case .function(let cnt) = fun.arguments.arguments[1].typeAnnotation?.type {
+                if case .named(let named) = fun.arguments.arguments[1].spec,
+                   case .function(let cnt) = named.typeAnnotation.type {
+                    XCTAssertEqual(cnt.arguments.arguments.count, 0)
+                    XCTAssertEqual(cnt.returning.arguments.count, 0)
+                } else {
+                    XCTFail()
+                }
+            } else {
+                XCTFail()
+            }
+        }
+        parseReference(text: "if: (bool,() ()) ()", expectedName: "if") { ref in
+            XCTAssertNil(ref.generics)
+            if case .function(let fun) = ref.identifier.typeAnnotation?.type {
+                XCTAssertEqual(fun.arguments.arguments.count, 2)
+                XCTAssertEqual(fun.returning.arguments.count, 0)
+                if case .unnamedSingle(let type) = fun.arguments.arguments[0].spec,
+                   case .generic(let gen) = type {
+                    XCTAssertEqual(gen.name.identifier, "bool")
+                    XCTAssertNil(gen.generics)
+                } else {
+                    XCTFail()
+                }
+                if case .unnamedSingle(let type) = fun.arguments.arguments[1].spec,
+                   case .function(let cnt) = type {
                     XCTAssertEqual(cnt.arguments.arguments.count, 0)
                     XCTAssertEqual(cnt.returning.arguments.count, 0)
                 } else {

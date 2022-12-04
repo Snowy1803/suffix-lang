@@ -46,7 +46,6 @@ extension FunctionTypeReference.Argument {
             return nil
         }
         self.spec = spec
-        self.typeAnnotation = TypeAnnotation(stream: stream)
         if let comma = stream.consumeOne(type: .comma) {
             self.trailingComma = comma
         }
@@ -55,33 +54,58 @@ extension FunctionTypeReference.Argument {
 
 extension FunctionTypeReference.Argument.Spec {
     init?(stream: TokenStream) {
-        if let int = IntegerValue(stream: stream) {
+        if let int = Count(stream: stream) {
             self = .count(int)
         } else if let spec = Variadic(stream: stream) {
             self = .unnamedVariadic(spec)
         } else if let spec = Named(stream: stream) {
             self = .named(spec)
+        } else if let spec = TypeReference(stream: stream) {
+            self = .unnamedSingle(spec)
         } else {
             return nil
         }
     }
 }
 
+extension FunctionTypeReference.Argument.Spec.Count {
+    init?(stream: TokenStream) {
+        let state = stream.saveState()
+        guard let count = IntegerValue(stream: stream),
+              let typeAnnotation = TypeAnnotation(stream: stream) else {
+            stream.restore(state: state)
+            return nil
+        }
+        self.count = count
+        self.typeAnnotation = typeAnnotation
+    }
+}
+
 extension FunctionTypeReference.Argument.Spec.Variadic {
     init?(stream: TokenStream) {
-        guard let token = stream.consumeOne(type: .variadic) else {
+        let state = stream.saveState()
+        guard let token = stream.consumeOne(type: .variadic),
+              let typeAnnotation = TypeAnnotation(stream: stream) else {
+            stream.restore(state: state)
             return nil
         }
         self.token = token
+        self.typeAnnotation = typeAnnotation
     }
 }
 
 extension FunctionTypeReference.Argument.Spec.Named {
     init?(stream: TokenStream) {
+        let state = stream.saveState()
         guard let token = Identifier(stream: stream, allow: .inBinding) else {
             return nil
         }
         self.name = token
-        self.variadic = .init(stream: stream)
+        self.variadic = stream.consumeOne(type: .variadic)
+        guard let typeAnnotation = TypeAnnotation(stream: stream) else {
+            stream.restore(state: state)
+            return nil
+        }
+        self.typeAnnotation = typeAnnotation
     }
 }
