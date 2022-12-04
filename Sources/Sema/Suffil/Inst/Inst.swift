@@ -17,8 +17,6 @@ import SuffixLang
 enum Inst {
     /// A call to a function
     case call(CallInst)
-    /// A binding usually
-    case rename(RenameInst)
     /// A return, at the end of the function
     case ret(RetInst)
     /// The specialisation of a generic function
@@ -36,13 +34,13 @@ enum Inst {
 protocol InstProtocol: AnyObject, CustomStringConvertible {
     var definingRefs: [LocatedLocalRef] { get }
     var usingRefs: [LocatedRef] { get }
+    func replaceOccurrences(of target: Ref, with replacement: Ref)
 }
 
 extension Inst {
     var wrapped: InstProtocol {
         switch self {
         case .call(let inst as InstProtocol),
-             .rename(let inst as InstProtocol),
              .ret(let inst as InstProtocol),
              .specialise(let inst as InstProtocol),
              .array(let inst as InstProtocol),
@@ -50,6 +48,14 @@ extension Inst {
              .closure(let inst as InstProtocol),
              .destroy(let inst as InstProtocol):
             return inst
+        }
+    }
+}
+
+extension MutableCollection {
+    mutating func formMap(_ body: (inout Element) throws -> Void) rethrows {
+        for index in indices {
+            try body(&self[index])
         }
     }
 }

@@ -12,9 +12,9 @@
 
 import Foundation
 
-class ClosureInst {
-    let name: LocatedLocalRef
-    let function: LocatedFunction
+final class ClosureInst {
+    var name: LocatedLocalRef
+    var function: LocatedFunction
     var captures: [LocatedRef] = []
     
     var functionRef: LocatedRef { function.map({ .function($0) }) }
@@ -32,4 +32,11 @@ extension ClosureInst: InstProtocol {
     
     var definingRefs: [LocatedLocalRef] { [name] }
     var usingRefs: [LocatedRef] { [functionRef] + captures }
+    func replaceOccurrences(of target: Ref, with replacement: Ref) {
+        // note: the function cannot be replaced as it is not a real ref, its always a function
+        // it should never be an issue
+        captures.formMap {
+            $0.value.replaceOccurrences(of: target, with: replacement)
+        }
+    }
 }

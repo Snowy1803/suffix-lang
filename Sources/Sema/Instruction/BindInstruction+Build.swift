@@ -20,7 +20,7 @@ extension BindInstruction {
         }
         // TODO: create inst for converting to appropriate type
         let target = self.value.typeAnnotation?.type.resolve(context: context) ?? value.type
-        let rename = context.builder.buildRename(value: LocatedRef(value: value.ref, node: self), type: target, name: self.value.literal.identifier)
+        let rename = context.builder.buildRename(value: value.ref, type: target, name: self.value.literal.identifier)
         context.bindings.append(Binding(name: self.value.literal.identifier, type: target, source: .binding(self), ref: rename))
     }
 }

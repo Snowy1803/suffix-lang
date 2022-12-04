@@ -57,10 +57,11 @@ class SuffilBuilder {
         return .local(inst.copy.value)
     }
     
-    func buildRename(value: LocatedRef, type: SType, name: String) -> Ref {
-        let inst = RenameInst(newName: LocalRef(givenName: name, type: type).noLocation, oldName: value)
-        insert(inst: .rename(inst))
-        return .local(inst.newName.value)
+    func buildRename(value: Ref, type: SType, name: String) -> Ref {
+        if case .local(let local) = value {
+            local.givenName = name
+        }
+        return value
     }
     
     func buildClosure(function lfunction: LocatedFunction) -> Ref {

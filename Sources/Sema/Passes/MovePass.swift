@@ -38,8 +38,8 @@ class MovePass: TypeCheckingPass {
     /// ```
     func run(function: Function, typechecker: TypeChecker) {
         var copies: [CopyInst] = []
-        var copiesToReplace: Set<ObjectID<CopyInst>> = []
-        var destroysToRemove: Set<ObjectID<DestroyInst>> = []
+        var instsToRemove: Set<ObjectIdentifier> = []
+        var copiesToReplaceInOrder: [CopyInst] = []
         for inst in function.instructions {
             func removeUsed() {
                 for used in inst.wrapped.usingRefs {
@@ -54,24 +54,21 @@ class MovePass: TypeCheckingPass {
                 if let copyIndex = copies.firstIndex(where: { destroyInst.value.value == $0.original.value }) {
                     let copy = copies.remove(at: copyIndex)
                     // replace the copy with the original, making it into a 'move' operation
-                    copiesToReplace.insert(ObjectID(copy))
-                    destroysToRemove.insert(ObjectID(destroyInst))
+                    instsToRemove.insert(ObjectIdentifier(copy))
+                    copiesToReplaceInOrder.append(copy)
+                    instsToRemove.insert(ObjectIdentifier(destroyInst))
                 }
             default:
                 removeUsed()
             }
         }
-        function.instructions = function.instructions.compactMap { inst in
-            if case .copy(let copyInst) = inst,
-               copiesToReplace.contains(ObjectID(copyInst)) {
-                // replace the copy with a rename
-                return .rename(RenameInst(newName: copyInst.copy, oldName: copyInst.original))
+        function.instructions.removeAll { inst in
+            instsToRemove.contains(ObjectIdentifier(inst.wrapped))
+        }
+        function.instructions.forEach { inst in
+            for copy in copiesToReplaceInOrder.reversed() {
+                inst.wrapped.replaceOccurrences(of: .local(copy.copy.value), with: copy.original.value)
             }
-            if case .destroy(let destroyInst) = inst,
-               destroysToRemove.contains(ObjectID(destroyInst)) {
-                return nil // remove the destroy
-            }
-            return inst
         }
     }
 }

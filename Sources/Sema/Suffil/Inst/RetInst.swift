@@ -12,8 +12,8 @@
 
 import Foundation
 
-class RetInst {
-    let values: [LocatedRef]
+final class RetInst {
+    var values: [LocatedRef]
     
     init(values: [LocatedRef]) {
         self.values = values
@@ -27,4 +27,9 @@ extension RetInst: InstProtocol {
     
     var definingRefs: [LocatedLocalRef] { [] }
     var usingRefs: [LocatedRef] { values }
+    func replaceOccurrences(of target: Ref, with replacement: Ref) {
+        values.formMap {
+            $0.value.replaceOccurrences(of: target, with: replacement)
+        }
+    }
 }

@@ -12,8 +12,8 @@
 
 import Foundation
 
-class DestroyInst {
-    let value: LocatedRef
+final class DestroyInst {
+    var value: LocatedRef
     
     init(value: LocatedRef) {
         self.value = value
@@ -27,4 +27,7 @@ extension DestroyInst: InstProtocol {
     
     var definingRefs: [LocatedLocalRef] { [] }
     var usingRefs: [LocatedRef] { [value] }
+    func replaceOccurrences(of target: Ref, with replacement: Ref) {
+        value.value.replaceOccurrences(of: target, with: replacement)
+    }
 }

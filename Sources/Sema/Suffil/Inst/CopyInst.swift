@@ -12,9 +12,9 @@
 
 import Foundation
 
-class CopyInst {
-    let copy: LocatedLocalRef
-    let original: LocatedRef
+final class CopyInst {
+    var copy: LocatedLocalRef
+    var original: LocatedRef
     
     init(copy: LocatedLocalRef, original: LocatedRef) {
         self.copy = copy
@@ -29,4 +29,7 @@ extension CopyInst: InstProtocol {
     
     var definingRefs: [LocatedLocalRef] { [copy] }
     var usingRefs: [LocatedRef] { [original] }
+    func replaceOccurrences(of target: Ref, with replacement: Ref) {
+        original.value.replaceOccurrences(of: target, with: replacement)
+    }
 }

@@ -57,4 +57,10 @@ extension Ref {
             return true
         }
     }
+    
+    mutating func replaceOccurrences(of target: Ref, with replacement: Ref) {
+        if self == target {
+            self = replacement
+        }
+    }
 }

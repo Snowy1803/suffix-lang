@@ -12,10 +12,10 @@
 
 import Foundation
 
-class SpecialiseInst {
-    let name: LocatedLocalRef
-    let function: LocatedRef
-    let types: [SType]
+final class SpecialiseInst {
+    var name: LocatedLocalRef
+    var function: LocatedRef
+    var types: [SType]
     
     init(name: LocatedLocalRef, function: LocatedRef, types: [SType]) {
         self.name = name
@@ -31,4 +31,7 @@ extension SpecialiseInst: InstProtocol {
     
     var definingRefs: [LocatedLocalRef] { [name] }
     var usingRefs: [LocatedRef] { [function] }
+    func replaceOccurrences(of target: Ref, with replacement: Ref) {
+        function.value.replaceOccurrences(of: target, with: replacement)
+    }
 }

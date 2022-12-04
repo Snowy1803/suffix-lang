@@ -12,10 +12,10 @@
 
 import Foundation
 
-class ArrayInst {
-    let array: LocatedLocalRef
-    let elementType: SType
-    let elements: [LocatedRef]
+final class ArrayInst {
+    var array: LocatedLocalRef
+    var elementType: SType
+    var elements: [LocatedRef]
     
     init(array: LocatedLocalRef, elementType: SType, elements: [LocatedRef]) {
         self.array = array
@@ -31,4 +31,9 @@ extension ArrayInst: InstProtocol {
     
     var definingRefs: [LocatedLocalRef] { [array] }
     var usingRefs: [LocatedRef] { elements }
+    func replaceOccurrences(of target: Ref, with replacement: Ref) {
+        elements.formMap {
+            $0.value.replaceOccurrences(of: target, with: replacement)
+        }
+    }
 }

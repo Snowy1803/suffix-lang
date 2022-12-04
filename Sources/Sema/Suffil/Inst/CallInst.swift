@@ -12,10 +12,10 @@
 
 import Foundation
 
-class CallInst {
+final class CallInst {
     var returning: [LocatedLocalRef]
-    let function: LocatedRef
-    let parameters: [LocatedRef]
+    var function: LocatedRef
+    var parameters: [LocatedRef]
     
     init(returning: [LocatedLocalRef], function: LocatedRef, parameters: [LocatedRef]) {
         self.returning = returning
@@ -31,6 +31,13 @@ extension CallInst: InstProtocol {
     
     var definingRefs: [LocatedLocalRef] { returning }
     var usingRefs: [LocatedRef] { [function] + parameters }
+    func replaceOccurrences(of target: Ref, with replacement: Ref) {
+        function.value.replaceOccurrences(of: target, with: replacement)
+        parameters.formMap {
+            $0.value.replaceOccurrences(of: target, with: replacement)
+        }
+    }
+    
     var isPure: Bool {
         // TODO: function should have pure/impure trait
         false

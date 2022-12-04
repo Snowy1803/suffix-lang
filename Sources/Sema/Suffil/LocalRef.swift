@@ -13,7 +13,7 @@
 import Foundation
 
 final class LocalRef {
-    let givenName: String
+    var givenName: String
     let type: SType
     var seqNumber: Int?
     
