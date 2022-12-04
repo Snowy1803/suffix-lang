@@ -34,7 +34,7 @@ extension TypeReference {
             }
             let map = GenericMap(map: Dictionary(uniqueKeysWithValues: zip(generics, generic.generics?.generics ?? []).map { archetype, parameter in
                 let resolved = parameter.type.resolve(context: context)
-                return (ObjectIdentifier(archetype), resolved)
+                return (ObjectID(archetype), resolved)
             }))
             return named.map(with: map)
         }

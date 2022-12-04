@@ -38,8 +38,8 @@ class MovePass: TypeCheckingPass {
     /// ```
     func run(function: Function, typechecker: TypeChecker) {
         var copies: [CopyInst] = []
-        var copiesToReplace: Set<ObjectIdentifier> = []
-        var destroysToRemove: Set<ObjectIdentifier> = []
+        var copiesToReplace: Set<ObjectID<CopyInst>> = []
+        var destroysToRemove: Set<ObjectID<DestroyInst>> = []
         for inst in function.instructions {
             func removeUsed() {
                 for used in inst.wrapped.usingRefs {
@@ -54,8 +54,8 @@ class MovePass: TypeCheckingPass {
                 if let copyIndex = copies.firstIndex(where: { destroyInst.value.value == $0.original.value }) {
                     let copy = copies.remove(at: copyIndex)
                     // replace the copy with the original, making it into a 'move' operation
-                    copiesToReplace.insert(ObjectIdentifier(copy))
-                    destroysToRemove.insert(ObjectIdentifier(destroyInst))
+                    copiesToReplace.insert(ObjectID(copy))
+                    destroysToRemove.insert(ObjectID(destroyInst))
                 }
             default:
                 removeUsed()
@@ -63,12 +63,12 @@ class MovePass: TypeCheckingPass {
         }
         function.instructions = function.instructions.compactMap { inst in
             if case .copy(let copyInst) = inst,
-               copiesToReplace.contains(ObjectIdentifier(copyInst)) {
+               copiesToReplace.contains(ObjectID(copyInst)) {
                 // replace the copy with a rename
                 return .rename(RenameInst(newName: copyInst.copy, oldName: copyInst.original))
             }
             if case .destroy(let destroyInst) = inst,
-               destroysToRemove.contains(ObjectIdentifier(destroyInst)) {
+               destroysToRemove.contains(ObjectID(destroyInst)) {
                 return nil // remove the destroy
             }
             return inst

@@ -25,12 +25,12 @@ extension FunctionInstruction {
         partial.types.append(contentsOf: genericArguments)
         let resolved = resolve(context: partial, generics: genericArguments)
         let function = parent.createFunction(name: name.identifier, type: resolved, source: .instruction(self))
-        parent.registeredFunctions[ObjectIdentifier(self)] = function
+        parent.registeredFunctions[ObjectID(self)] = function
         parent.bindings.append(Binding(name: function.name, type: function.type, source: .function(self), ref: .function(function)))
     }
     
     func createSubContext(parent: FunctionParsingContext) -> FunctionParsingContext {
-        guard let function = parent.registeredFunctions[ObjectIdentifier(self)] else {
+        guard let function = parent.registeredFunctions[ObjectID(self)] else {
             preconditionFailure()
         }
         let subcontext = FunctionParsingContext(parent: parent, function: function)

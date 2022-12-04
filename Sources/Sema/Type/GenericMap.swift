@@ -13,16 +13,16 @@
 import Foundation
 
 public struct GenericMap {
-    var map: [ObjectIdentifier: SType]
+    var map: [ObjectID<GenericArchetype>: SType]
     
     func apply(type: GenericArchetype) -> SType {
-        if let mapped = map[ObjectIdentifier(type)] {
+        if let mapped = map[ObjectID(type)] {
             return mapped
         }
         return type
     }
     
     func contains(type: GenericArchetype) -> Bool {
-        map.keys.contains(ObjectIdentifier(type))
+        map.keys.contains(ObjectID(type))
     }
 }

@@ -18,8 +18,7 @@ class FunctionParsingContext: ParsingContext {
     var stack: [StackElement] = []
     var builder: SuffilBuilder
     
-    // map of FunctionInstruction: Function
-    var registeredFunctions: [ObjectIdentifier: Function] = [:]
+    var registeredFunctions: [ObjectID<FunctionInstruction>: Function] = [:]
     
     init(parent: ParsingContext, function: Function) {
         self.function = function
