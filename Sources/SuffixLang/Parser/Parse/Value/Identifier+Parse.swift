@@ -35,14 +35,14 @@ extension Identifier {
 }
 
 struct IdentifierAllowList {
-    var asFirst: [TokenType]
-    var next: [TokenType]
+    var asFirst: Set<TokenType>
+    var next: Set<TokenType>
 }
 
 extension IdentifierAllowList {
-    private static let basicFirst: [TokenType] = [.word, .numberPrefixedWord]
-    private static let basicNext: [TokenType] = basicFirst + [.number]
-    private static let instStarterKeywords: [TokenType] = [.keyword(.record), .keyword(.enum), .keyword(.func), .keyword(.trait), .keyword(.conform), .keyword(.typealias)]
+    private static let basicFirst: Set<TokenType> = [.word, .numberPrefixedWord]
+    private static let basicNext: Set<TokenType> = basicFirst + [.number]
+    private static let instStarterKeywords: Set<TokenType> = [.keyword(.record), .keyword(.enum), .keyword(.func), .keyword(.trait), .keyword(.conform), .keyword(.typealias)]
     
     /// Only basic words and the `where` keyword are allowed in binding names
     static let inBinding = IdentifierAllowList(asFirst: basicFirst + [.keyword(.where)], next: basicNext + [.keyword(.where)])
@@ -50,4 +50,10 @@ extension IdentifierAllowList {
     static let inTypeName = IdentifierAllowList(asFirst: basicFirst, next: basicNext)
     /// Everything is allowed in trait names, except `where` as first word
     static let inTraitName = IdentifierAllowList(asFirst: basicFirst + instStarterKeywords, next: basicNext + instStarterKeywords + [.keyword(.where)])
+}
+
+private extension Set {
+    static func + (lhs: Set, rhs: Set) -> Set {
+        return lhs.union(rhs)
+    }
 }

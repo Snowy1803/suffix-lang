@@ -12,7 +12,7 @@
 
 import Foundation
 
-public enum TokenType: Equatable {
+public enum TokenType: Equatable, Hashable {
     /// Insignificant whitespace
     case whitespace
     /// An ignoreable single line comment (starting with `#`)
