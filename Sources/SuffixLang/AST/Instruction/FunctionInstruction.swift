@@ -18,14 +18,16 @@ public class FunctionInstruction: ASTNode {
     public let generics: GenericDefinition?
     public let arguments: FunctionTypeReference.Arguments
     public let returning: FunctionTypeReference.ReturnValues
+    public let traits: TraitCollection
     public let block: Block
     
-    init(keyword: Token, name: Identifier, generics: GenericDefinition?, arguments: FunctionTypeReference.Arguments, returning: FunctionTypeReference.ReturnValues, block: Block) {
+    init(keyword: Token, name: Identifier, generics: GenericDefinition?, arguments: FunctionTypeReference.Arguments, returning: FunctionTypeReference.ReturnValues, traits: TraitCollection, block: Block) {
         self.keyword = keyword
         self.name = name
         self.generics = generics
         self.arguments = arguments
         self.returning = returning
+        self.traits = traits
         self.block = block
     }
 }

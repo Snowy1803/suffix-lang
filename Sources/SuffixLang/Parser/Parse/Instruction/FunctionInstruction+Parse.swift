@@ -23,6 +23,7 @@ extension FunctionInstruction {
             generics: GenericDefinition(stream: stream),
             arguments: FunctionTypeReference.Arguments(assert: stream),
             returning: FunctionTypeReference.ReturnValues(assert: stream),
+            traits: TraitCollection(stream: stream),
             block: Block(stream: stream)
         )
     }

@@ -42,7 +42,12 @@ struct IdentifierAllowList {
 extension IdentifierAllowList {
     private static let basicFirst: [TokenType] = [.word, .numberPrefixedWord]
     private static let basicNext: [TokenType] = basicFirst + [.number]
+    private static let instStarterKeywords: [TokenType] = [.keyword(.record), .keyword(.enum), .keyword(.func), .keyword(.trait), .keyword(.conform), .keyword(.typealias)]
     
+    /// Only basic words and the `where` keyword are allowed in binding names
     static let inBinding = IdentifierAllowList(asFirst: basicFirst + [.keyword(.where)], next: basicNext + [.keyword(.where)])
+    /// Only basic words are allowed in type names
     static let inTypeName = IdentifierAllowList(asFirst: basicFirst, next: basicNext)
+    /// Everything is allowed in trait names, except `where` as first word
+    static let inTraitName = IdentifierAllowList(asFirst: basicFirst + instStarterKeywords, next: basicNext + instStarterKeywords + [.keyword(.where)])
 }
