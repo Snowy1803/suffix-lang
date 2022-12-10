@@ -44,5 +44,7 @@ class Binding {
         case recordFieldAccessor(RecordType, RecordInstruction, BindInstruction)
         /// This value is the constructor function for a defined record
         case recordConstructor(RecordType, RecordInstruction)
+        /// This value is the accessor function for a defined record's field
+        case enumCase(EnumType, EnumInstruction, BindInstruction)
     }
 }

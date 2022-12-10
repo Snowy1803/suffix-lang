@@ -18,6 +18,8 @@ extension Instruction {
         switch self {
         case .record(let recordInstruction):
             recordInstruction.registerTypeDeclaration(context: context)
+        case .enum(let enumInstruction):
+            enumInstruction.registerTypeDeclaration(context: context)
         case .push, .call, .bind, .function:
             break
         }
@@ -27,6 +29,8 @@ extension Instruction {
         switch self {
         case .record(let recordInstruction):
             recordInstruction.registerGlobalBindings(context: context)
+        case .enum(let enumInstruction):
+            enumInstruction.registerGlobalBindings(context: context)
         case .function(let functionInstruction):
             functionInstruction.registerGlobalBindings(parent: context)
         case .push, .call, .bind:
@@ -46,7 +50,7 @@ extension Instruction {
             let subcontext = functionInstruction.createSubContext(parent: context)
             functionInstruction.registerLocalBindings(subcontext: subcontext)
             functionInstruction.block.content.typecheckContent(context: subcontext)
-        case .record:
+        case .record, .enum:
             break
         }
     }

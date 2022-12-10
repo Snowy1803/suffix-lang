@@ -18,6 +18,7 @@ public enum Instruction: ASTEnum {
     case bind(BindInstruction)
     case function(FunctionInstruction)
     case record(RecordInstruction)
+    case `enum`(EnumInstruction)
     
     public var node: ASTNode {
         switch self {
@@ -25,7 +26,8 @@ public enum Instruction: ASTEnum {
              .call(let node as ASTNode),
              .bind(let node as ASTNode),
              .function(let node as ASTNode),
-             .record(let node as ASTNode):
+             .record(let node as ASTNode),
+             .enum(let node as ASTNode):
             return node
         }
     }

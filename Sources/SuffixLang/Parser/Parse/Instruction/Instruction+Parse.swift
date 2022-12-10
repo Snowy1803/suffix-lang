@@ -22,6 +22,8 @@ extension Instruction {
             self = .function(inst)
         } else if let inst = RecordInstruction(stream: stream) {
             self = .record(inst)
+        } else if let inst = EnumInstruction(stream: stream) {
+            self = .enum(inst)
         } else if let inst = PushInstruction(stream: stream) {
             self = .push(inst)
         } else { // implicit push

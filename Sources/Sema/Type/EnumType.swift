@@ -16,20 +16,27 @@ import SuffixLang
 public class EnumType: NamedType, LeafType {
     public var name: String
     public var cases: [Case]
+    public var source: Source
     
-    init(name: String, cases: [Case]) {
+    init(name: String, cases: [Case], source: Source) {
         self.name = name
         self.cases = cases
+        self.source = source
     }
     
     public struct Case {
         public var name: String
         public var source: BindInstruction? // nil if builtin
     }
+    
+    public enum Source {
+        case instruction(EnumInstruction)
+        case builtin
+    }
 }
 
 extension EnumType {
-    static let bool = EnumType(name: "bool", cases: [Case(name: "false"), Case(name: "true")])
+    static let bool = EnumType(name: "bool", cases: [Case(name: "false"), Case(name: "true")], source: .builtin)
 }
 
 extension EnumType {

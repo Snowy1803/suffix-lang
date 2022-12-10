@@ -27,6 +27,7 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case negativeArgumentCount(IntegerValue)
     case unknownType(String)
     case missingTypeAnnotation
+    case invalidTypeAnnotation
     case poppingEmptyStack
     case invalidStringEscapeSequence(Substring)
     case noViableBinding(String)
@@ -48,6 +49,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Could not find type '\(name)' in scope"
         case .missingTypeAnnotation:
             return "Missing type annotation"
+        case .invalidTypeAnnotation:
+            return "Unexpected type annotation"
         case .poppingEmptyStack:
             return "Cannot pop more values than there is on the stack"
         case .invalidStringEscapeSequence(let str):
