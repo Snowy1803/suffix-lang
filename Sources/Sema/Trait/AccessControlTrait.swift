@@ -12,7 +12,7 @@
 
 import Foundation
 
-enum AccessControlTrait: TraitProtocol, Equatable, Hashable, CaseIterable, Comparable {
+enum AccessControlTrait: String, TraitProtocol, Equatable, Hashable, CaseIterable {
     
     case `private`
     case `internal`
@@ -25,7 +25,7 @@ enum AccessControlTrait: TraitProtocol, Equatable, Hashable, CaseIterable, Compa
     }
     
     var implies: Set<Trait> {
-        if self >= .hidden {
+        if self == .hidden || self == .public {
             return [.function(.constant)]
         }
         return []

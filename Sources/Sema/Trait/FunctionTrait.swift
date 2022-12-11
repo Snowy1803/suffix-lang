@@ -12,11 +12,11 @@
 
 import Foundation
 
-enum FunctionTrait: TraitProtocol, Equatable, Hashable, CaseIterable {
+enum FunctionTrait: String, TraitProtocol, Equatable, Hashable, CaseIterable {
     
     case pure
     case impure
-    case noCapture
+    case noCapture = "no capture"
     case constant
     case extern
     

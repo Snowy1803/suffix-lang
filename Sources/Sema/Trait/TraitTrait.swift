@@ -12,14 +12,14 @@
 
 import Foundation
 
-enum TraitTrait: TraitProtocol, Equatable, Hashable, CaseIterable {
+enum TraitTrait: String, TraitProtocol, Equatable, Hashable, CaseIterable {
     
-    case sourceTrait
-    case funcTrait
-    case typeTrait
-    case recordTrait
-    case enumTrait
-    case traitTrait
+    case sourceTrait = "source trait"
+    case funcTrait = "func trait"
+    case typeTrait = "type trait"
+    case recordTrait = "record trait"
+    case enumTrait = "enum trait"
+    case traitTrait = "trait trait"
     
     var exclusiveWith: Set<Trait> {
         []

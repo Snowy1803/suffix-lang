@@ -30,7 +30,12 @@ enum Trait: Equatable, Hashable {
 }
 
 protocol TraitProtocol {
+    var name: String { get }
     var traits: TraitContainer { get }
     var exclusiveWith: Set<Trait> { get }
     var implies: Set<Trait> { get }
+}
+
+extension TraitProtocol where Self: RawRepresentable, Self.RawValue == String {
+    var name: String { rawValue }
 }

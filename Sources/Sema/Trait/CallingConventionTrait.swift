@@ -12,7 +12,7 @@
 
 import Foundation
 
-enum CallingConventionTrait: TraitProtocol, Equatable, Hashable, CaseIterable {
+enum CallingConventionTrait: String, TraitProtocol, Equatable, Hashable, CaseIterable {
     
     case c
     case grph
