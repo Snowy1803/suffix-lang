@@ -16,6 +16,7 @@ enum FunctionTrait: TraitProtocol, Equatable, Hashable, CaseIterable {
     
     case pure
     case impure
+    case noCapture
     case constant
     case extern
     
@@ -25,13 +26,18 @@ enum FunctionTrait: TraitProtocol, Equatable, Hashable, CaseIterable {
             return [.function(.impure)]
         case .impure:
             return [.function(.pure)]
-        case .constant, .extern:
+        case .noCapture, .extern, .constant:
             return []
         }
     }
     
     var implies: Set<Trait> {
-        return []
+        switch self {
+        case .constant:
+            return [.function(.pure), .function(.noCapture)]
+        case .pure, .impure, .noCapture, .extern:
+            return []
+        }
     }
     
     var traits: TraitContainer {
