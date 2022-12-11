@@ -1,5 +1,5 @@
 //
-//  AccessControlTrait.swift
+//  FunctionTrait.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 11/12/2022.
@@ -12,22 +12,25 @@
 
 import Foundation
 
-enum AccessControlTrait: TraitProtocol, Equatable, Hashable, CaseIterable, Comparable {
+enum FunctionTrait: TraitProtocol, Equatable, Hashable, CaseIterable {
     
-    case `private`
-    case `internal`
-    case hidden
-    case `public`
-    case open
+    case pure
+    case impure
+    case constant
+    case extern
     
     var exclusiveWith: Set<Trait> {
-        Set(Set(Self.allCases).subtracting([self]).map { Trait.accessControl($0) })
+        switch self {
+        case .pure:
+            return [.function(.impure)]
+        case .impure:
+            return [.function(.pure)]
+        case .constant, .extern:
+            return []
+        }
     }
     
     var implies: Set<Trait> {
-        if self >= .hidden {
-            return [.function(.constant)]
-        }
         return []
     }
     

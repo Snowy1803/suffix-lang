@@ -14,10 +14,12 @@ import Foundation
 
 enum Trait: Equatable, Hashable {
     case accessControl(AccessControlTrait)
+    case function(FunctionTrait)
     
     var wrapped: TraitProtocol {
         switch self {
-        case .accessControl(let trait as TraitProtocol):
+        case .accessControl(let trait as TraitProtocol),
+             .function(let trait as TraitProtocol):
             return trait
         }
     }
@@ -26,4 +28,5 @@ enum Trait: Equatable, Hashable {
 protocol TraitProtocol {
     var traits: TraitContainer { get }
     var exclusiveWith: Set<Trait> { get }
+    var implies: Set<Trait> { get }
 }
