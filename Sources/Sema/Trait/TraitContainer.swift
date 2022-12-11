@@ -44,4 +44,13 @@ extension TraitContainer {
             return .internal
         }
     }
+    
+    var callingConvention: CallingConventionTrait {
+        for trait in traits {
+            if case .callingConvention(let result) = trait.trait {
+                return result
+            }
+        }
+        return .suffix
+    }
 }

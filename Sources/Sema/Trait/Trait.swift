@@ -15,11 +15,13 @@ import Foundation
 enum Trait: Equatable, Hashable {
     case accessControl(AccessControlTrait)
     case function(FunctionTrait)
+    case callingConvention(CallingConventionTrait)
     
     var wrapped: TraitProtocol {
         switch self {
         case .accessControl(let trait as TraitProtocol),
-             .function(let trait as TraitProtocol):
+             .function(let trait as TraitProtocol),
+             .callingConvention(let trait as TraitProtocol):
             return trait
         }
     }
