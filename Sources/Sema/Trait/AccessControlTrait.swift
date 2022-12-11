@@ -32,6 +32,10 @@ enum AccessControlTrait: TraitProtocol, Equatable, Hashable, CaseIterable, Compa
     }
     
     var traits: TraitContainer {
-        TraitContainer(type: .trait, builtin: [.accessControl(.public)])
+        if self == .open {
+            return TraitContainer(type: .trait, builtin: [.trait(.sourceTrait), .trait(.traitTrait)])
+        } else {
+            return TraitContainer(type: .trait, builtin: [.trait(.sourceTrait), .trait(.traitTrait), .trait(.typeTrait), .trait(.funcTrait)])
+        }
     }
 }

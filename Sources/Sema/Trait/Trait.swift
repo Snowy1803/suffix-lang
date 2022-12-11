@@ -16,12 +16,14 @@ enum Trait: Equatable, Hashable {
     case accessControl(AccessControlTrait)
     case function(FunctionTrait)
     case callingConvention(CallingConventionTrait)
+    case trait(TraitTrait)
     
     var wrapped: TraitProtocol {
         switch self {
         case .accessControl(let trait as TraitProtocol),
              .function(let trait as TraitProtocol),
-             .callingConvention(let trait as TraitProtocol):
+             .callingConvention(let trait as TraitProtocol),
+             .trait(let trait as TraitProtocol):
             return trait
         }
     }

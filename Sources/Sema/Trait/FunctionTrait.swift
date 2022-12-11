@@ -35,6 +35,10 @@ enum FunctionTrait: TraitProtocol, Equatable, Hashable, CaseIterable {
     }
     
     var traits: TraitContainer {
-        TraitContainer(type: .trait, builtin: [.accessControl(.public)])
+        if self == .extern {
+            return TraitContainer(type: .trait, builtin: [.trait(.sourceTrait), .trait(.funcTrait)])
+        } else {
+            return TraitContainer(type: .trait, builtin: [.trait(.funcTrait)])
+        }
     }
 }

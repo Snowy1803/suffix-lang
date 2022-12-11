@@ -29,7 +29,7 @@ struct TraitContainer {
 extension TraitContainer {
     init(type: TraitContainerType, builtin: [Trait]) {
         self.type = type
-        self.traits = builtin.map { TraitInfo(trait: $0, source: .builtin) }
+        self.traits = ([.accessControl(.open)] + builtin).map { TraitInfo(trait: $0, source: .builtin) }
     }
     
     var accessControl: AccessControlTrait {

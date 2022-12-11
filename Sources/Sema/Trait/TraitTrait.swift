@@ -1,5 +1,5 @@
 //
-//  CallingConventionTrait.swift
+//  TraitTrait.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 11/12/2022.
@@ -12,26 +12,29 @@
 
 import Foundation
 
-enum CallingConventionTrait: TraitProtocol, Equatable, Hashable, CaseIterable {
+enum TraitTrait: TraitProtocol, Equatable, Hashable, CaseIterable {
     
-    case c
-    case grph
-    case suffix
+    case sourceTrait
+    case funcTrait
+    case typeTrait
+    case recordTrait
+    case enumTrait
+    case traitTrait
     
     var exclusiveWith: Set<Trait> {
-        Set(Set(Self.allCases).subtracting([self]).map { Trait.callingConvention($0) })
+        []
     }
     
     var implies: Set<Trait> {
         switch self {
-        case .c, .grph:
-            return [.function(.constant)]
-        case .suffix:
+        case .typeTrait:
+            return [.trait(.recordTrait), .trait(.enumTrait)]
+        case .sourceTrait, .funcTrait, .recordTrait, .enumTrait, .traitTrait:
             return []
         }
     }
     
     var traits: TraitContainer {
-        TraitContainer(type: .trait, builtin: [.trait(.funcTrait)])
+        TraitContainer(type: .trait, builtin: [.trait(.traitTrait)])
     }
 }
