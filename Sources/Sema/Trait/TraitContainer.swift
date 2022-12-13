@@ -15,9 +15,7 @@ import SuffixLang
 
 struct TraitContainer {
     var type: TraitContainerType
-    // maybe merge into a dictionary
-    private(set) var traits: [TraitInfo]
-    private(set) var traitSet: Set<Trait> = []
+    private(set) var traits: [Trait: TraitInfo]
     
     struct TraitInfo {
         var trait: Trait
@@ -46,55 +44,47 @@ struct TraitContainer {
     
     init(type: TraitContainerType, traits: [TraitInfo], diagnostics: inout [Diagnostic]) {
         self.type = type
-        self.traits = traits
-        createTraitSet()
+        self.traits = Dictionary(uniqueKeysWithValues: traits.map { ($0.trait, $0) })
         populateImpliedTraits(diagnostics: &diagnostics)
     }
     
     init(type: TraitContainerType, builtin: [Trait]) {
         self.type = type
-        self.traits = ([.accessControl(.open)] + builtin).map { TraitInfo(trait: $0, source: .builtin) }
-        createTraitSet()
+        let traits = ([.accessControl(.open)] + builtin).map { TraitInfo(trait: $0, source: .builtin) }
+        self.traits = Dictionary(uniqueKeysWithValues: traits.map { ($0.trait, $0) })
         var diagnostics: [Diagnostic] = []
         populateImpliedTraits(diagnostics: &diagnostics)
         assert(diagnostics.isEmpty)
     }
     
     mutating func add(trait: TraitInfo, diagnostics: inout [Diagnostic]) {
-        traits.append(trait)
-        traitSet.insert(trait.trait)
+        traits[trait.trait] = trait
         implyTraits(for: trait, diagnostics: &diagnostics)
     }
     
-    private mutating func createTraitSet() {
-        traitSet = Set(traits.map(\.trait))
-    }
-    
     private mutating func populateImpliedTraits(diagnostics: inout [Diagnostic]) {
-        for trait in traits {
+        for trait in traits.values {
             implyTraits(for: trait, diagnostics: &diagnostics)
         }
     }
     
     private mutating func implyTraits(for trait: TraitInfo, diagnostics: inout [Diagnostic]) {
-        if !trait.trait.wrapped.traits.traitSet.contains(.trait(requiredTraitForType)) {
+        if trait.trait.wrapped.traits.traits[.trait(requiredTraitForType)] == nil {
             switch trait.source {
             case .implied, .inferred, .inherited: // can safely ignore the trait
-                traits.removeAll(where: { $0.trait == trait.trait })
-                traitSet.remove(trait.trait)
+                traits[trait.trait] = nil
                 return
             case .explicit, .builtin, .implicitlyConstrained:
                 diagnostics.append(Diagnostic(tokens: diagnosticTokens(for: trait.source), message: .invalidTrait(expected: type, trait: trait), severity: .error))
             }
         }
         for implication in trait.trait.wrapped.implies {
-            if !traitSet.contains(implication) {
+            if traits[implication] == nil {
                 add(trait: TraitInfo(trait: implication, source: .implied(trait)), diagnostics: &diagnostics)
             }
         }
         for excluded in trait.trait.wrapped.exclusiveWith {
-            if traitSet.contains(excluded) {
-                let other = traits.first(where: { $0.trait == excluded })!
+            if let other = traits[excluded] {
                 diagnostics.append(Diagnostic(tokens: diagnosticTokens(for: trait.source), message: .incompatibleTraitsProvided(trait, other), severity: .error, hints: [Diagnostic(tokens: diagnosticTokens(for: other.source), message: .incompatibleTraitsProvided(trait, other), severity: .error)]))
             }
         }
@@ -129,8 +119,8 @@ struct TraitContainer {
 
 extension TraitContainer {
     var accessControl: AccessControlTrait {
-        for trait in traits {
-            if case .accessControl(let result) = trait.trait {
+        for trait in traits.keys {
+            if case .accessControl(let result) = trait {
                 return result
             }
         }
@@ -142,8 +132,8 @@ extension TraitContainer {
     }
     
     var callingConvention: CallingConventionTrait {
-        for trait in traits {
-            if case .callingConvention(let result) = trait.trait {
+        for trait in traits.keys {
+            if case .callingConvention(let result) = trait {
                 return result
             }
         }
