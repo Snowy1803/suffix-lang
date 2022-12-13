@@ -20,6 +20,7 @@ enum TraitTrait: String, TraitProtocol, Equatable, Hashable, CaseIterable {
     case recordTrait = "record trait"
     case enumTrait = "enum trait"
     case traitTrait = "trait trait"
+    case inheritable = "inheritable"
     
     var exclusiveWith: Set<Trait> {
         []
@@ -31,6 +32,8 @@ enum TraitTrait: String, TraitProtocol, Equatable, Hashable, CaseIterable {
             return [.trait(.recordTrait), .trait(.enumTrait)]
         case .sourceTrait, .funcTrait, .recordTrait, .enumTrait, .traitTrait:
             return []
+        case .inheritable:
+            return [.trait(.funcTrait)]
         }
     }
     

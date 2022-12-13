@@ -12,7 +12,7 @@
 
 import Foundation
 
-enum TraitContainerType {
+enum TraitContainerType: String {
     case record
     case `enum`
     case trait
