@@ -26,8 +26,12 @@ enum FunctionTrait: String, TraitProtocol, Equatable, Hashable, CaseIterable {
             return [.function(.impure)]
         case .impure:
             return [.function(.pure)]
-        case .noCapture, .extern, .constant:
+        case .noCapture:
             return []
+        case .constant:
+            return [.function(.extern)]
+        case .extern:
+            return [.function(.constant)]
         }
     }
     

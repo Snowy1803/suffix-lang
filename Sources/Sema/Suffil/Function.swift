@@ -18,6 +18,7 @@ public final class Function {
     var name: String
     var type: FunctionType
     var source: Source
+    var traits: TraitContainer
     
     var captures: [Capture]
     
@@ -25,11 +26,13 @@ public final class Function {
     var arguments: [LocalRef]
     var instructions: [Inst]
     
-    init(parent: Function?, name: String, type: FunctionType, source: Source) {
+    init(parent: Function?, name: String, type: FunctionType, source: Source, traits: TraitContainer) {
+        assert(traits.type == .func)
         self.parent = parent
         self.name = name
         self.type = type
         self.source = source
+        self.traits = traits
         self.captures = []
         self.arguments = [] // this is populated by the resolver
         self.instructions = []
@@ -68,7 +71,8 @@ extension Function: CustomStringConvertible {
         let captures = captures.map(\.ref.description).joined(separator: ", ")
         let arguments = (isSynthesized ? type.arguments : arguments as [CustomStringConvertible]).map(\.description).joined(separator: ", ")
         let returning = type.returning.map(\.description).joined(separator: ", ")
-        let sign = "\(sig) (\(captures)) (\(arguments)) (\(returning))"
+        let traits = traits.traits.keys.map(\.wrapped.name).sorted().map { ", " + $0 }.joined()
+        let sign = "\(sig) (\(captures)) (\(arguments)) (\(returning))\(traits)"
         if isSynthesized {
             return "\(sign)\n"
         } else {

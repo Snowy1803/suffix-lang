@@ -50,7 +50,7 @@ struct TraitContainer {
     
     init(type: TraitContainerType, builtin: [Trait]) {
         self.type = type
-        let traits = ([.accessControl(.open)] + builtin).map { TraitInfo(trait: $0, source: .builtin) }
+        let traits = ([.accessControl(type == .trait ? .open : .public)] + builtin).map { TraitInfo(trait: $0, source: .builtin) }
         self.traits = Dictionary(uniqueKeysWithValues: traits.map { ($0.trait, $0) })
         var diagnostics: [Diagnostic] = []
         populateImpliedTraits(diagnostics: &diagnostics)
@@ -69,7 +69,9 @@ struct TraitContainer {
     }
     
     private mutating func implyTraits(for trait: TraitInfo, diagnostics: inout [Diagnostic]) {
-        if trait.trait.wrapped.traits.traits[.trait(requiredTraitForType)] == nil {
+        if case .builtin = trait.source {
+            // assume OK and avoid infinite loop by reinstantiating a TraitContainer recursively
+        } else if trait.trait.wrapped.traits.traits[.trait(requiredTraitForType)] == nil {
             switch trait.source {
             case .implied, .inferred, .inherited: // can safely ignore the trait
                 traits[trait.trait] = nil

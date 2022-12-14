@@ -16,6 +16,7 @@ import SuffixLang
 class ParsingContext {
     var parent: ParsingContext?
     var types: [NamedType] = []
+    var traits: [Trait] = []
     var bindings: [Binding] = []
     
     init(parent: ParsingContext?) {
@@ -41,6 +42,13 @@ class ParsingContext {
             return type
         }
         return parent?.getType(name: name)
+    }
+    
+    func getTrait(name: String) -> Trait? {
+        if let trait = traits.first(where: { $0.wrapped.name == name }) {
+            return trait
+        }
+        return parent?.getTrait(name: name)
     }
     
     var typeChecker: TypeChecker! {

@@ -39,3 +39,14 @@ protocol TraitProtocol {
 extension TraitProtocol where Self: RawRepresentable, Self.RawValue == String {
     var name: String { rawValue }
 }
+
+extension Trait {
+    static let allBuiltins: [Trait] = {
+        var allBuiltins: [Trait] = []
+        allBuiltins.append(contentsOf: AccessControlTrait.allCases.map({ .accessControl($0) }))
+        allBuiltins.append(contentsOf: FunctionTrait.allCases.map({ .function($0) }))
+        allBuiltins.append(contentsOf: CallingConventionTrait.allCases.map({ .callingConvention($0) }))
+        allBuiltins.append(contentsOf: TraitTrait.allCases.map({ .trait($0) }))
+        return allBuiltins
+    }()
+}

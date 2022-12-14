@@ -21,6 +21,7 @@ class BuiltinParsingContext: ParsingContext {
         let bool = EnumType.bool
         let str = StringType.shared
         super.init(parent: nil)
+        self.traits = Trait.allBuiltins
         self.types = [
             any,
             IntType.shared,
@@ -32,23 +33,29 @@ class BuiltinParsingContext: ParsingContext {
             },
         ]
         self.bindings = EnumType.bool.caseBindings
-        createBuiltinFunction(name: "join", type: FunctionType(
-            arguments: [.init(type: str, variadic: true)],
-            returning: [.init(type: str)]))
-        createBuiltinFunction(name: "print", type: FunctionType(
-            arguments: [.init(type: any, variadic: true)],
-            returning: []))
-        createBuiltinFunction(name: "select", type: GenericArchetype(name: "T")
-            .with { t in
-                FunctionType(
-                    generics: [t],
-                    arguments: [.init(type: bool), .init(type: t), .init(type: t)],
-                    returning: [.init(type: t)])
-            })
+        createBuiltinFunction(
+            name: "join", type: FunctionType(
+                arguments: [.init(type: str, variadic: true)],
+                returning: [.init(type: str)]),
+            traits: TraitContainer(type: .func, builtin: [.function(.constant)]))
+        createBuiltinFunction(
+            name: "print", type: FunctionType(
+                arguments: [.init(type: any, variadic: true)],
+                returning: []),
+            traits: TraitContainer(type: .func, builtin: [.function(.impure)]))
+        createBuiltinFunction(
+            name: "select", type: GenericArchetype(name: "T")
+                .with { t in
+                    FunctionType(
+                        generics: [t],
+                        arguments: [.init(type: bool), .init(type: t), .init(type: t)],
+                        returning: [.init(type: t)])
+                },
+            traits: TraitContainer(type: .func, builtin: [.function(.constant)]))
     }
     
-    func createBuiltinFunction(name: String, type: FunctionType) {
-        let function = Function(parent: nil, name: name, type: type, source: .builtin)
+    func createBuiltinFunction(name: String, type: FunctionType, traits: TraitContainer) {
+        let function = Function(parent: nil, name: name, type: type, source: .builtin, traits: traits)
         self.bindings.append(Binding(name: name, type: type, source: .builtin, ref: .function(function)))
     }
 }

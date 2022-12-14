@@ -18,7 +18,7 @@ class RootParsingContext: FunctionParsingContext {
     
     init(typechecker: TypeChecker, builtins: ParsingContext) {
         self.typechecker = typechecker
-        let main = Function(parent: nil, name: "main", type: FunctionType(arguments: [], returning: []), source: .main)
+        let main = Function(parent: nil, name: "main", type: FunctionType(arguments: [], returning: []), source: .main, traits: TraitContainer(type: .func, builtin: []))
         typechecker.functions.append(main)
         super.init(parent: builtins, function: main)
     }

@@ -43,7 +43,7 @@ extension RecordInstruction {
                 name: name,
                 type: type,
                 source: .recordFieldAccessor(record, self, bind),
-                ref: .function(context.createFunction(name: name, type: type, source: .synthesized))))
+                ref: .function(context.createFunction(name: name, type: type, source: .synthesized, traits: TraitContainer(type: .func, traits: [], diagnostics: &context.typeChecker.diagnostics)))))
             return RecordType.Field(name: bind.value.literal.identifier, type: inner, source: bind)
         }
         let constructorName = "new \(name.identifier)"
@@ -52,6 +52,6 @@ extension RecordInstruction {
             name: constructorName,
             type: constructorType,
             source: .recordConstructor(record, self),
-            ref: .function(context.createFunction(name: constructorName, type: constructorType, source: .synthesized))))
+            ref: .function(context.createFunction(name: constructorName, type: constructorType, source: .synthesized, traits: TraitContainer(type: .func, traits: [], diagnostics: &context.typeChecker.diagnostics)))))
     }
 }

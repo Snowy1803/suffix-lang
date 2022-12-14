@@ -26,6 +26,7 @@ extension Diagnostic {
 enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case negativeArgumentCount(IntegerValue)
     case unknownType(String)
+    case unknownTrait(String)
     case missingTypeAnnotation
     case invalidTypeAnnotation
     case poppingEmptyStack
@@ -49,6 +50,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Invalid argument multiplier: \(token.integer) is negative"
         case .unknownType(let name):
             return "Could not find type '\(name)' in scope"
+        case .unknownTrait(let name):
+            return "Could not find trait '\(name)' in scope"
         case .missingTypeAnnotation:
             return "Missing type annotation"
         case .invalidTypeAnnotation:

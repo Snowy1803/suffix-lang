@@ -18,6 +18,7 @@ extension AnonymousFunctionValue {
             self.keyword = Token(position: .missing, literal: "func", type: .keyword(.func))
             self.arguments = .recovery
             self.returning = .recovery
+            self.traits = TraitCollection(traits: [])
             self.block = Block(stream: stream)
         } else {
             guard let keyword = stream.consumeOne(type: .keyword(.func)) else {
@@ -27,6 +28,7 @@ extension AnonymousFunctionValue {
             self.generics = GenericDefinition(stream: stream)
             self.arguments = FunctionTypeReference.Arguments(assert: stream)
             self.returning = FunctionTypeReference.ReturnValues(assert: stream)
+            self.traits = TraitCollection(stream: stream)
             self.block = Block(stream: stream)
         }
     }

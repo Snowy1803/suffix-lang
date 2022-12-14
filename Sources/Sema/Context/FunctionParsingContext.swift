@@ -26,8 +26,8 @@ class FunctionParsingContext: ParsingContext {
         super.init(parent: parent)
     }
     
-    func createFunction(name: String, type: FunctionType, source: Function.Source) -> Function {
-        let fn = Function(parent: self.function, name: name, type: type, source: source)
+    func createFunction(name: String, type: FunctionType, source: Function.Source, traits: TraitContainer) -> Function {
+        let fn = Function(parent: self.function, name: name, type: type, source: source, traits: traits)
         typeChecker.functions.append(fn)
         return fn
     }
