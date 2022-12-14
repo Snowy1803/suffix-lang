@@ -26,7 +26,7 @@ enum AccessControlTrait: String, TraitProtocol, Equatable, Hashable, CaseIterabl
     
     var implies: Set<Trait> {
         if self == .hidden || self == .public {
-            return [.function(.constant)]
+            return [.function(.noCapture)]
         }
         return []
     }
