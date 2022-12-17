@@ -50,7 +50,7 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case hintTraitImpliedFrom(String, original: String)
     case hintTraitInheritedFrom(String)
     case hintUseFunctionWithCapturesBeforeDefinition(String)
-    case hintSemicolonFunction(String)
+    case hintSemicolonFunction
     
     var description: String {
         switch self {
@@ -104,8 +104,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Trait '\(name)' was inherited from an outer function"
         case .hintUseFunctionWithCapturesBeforeDefinition(let function):
             return "Using function '\(function)' before it is defined implies it does not capture values"
-        case .hintSemicolonFunction(let function):
-            return "Trait 'extern' is implied because a semicolon was used for '\(function)'"
+        case .hintSemicolonFunction:
+            return "Trait 'extern' is implied because a semicolon was used"
         }
     }
 }
@@ -133,7 +133,7 @@ extension TraitContainer.TraitInfo {
             case .functionUsedBeforeDefinition:
                 return Diagnostic(tokens: node.nodeAllTokens, message: .hintUseFunctionWithCapturesBeforeDefinition(self.trait.wrapped.name), severity: .hint)
             case .functionWithSemicolon:
-                return Diagnostic(tokens: node.nodeAllTokens, message: .hintSemicolonFunction(self.trait.wrapped.name), severity: .hint)
+                return Diagnostic(tokens: node.nodeAllTokens, message: .hintSemicolonFunction, severity: .hint)
             }
         case .inferred:
             print("Inferences will only be added if there is no issue")

@@ -54,7 +54,7 @@ struct TraitContainer {
         self.traits = [:]
         for trait in traits {
             if let previous = self.traits[trait.trait] {
-                diagnostics.append(Diagnostic(tokens: diagnosticTokens(for: trait.source), message: .duplicateTrait(trait.trait.wrapped.name), severity: .error, hints: [Diagnostic(tokens: diagnosticTokens(for: previous.source), message: .hintTraitExplicitHere(previous.trait.wrapped.name), severity: .hint)]))
+                diagnostics.append(Diagnostic(tokens: diagnosticTokens(for: trait.source), message: .duplicateTrait(trait.trait.wrapped.name), severity: .error, hints: [previous.hint].compactMap { $0 }))
             } else {
                 self.traits[trait.trait] = trait
             }
@@ -107,7 +107,14 @@ struct TraitContainer {
         }
         for excluded in trait.trait.wrapped.exclusiveWith {
             if let other = traits[excluded] { // TODO: avoid double diagnostic
-                diagnostics.append(Diagnostic(tokens: diagnosticTokens(for: trait.source), message: .incompatibleTraitsProvided(trait, other), severity: .error, hints: [Diagnostic(tokens: diagnosticTokens(for: other.source), message: .incompatibleTraitsProvided(trait, other), severity: .error)]))
+                let first, second: TraitInfo
+                if case .explicit = other.source,
+                   case .implicitlyConstrained = trait.source {
+                    (first, second) = (trait, other)
+                } else {
+                    (first, second) = (other, trait)
+                }
+                diagnostics.append(Diagnostic(tokens: diagnosticTokens(for: second.source), message: .incompatibleTraitsProvided(first, second), severity: .error, hints: [first.hint].compactMap { $0 }))
             }
         }
     }
