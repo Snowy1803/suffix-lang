@@ -96,7 +96,7 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
         case .hintTraitInheritedFrom(let name):
             return "Trait '\(name)' was inherited from an outer function"
         case .hintUseFunctionWithCapturesBeforeDefinition(let function):
-            return "Cannot use function '\(function)' before it is defined if it captures values"
+            return "Using function '\(function)' before it is defined implies it does not capture values"
         }
     }
 }

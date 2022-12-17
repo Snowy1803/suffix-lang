@@ -11,6 +11,7 @@
 //
 
 import Foundation
+import SuffixLang
 
 class SuffilBuilder {
     var function: Function
@@ -67,7 +68,13 @@ class SuffilBuilder {
     func buildClosure(function lfunction: LocatedFunction) -> Ref {
         let function = lfunction.value
         let const = Ref.function(function)
-        if const.isConstant {
+        if function.traits.traits[.function(.noCapture)] != nil {
+            return const // function with 'no capture' trait don't need a closure
+        }
+        if function.notBuilt {
+            var diagnostics: [Diagnostic] = []
+            function.traits.add(trait: TraitContainer.TraitInfo(trait: .function(.noCapture), source: .implicitlyConstrained(lfunction.node!, reason: .functionUsedBeforeDefinition)), diagnostics: &diagnostics)
+            assert(diagnostics.isEmpty, "Adding 'no capture' cannot fail")
             return const
         }
         let inst = ClosureInst(name: LocalRef(givenName: "\(function.name) closure", type: function.type).noLocation, function: lfunction)

@@ -21,6 +21,7 @@ class FunctionParsingContext: ParsingContext {
     var registeredFunctions: [ObjectID<FunctionInstruction>: Function] = [:]
     
     init(parent: ParsingContext, function: Function) {
+        function.notBuilt = false
         self.function = function
         self.builder = SuffilBuilder(function: function)
         super.init(parent: parent)
@@ -45,14 +46,14 @@ class FunctionParsingContext: ParsingContext {
     }
     
     override func capture(binding: Binding, node: ASTNode) -> Ref? {
-        if binding.ref.isConstant {
-            return binding.ref
-        }
         if bindings.contains(where: { $0 === binding }) {
             if case .function(let fn) = binding.ref,
                case .instruction = fn.source {
                 binding.ref = builder.buildClosure(function: LocatedFunction(value: fn, node: node, binding: binding))
             }
+            return binding.ref
+        }
+        if binding.ref.isConstant {
             return binding.ref
         }
         if let match = function.captures.first(where: { $0.binding === binding }) {

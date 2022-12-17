@@ -47,10 +47,9 @@ extension Ref: CustomStringConvertible {
 extension Ref {
     var isConstant: Bool {
         switch self {
-        case .function(let function):
-            // If the function hasn't been parsed yet, the captures will always be empty
-            // If there is captures, an error will be raised in ClosurePass
-            return function.captures.isEmpty
+        case .function:
+            // This should go through `buildClosure` to become a non-constant closure, if there are captures
+            return true
         case .local:
             return false
         case .intLiteral, .floatLiteral, .strLiteral:

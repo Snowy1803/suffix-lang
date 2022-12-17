@@ -26,8 +26,6 @@ class ClosurePass: TypeCheckingPass {
         for inst in function.instructions {
             if case .closure(let closureInst) = inst {
                 run(closure: closureInst, typechecker: typechecker)
-            } else {
-                checkFunctionsAreConstant(inst: inst, typechecker: typechecker)
             }
         }
     }
@@ -36,25 +34,6 @@ class ClosurePass: TypeCheckingPass {
         assert(inst.captures.isEmpty, "Closure resolution ran twice")
         for capture in inst.function.value.captures {
             inst.captures.append(LocatedRef(value: capture.parentRef, binding: capture.binding))
-        }
-    }
-    
-    func checkFunctionsAreConstant(inst: Inst, typechecker: TypeChecker) {
-        for used in inst.wrapped.usingRefs {
-            if case .function(let function) = used.value,
-                !function.captures.isEmpty,
-               let tokens = used.node?.nodeAllTokens {
-                typechecker.diagnostics.append(Diagnostic(
-                    tokens: tokens,
-                    message: .hintUseFunctionWithCapturesBeforeDefinition(function.name), // FIXME: remove
-                    severity: .error,
-                    hints: function.captures.compactMap { cap -> Diagnostic? in
-                        guard let tokens = cap.firstLocation.node?.nodeAllTokens else {
-                            return nil
-                        }
-                        return Diagnostic(tokens: tokens, message: .hintCaptureHere(cap.binding.name), severity: .hint)
-                    }))
-            }
         }
     }
 }

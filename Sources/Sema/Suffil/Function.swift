@@ -25,6 +25,7 @@ public final class Function {
     // these are empty if builtin or synthesized
     var arguments: [LocalRef]
     var instructions: [Inst]
+    var notBuilt: Bool
     
     init(parent: Function?, name: String, type: FunctionType, source: Source, traits: TraitContainer) {
         assert(traits.type == .func)
@@ -36,6 +37,11 @@ public final class Function {
         self.captures = []
         self.arguments = [] // this is populated by the resolver
         self.instructions = []
+        if case .instruction = source {
+            notBuilt = true
+        } else {
+            notBuilt = false
+        }
     }
     
     var isSynthesized: Bool {
