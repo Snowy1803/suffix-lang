@@ -19,5 +19,6 @@ extension FunctionTypeReference {
         }
         self.arguments = arguments
         self.returning = ReturnValues(assert: stream)
+        self.traits = GenericTraitsArgument(stream: stream)
     }
 }

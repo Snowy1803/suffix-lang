@@ -75,3 +75,29 @@ extension GenericDefinition.Generic {
         }
     }
 }
+
+extension GenericTraitsArgument {
+    init?(stream: TokenStream) {
+        guard let open = stream.consumeOne(type: .bracketOpen) else {
+            return nil
+        }
+        self.open = open
+        self.traits = []
+        while let generic = Generic(stream: stream) {
+            self.traits.append(generic)
+        }
+        self.close = stream.consumeOne(assert: .bracketClose, recoveryDefault: "]")
+    }
+}
+
+extension GenericTraitsArgument.Generic {
+    init?(stream: TokenStream) {
+        guard let trait = TraitReference(stream: stream) else {
+            return nil
+        }
+        self.trait = trait
+        if let comma = stream.consumeOne(type: .comma) {
+            self.trailingComma = comma
+        }
+    }
+}

@@ -38,3 +38,14 @@ public struct GenericDefinition: ASTNode {
         public var trailingComma: Token?
     }
 }
+
+public struct GenericTraitsArgument: ASTNode {
+    public var open: Token
+    public var traits: [Generic]
+    public var close: Token
+    
+    public struct Generic: ASTNode {
+        public var trait: TraitReference
+        public var trailingComma: Token?
+    }
+}

@@ -32,6 +32,14 @@ extension TraitCollection.Trait {
 }
 
 extension TraitReference {
+    init?(stream: TokenStream) {
+        guard let name = Identifier(stream: stream, allow: .inTraitName) else {
+            return nil
+        }
+        self.name = name
+        self.generics = GenericTypeArguments(stream: stream)
+    }
+    
     init(assert stream: TokenStream) {
         self.name = Identifier(assert: stream, allow: .inTraitName)
         self.generics = GenericTypeArguments(stream: stream)

@@ -15,6 +15,7 @@ import Foundation
 public struct FunctionTypeReference: ASTNode {
     public var arguments: Arguments
     public var returning: ReturnValues
+    public var traits: GenericTraitsArgument?
     
     public struct Arguments: ASTNode {
         public var open: Token
