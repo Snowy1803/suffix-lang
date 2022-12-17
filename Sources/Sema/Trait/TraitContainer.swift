@@ -50,7 +50,14 @@ struct TraitContainer {
     init(type: TraitContainerType, source: Bool, traits: [TraitInfo], diagnostics: inout [Diagnostic]) {
         self.type = type
         self.source = source
-        self.traits = Dictionary(uniqueKeysWithValues: traits.map { ($0.trait, $0) })
+        self.traits = [:]
+        for trait in traits {
+            if let previous = self.traits[trait.trait] {
+                diagnostics.append(Diagnostic(tokens: diagnosticTokens(for: trait.source), message: .duplicateTrait(trait.trait.wrapped.name), severity: .error, hints: [Diagnostic(tokens: diagnosticTokens(for: previous.source), message: .hintTraitExplicitHere(previous.trait.wrapped.name), severity: .hint)]))
+            } else {
+                self.traits[trait.trait] = trait
+            }
+        }
         populateImpliedTraits(diagnostics: &diagnostics)
     }
     

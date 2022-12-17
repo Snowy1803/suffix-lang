@@ -41,6 +41,7 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case captureInNoCaptureFunc(binding: String, function: String)
     case incompatibleTraitsProvided(TraitContainer.TraitInfo, TraitContainer.TraitInfo)
     case invalidTrait(expected: TraitContainerType, trait: TraitContainer.TraitInfo)
+    case duplicateTrait(String)
     
     case hintReturnHere(SType)
     case hintCaptureHere(String)
@@ -85,6 +86,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Traits '\(lhs.trait.wrapped.name)' and '\(rhs.trait.wrapped.name)' are incompatible"
         case .invalidTrait(expected: let expected, trait: let trait):
             return "Trait '\(trait.trait.wrapped.name)' cannot be used in a '\(expected)'"
+        case .duplicateTrait(let name):
+            return "Duplicate trait '\(name)'"
         case .hintReturnHere(let type):
             return "Value of type '\(type)' returned here"
         case .hintCaptureHere(let name):
