@@ -27,3 +27,16 @@ public struct RecordBlock: ASTNode {
     public var content: [BindInstruction]
     public var close: Token
 }
+
+public enum BlockOrSemicolon: ASTEnum {
+    case semicolon(Token)
+    case block(Block)
+    
+    public var node: ASTNode {
+        switch self {
+        case .semicolon(let node as ASTNode),
+             .block(let node as ASTNode):
+            return node
+        }
+    }
+}

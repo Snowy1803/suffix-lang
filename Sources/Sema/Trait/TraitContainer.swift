@@ -44,6 +44,7 @@ struct TraitContainer {
         
         enum ConstraintReason {
             case functionUsedBeforeDefinition // -> 'no capture'
+            case functionWithSemicolon // -> 'extern'
         }
     }
     

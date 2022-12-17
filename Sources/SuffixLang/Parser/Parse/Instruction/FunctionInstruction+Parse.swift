@@ -24,7 +24,7 @@ extension FunctionInstruction {
             arguments: FunctionTypeReference.Arguments(assert: stream),
             returning: FunctionTypeReference.ReturnValues(assert: stream),
             traits: TraitCollection(stream: stream),
-            block: Block(stream: stream)
+            block: BlockOrSemicolon(stream: stream)
         )
     }
 }

@@ -43,7 +43,11 @@ extension BlockContent {
             case .synthesized, .builtin:
                 preconditionFailure()
             case .instruction(let fn):
-                token = fn.block.close
+                if case .block(let block) = fn.block {
+                    token = block.close
+                } else {
+                    preconditionFailure()
+                }
             case .anonymous(let fn):
                 token = fn.block.close
             case .main:
@@ -76,7 +80,11 @@ extension BlockContent {
             case .synthesized, .builtin, .main:
                 preconditionFailure()
             case .instruction(let fn):
-                token = fn.block.close
+                if case .block(let block) = fn.block {
+                    token = block.close
+                } else {
+                    preconditionFailure()
+                }
             case .anonymous(let fn):
                 token = fn.block.close
             }

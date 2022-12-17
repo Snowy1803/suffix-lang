@@ -39,3 +39,13 @@ extension RecordBlock {
         self.close = stream.consumeOne(assert: .curlyClose, recoveryDefault: "}")
     }
 }
+
+extension BlockOrSemicolon {
+    init(stream: TokenStream) {
+        if let semicolon = stream.consumeOne(type: .semicolon) {
+            self = .semicolon(semicolon)
+        } else {
+            self = .block(Block(stream: stream))
+        }
+    }
+}

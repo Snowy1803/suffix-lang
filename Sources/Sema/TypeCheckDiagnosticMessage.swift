@@ -42,6 +42,7 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case incompatibleTraitsProvided(TraitContainer.TraitInfo, TraitContainer.TraitInfo)
     case invalidTrait(expected: TraitContainerType, trait: TraitContainer.TraitInfo)
     case duplicateTrait(String)
+    case externWithBlock
     
     case hintReturnHere(SType)
     case hintCaptureHere(String)
@@ -49,6 +50,7 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case hintTraitImpliedFrom(String, original: String)
     case hintTraitInheritedFrom(String)
     case hintUseFunctionWithCapturesBeforeDefinition(String)
+    case hintSemicolonFunction(String)
     
     var description: String {
         switch self {
@@ -86,6 +88,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Traits '\(lhs.trait.wrapped.name)' and '\(rhs.trait.wrapped.name)' are incompatible"
         case .invalidTrait(expected: let expected, trait: let trait):
             return "Trait '\(trait.trait.wrapped.name)' cannot be used in a '\(expected)'"
+        case .externWithBlock:
+            return "Functions with the 'extern' trait cannot have a definition, consider replacing it with a semicolon"
         case .duplicateTrait(let name):
             return "Duplicate trait '\(name)'"
         case .hintReturnHere(let type):
@@ -100,6 +104,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Trait '\(name)' was inherited from an outer function"
         case .hintUseFunctionWithCapturesBeforeDefinition(let function):
             return "Using function '\(function)' before it is defined implies it does not capture values"
+        case .hintSemicolonFunction(let function):
+            return "Trait 'extern' is implied because a semicolon was used for '\(function)'"
         }
     }
 }
@@ -126,6 +132,8 @@ extension TraitContainer.TraitInfo {
             switch reason {
             case .functionUsedBeforeDefinition:
                 return Diagnostic(tokens: node.nodeAllTokens, message: .hintUseFunctionWithCapturesBeforeDefinition(self.trait.wrapped.name), severity: .hint)
+            case .functionWithSemicolon:
+                return Diagnostic(tokens: node.nodeAllTokens, message: .hintSemicolonFunction(self.trait.wrapped.name), severity: .hint)
             }
         case .inferred:
             print("Inferences will only be added if there is no issue")

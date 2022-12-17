@@ -49,7 +49,17 @@ extension Instruction {
         case .function(let functionInstruction):
             let subcontext = functionInstruction.createSubContext(parent: context)
             functionInstruction.registerLocalBindings(subcontext: subcontext)
-            functionInstruction.block.content.typecheckContent(context: subcontext)
+            switch functionInstruction.block {
+            case .block(let block):
+                if let info = subcontext.function.traits.traits[.function(.extern)] {
+                    context.typeChecker.diagnostics.append(Diagnostic(token: block.open, message: .externWithBlock, severity: .error, hints: [info.hint].compactMap({ $0 })))
+                }
+                block.content.typecheckContent(context: subcontext)
+            case .semicolon(let token):
+                if subcontext.function.traits.traits[.function(.extern)] == nil {
+                    subcontext.function.traits.add(trait: TraitContainer.TraitInfo(trait: .function(.extern), source: .implicitlyConstrained(token, reason: .functionWithSemicolon)), diagnostics: &context.typeChecker.diagnostics)
+                }
+            }
         case .record, .enum:
             break
         }

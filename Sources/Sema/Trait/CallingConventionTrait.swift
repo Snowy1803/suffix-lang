@@ -25,7 +25,7 @@ enum CallingConventionTrait: String, TraitProtocol, Equatable, Hashable, CaseIte
     var implies: Set<Trait> {
         switch self {
         case .c, .grph:
-            return [.function(.constant)]
+            return [.function(.noCapture)]
         case .suffix:
             return []
         }
