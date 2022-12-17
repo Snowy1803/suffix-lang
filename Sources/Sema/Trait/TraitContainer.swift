@@ -14,7 +14,8 @@ import Foundation
 import SuffixLang
 
 struct TraitContainer {
-    var type: TraitContainerType
+    let type: TraitContainerType
+    let source: Bool
     private(set) var traits: [Trait: TraitInfo]
     
     struct TraitInfo {
@@ -46,19 +47,26 @@ struct TraitContainer {
         }
     }
     
-    init(type: TraitContainerType, traits: [TraitInfo], diagnostics: inout [Diagnostic]) {
+    init(type: TraitContainerType, source: Bool, traits: [TraitInfo], diagnostics: inout [Diagnostic]) {
         self.type = type
+        self.source = source
         self.traits = Dictionary(uniqueKeysWithValues: traits.map { ($0.trait, $0) })
         populateImpliedTraits(diagnostics: &diagnostics)
     }
     
-    init(type: TraitContainerType, builtin: [Trait]) {
+    init(type: TraitContainerType, source: Bool, builtin: [Trait]) {
         self.type = type
-        let traits = ([.accessControl(type == .trait ? .open : .public)] + builtin).map { TraitInfo(trait: $0, source: .builtin) }
+        self.source = source
+        let defaultAccessControl: [Trait] = (source ? [.accessControl(type == .trait ? .open : .public)] : [])
+        let traits = (defaultAccessControl + builtin).map { TraitInfo(trait: $0, source: .builtin) }
         self.traits = Dictionary(uniqueKeysWithValues: traits.map { ($0.trait, $0) })
         var diagnostics: [Diagnostic] = []
         populateImpliedTraits(diagnostics: &diagnostics)
         assert(diagnostics.isEmpty)
+    }
+    
+    init(builtinTraitWithTraits traits: [Trait]) {
+        self.init(type: .trait, source: true, builtin: traits)
     }
     
     mutating func add(trait: TraitInfo, diagnostics: inout [Diagnostic]) {

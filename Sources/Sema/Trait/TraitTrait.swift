@@ -38,6 +38,6 @@ enum TraitTrait: String, TraitProtocol, Equatable, Hashable, CaseIterable {
     }
     
     var traits: TraitContainer {
-        TraitContainer(type: .trait, builtin: [.trait(.traitTrait)])
+        TraitContainer(builtinTraitWithTraits: [.trait(.traitTrait)])
     }
 }

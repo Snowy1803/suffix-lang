@@ -17,7 +17,7 @@ extension TypeReference {
     func resolve(context: ParsingContext) -> SType {
         switch self {
         case .function(let function):
-            return FunctionType(generics: [], arguments: function.arguments.resolve(context: context), returning: function.returning.resolve(context: context))
+            return FunctionType(generics: [], arguments: function.arguments.resolve(context: context), returning: function.returning.resolve(context: context), traits: TraitContainer(type: .func, source: false, traits: function.traits?.createContainer(context: context) ?? [], diagnostics: &context.typeChecker.diagnostics))
         case .generic(let generic):
             guard let named = context.getType(name: generic.name.identifier) else {
                 context.typeChecker.diagnostics.append(Diagnostic(tokens: generic.name.tokens, message: .unknownType(generic.name.identifier), severity: .error))

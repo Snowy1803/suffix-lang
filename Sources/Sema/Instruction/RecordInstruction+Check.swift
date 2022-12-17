@@ -38,20 +38,20 @@ extension RecordInstruction {
                 inner = AnyType.shared
             }
             let name = bind.value.literal.identifier
-            let type = FunctionType(arguments: [.init(type: record)], returning: [.init(type: inner)])
+            let type = FunctionType(arguments: [.init(type: record)], returning: [.init(type: inner)], traits: TraitContainer(type: .func, source: false, traits: [], diagnostics: &context.typeChecker.diagnostics))
             context.bindings.append(Binding(
                 name: name,
                 type: type,
                 source: .recordFieldAccessor(record, self, bind),
-                ref: .function(context.createFunction(name: name, type: type, source: .synthesized, traits: TraitContainer(type: .func, traits: [], diagnostics: &context.typeChecker.diagnostics)))))
+                ref: .function(context.createFunction(name: name, type: type, source: .synthesized, traits: TraitContainer(type: .func, source: true, traits: [], diagnostics: &context.typeChecker.diagnostics)))))
             return RecordType.Field(name: bind.value.literal.identifier, type: inner, source: bind)
         }
         let constructorName = "new \(name.identifier)"
-        let constructorType = FunctionType(arguments: record.fields.map { .init(type: $0.type) }, returning: [.init(type: record)])
+        let constructorType = FunctionType(arguments: record.fields.map { .init(type: $0.type) }, returning: [.init(type: record)], traits: TraitContainer(type: .func, source: false, traits: [], diagnostics: &context.typeChecker.diagnostics))
         context.bindings.append(Binding(
             name: constructorName,
             type: constructorType,
             source: .recordConstructor(record, self),
-            ref: .function(context.createFunction(name: constructorName, type: constructorType, source: .synthesized, traits: TraitContainer(type: .func, traits: [], diagnostics: &context.typeChecker.diagnostics)))))
+            ref: .function(context.createFunction(name: constructorName, type: constructorType, source: .synthesized, traits: TraitContainer(type: .func, source: true, traits: [], diagnostics: &context.typeChecker.diagnostics)))))
     }
 }

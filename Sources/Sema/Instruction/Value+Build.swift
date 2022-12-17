@@ -35,7 +35,7 @@ extension Value {
                 }
             }
             // TODO: define that function
-            let ftype = FunctionType(arguments: [.init(type: ArrayType(element: AnyType.shared))], returning: [.init(type: StringType.shared)])
+            let ftype = FunctionType(arguments: [.init(type: ArrayType(element: AnyType.shared))], returning: [.init(type: StringType.shared)], traits: TraitContainer(type: .func, source: false, builtin: [.function(.constant)]))
             guard let ref = context.getBindings(name: "interpolate string literal").last(where: { $0.type.canBeAssigned(to: ftype) })?.ref else {
                 context.typeChecker.diagnostics.append(Diagnostic(token: str.token, message: .noViableBinding("interpolate string literal"), severity: .error))
                 return (LocatedRef(value: .strLiteral(""), node: str), StringType.shared)

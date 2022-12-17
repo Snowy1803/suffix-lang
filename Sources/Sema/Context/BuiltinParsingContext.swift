@@ -34,28 +34,38 @@ class BuiltinParsingContext: ParsingContext {
         ]
         self.bindings = EnumType.bool.caseBindings
         createBuiltinFunction(
-            name: "join", type: FunctionType(
-                arguments: [.init(type: str, variadic: true)],
-                returning: [.init(type: str)]),
-            traits: TraitContainer(type: .func, builtin: [.function(.constant)]))
+            name: "join",
+            arguments: [.init(type: str, variadic: true)],
+            returning: [str],
+            traits: [.function(.constant)])
         createBuiltinFunction(
-            name: "print", type: FunctionType(
-                arguments: [.init(type: any, variadic: true)],
-                returning: []),
-            traits: TraitContainer(type: .func, builtin: [.function(.impure)]))
-        createBuiltinFunction(
-            name: "select", type: GenericArchetype(name: "T")
-                .with { t in
-                    FunctionType(
-                        generics: [t],
-                        arguments: [.init(type: bool), .init(type: t), .init(type: t)],
-                        returning: [.init(type: t)])
-                },
-            traits: TraitContainer(type: .func, builtin: [.function(.constant)]))
+            name: "print",
+            arguments: [.init(type: any, variadic: true)],
+            returning: [],
+            traits: [.function(.impure)])
+        GenericArchetype(name: "T")
+            .with { t in
+                createBuiltinFunction(
+                    name: "select",
+                    generics: [t],
+                    arguments: [.init(type: bool), .init(type: t), .init(type: t)],
+                    returning: [t],
+                    traits: [.function(.constant)])
+            }
     }
     
-    func createBuiltinFunction(name: String, type: FunctionType, traits: TraitContainer) {
-        let function = Function(parent: nil, name: name, type: type, source: .builtin, traits: traits)
+    func createBuiltinFunction(name: String, generics: [GenericArchetype] = [], arguments: [FunctionType.Argument], returning: [SType], traits: [Trait]) {
+        let type = FunctionType(
+            generics: generics,
+            arguments: arguments,
+            returning: returning.map { .init(type: $0) },
+            traits: TraitContainer(type: .func, source: false, builtin: traits))
+        let function = Function(
+            parent: nil,
+            name: name,
+            type: type,
+            source: .builtin,
+            traits: TraitContainer(type: .func, source: true, builtin: traits))
         self.bindings.append(Binding(name: name, type: type, source: .builtin, ref: .function(function)))
     }
 }

@@ -17,11 +17,13 @@ public class FunctionType: SType {
     let generics: [GenericArchetype]
     public let arguments: [Argument]
     public let returning: [Argument]
+    let traits: TraitContainer
     
-    init(generics: [GenericArchetype] = [], arguments: [Argument], returning: [Argument]) {
+    init(generics: [GenericArchetype] = [], arguments: [Argument], returning: [Argument], traits: TraitContainer) {
         self.generics = generics
         self.arguments = arguments
         self.returning = returning
+        self.traits = traits
     }
     
     var variadicIndex: Int? {
@@ -67,7 +69,8 @@ public class FunctionType: SType {
         FunctionType(
             generics: generics.filter { !map.contains(type: $0) },
             arguments: arguments.map { Argument(type: $0.type.map(with: map), variadic: $0.variadic) },
-            returning: returning.map { Argument(type: $0.type.map(with: map), variadic: $0.variadic) }
+            returning: returning.map { Argument(type: $0.type.map(with: map), variadic: $0.variadic) },
+            traits: traits
         )
     }
     
@@ -78,6 +81,9 @@ public class FunctionType: SType {
         }
         desc += "(\(arguments.map(\.description).joined(separator: ", "))) "
         desc += "(\(returning.map(\.description).joined(separator: ", ")))"
+        if !traits.traits.isEmpty {
+            desc += " [\(traits.traits.keys.map(\.wrapped.name).sorted().joined(separator: ", "))]"
+        }
         return desc
     }
     

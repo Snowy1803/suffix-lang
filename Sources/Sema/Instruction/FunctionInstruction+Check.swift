@@ -14,17 +14,19 @@ import Foundation
 import SuffixLang
 
 extension FunctionInstruction {
-    private func resolve(context: ParsingContext, generics: [GenericArchetype]) -> FunctionType {
+    private func resolve(context: ParsingContext, generics: [GenericArchetype], traits: TraitContainer) -> FunctionType {
         let resolved = arguments.resolve(context: context)
-        return FunctionType(generics: generics, arguments: resolved, returning: returning.resolve(context: context))
+        return FunctionType(generics: generics, arguments: resolved, returning: returning.resolve(context: context), traits: traits)
     }
     
     func registerGlobalBindings(parent: FunctionParsingContext) {
         let partial = PartialFunctionParsingContext(parent: parent)
         let genericArguments = generics?.generics.map { GenericArchetype(name: $0.name.identifier) } ?? []
         partial.types.append(contentsOf: genericArguments)
-        let resolved = resolve(context: partial, generics: genericArguments)
-        let function = parent.createFunction(name: name.identifier, type: resolved, source: .instruction(self), traits: TraitContainer(type: .func, traits: traits.createContainer(context: parent), diagnostics: &parent.typeChecker.diagnostics))
+        // hope TraitContainer stays a value type
+        let traits = TraitContainer(type: .func, source: true, traits: traits.createContainer(context: parent), diagnostics: &parent.typeChecker.diagnostics)
+        let resolved = resolve(context: partial, generics: genericArguments, traits: traits)
+        let function = parent.createFunction(name: name.identifier, type: resolved, source: .instruction(self), traits: traits)
         parent.registeredFunctions[ObjectID(self)] = function
         parent.bindings.append(Binding(name: function.name, type: function.type, source: .function(self), ref: .function(function)))
     }
@@ -46,17 +48,18 @@ extension FunctionInstruction {
 }
 
 extension AnonymousFunctionValue {
-    private func resolve(context: ParsingContext, generics: [GenericArchetype]) -> FunctionType {
+    private func resolve(context: ParsingContext, generics: [GenericArchetype], traits: TraitContainer) -> FunctionType {
         let resolved = arguments.resolve(context: context)
-        return FunctionType(generics: generics, arguments: resolved, returning: returning.resolve(context: context))
+        return FunctionType(generics: generics, arguments: resolved, returning: returning.resolve(context: context), traits: traits)
     }
     
     func createAnonymousFunctionContext(parent: FunctionParsingContext) -> FunctionParsingContext {
         let partial = PartialFunctionParsingContext(parent: parent)
         let genericArguments = generics?.generics.map { GenericArchetype(name: $0.name.identifier) } ?? []
         partial.types.append(contentsOf: genericArguments)
-        let resolved = resolve(context: partial, generics: genericArguments)
-        let function = parent.createFunction(name: "anonymous function", type: resolved, source: .anonymous(self), traits: TraitContainer(type: .func, traits: traits.createContainer(context: parent), diagnostics: &parent.typeChecker.diagnostics))
+        let traits = TraitContainer(type: .func, source: true, traits: traits.createContainer(context: parent), diagnostics: &parent.typeChecker.diagnostics)
+        let resolved = resolve(context: partial, generics: genericArguments, traits: traits)
+        let function = parent.createFunction(name: "anonymous function", type: resolved, source: .anonymous(self), traits: traits)
         let subcontext = FunctionParsingContext(parent: parent, function: function)
         subcontext.types.append(contentsOf: function.type.generics)
         return subcontext
@@ -152,7 +155,19 @@ extension FunctionTypeReference.ReturnValue {
 
 extension TraitCollection {
     func createContainer(context: ParsingContext) -> [TraitContainer.TraitInfo] {
-        self.traits.map(\.trait).compactMap { ref in
+        self.traits.map(\.trait).createContainer(context: context)
+    }
+}
+
+extension GenericTraitsArgument {
+    func createContainer(context: ParsingContext) -> [TraitContainer.TraitInfo] {
+        self.traits.map(\.trait).createContainer(context: context)
+    }
+}
+
+private extension Array<TraitReference> {
+    func createContainer(context: ParsingContext) -> [TraitContainer.TraitInfo] {
+        self.compactMap { ref in
             guard let trait = context.getTrait(name: ref.name.identifier) else {
                 context.typeChecker.diagnostics.append(Diagnostic(tokens: ref.name.tokens, message: .unknownTrait(ref.name.identifier), severity: .error))
                 return nil

@@ -95,3 +95,9 @@ final class TypeConversionTests: XCTestCase {
     }
     
 }
+
+extension FunctionType {
+    convenience init(arguments: [Argument], returning: [Argument]) {
+        self.init(arguments: arguments, returning: returning, traits: TraitContainer(type: .func, source: false, builtin: []))
+    }
+}

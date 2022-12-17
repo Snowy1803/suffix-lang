@@ -32,6 +32,6 @@ enum CallingConventionTrait: String, TraitProtocol, Equatable, Hashable, CaseIte
     }
     
     var traits: TraitContainer {
-        TraitContainer(type: .trait, builtin: [.trait(.funcTrait)])
+        TraitContainer(builtinTraitWithTraits: [.trait(.funcTrait)])
     }
 }
