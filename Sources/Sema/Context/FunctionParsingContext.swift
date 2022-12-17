@@ -44,7 +44,7 @@ class FunctionParsingContext: ParsingContext {
         }
     }
     
-    override func capture(binding: Binding, node: ASTNode) -> Ref! {
+    override func capture(binding: Binding, node: ASTNode) -> Ref? {
         if binding.ref.isConstant {
             return binding.ref
         }
@@ -58,8 +58,13 @@ class FunctionParsingContext: ParsingContext {
         if let match = function.captures.first(where: { $0.binding === binding }) {
             return .local(match.ref)
         }
-        guard let toCapture = parent?.capture(binding: binding, node: node) else {
+        if function.traits.traits.keys.contains(.function(.noCapture)) {
+            typeChecker.diagnostics.append(Diagnostic(tokens: node.nodeAllTokens, message: .captureInNoCaptureFunc(binding: binding.name, function: function.name), severity: .error))
+            // TODO: add hints
             return nil
+        }
+        guard let toCapture = parent?.capture(binding: binding, node: node) else {
+            fatalError("Tried to capture a binding that does not exist")
         }
         let capture = LocalRef(givenName: binding.name, type: binding.type)
         function.captures.append(Function.Capture(binding: binding, ref: capture, parentRef: toCapture, firstLocation: LocationInfo(value: (), node: node, binding: binding)))

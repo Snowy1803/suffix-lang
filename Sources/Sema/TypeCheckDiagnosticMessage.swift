@@ -41,6 +41,7 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case genericTypeParameterMissing(expected: Int)
     case useFunctionWithCapturesBeforeDefinition(String)
     case hintCaptureHere(String)
+    case captureInNoCaptureFunc(binding: String, function: String)
     case incompatibleTraitsProvided(TraitContainer.TraitInfo, TraitContainer.TraitInfo)
     case invalidTrait(expected: TraitContainerType, trait: TraitContainer.TraitInfo)
     
@@ -80,6 +81,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Cannot use function '\(function)' before it is defined as it captures values"
         case .hintCaptureHere(let name):
             return "Binding '\(name)' captured here"
+        case .captureInNoCaptureFunc(let name, let funcname):
+            return "Cannot capture outside non-constant binding '\(name)', function '\(funcname)' has trait 'no capture'"
         case .incompatibleTraitsProvided(let lhs, let rhs):
             return "Traits '\(lhs.trait.wrapped.name)' and '\(rhs.trait.wrapped.name)' are incompatible"
         case .invalidTrait(expected: let expected, trait: let trait):

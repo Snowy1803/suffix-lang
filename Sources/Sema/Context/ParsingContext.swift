@@ -29,7 +29,7 @@ class ParsingContext {
         return result
     }
     
-    func capture(binding: Binding, node: ASTNode) -> Ref! {
+    func capture(binding: Binding, node: ASTNode) -> Ref? {
         // see FunctionParsingContext.capture(binding:node:)
         if bindings.contains(where: { $0 === binding }) {
             return binding.ref

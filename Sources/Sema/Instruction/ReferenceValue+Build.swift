@@ -26,7 +26,9 @@ extension ReferenceValue {
             context.typeChecker.diagnostics.append(Diagnostic(tokens: identifier.literal.tokens, message: .noViableBinding(identifier.literal.identifier), severity: .error))
             return (Ref.intLiteral(0).noLocation, type ?? AnyType.shared) // this may make additional unwanted errors
         }
-        let ref: Ref = context.capture(binding: binding, node: self)
+        guard let ref = context.capture(binding: binding, node: self) else {
+            return (Ref.intLiteral(0).noLocation, type ?? AnyType.shared) // this may make additional unwanted errors
+        }
         return (LocatedRef(value: context.builder.buildCopy(value: LocatedRef(value: ref, node: self, binding: binding), type: binding.type), node: self), binding.type)
     }
 }
