@@ -39,8 +39,6 @@ public enum TokenType: Equatable, Hashable {
     case bindOperator
     /// The `:` identifier typing operator
     case typingOperator
-    /// The `::` type coercing operator
-    case coercingOperator
     
     /// The `{` token, used for function definitions
     case curlyOpen
@@ -58,7 +56,11 @@ public enum TokenType: Equatable, Hashable {
     case comma
     /// The `...` token
     case variadic
+    /// The `;` declaration terminator
+    case semicolon
     
+    /// The `::` type coercing operator (to be removed)
+    case coercingOperator
     /// The `..` token
     case twoDots
     /// Anything unknown, out of normal, errored

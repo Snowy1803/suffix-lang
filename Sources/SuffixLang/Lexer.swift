@@ -78,7 +78,7 @@ public class Lexer {
                 return .satisfies
             }
             return .newToken
-        case .pushOperator, .bindOperator, .coercingOperator, .variadic, .curlyOpen, .curlyClose, .parenOpen, .parenClose, .bracketOpen, .bracketClose, .comma, .unresolved:
+        case .pushOperator, .bindOperator, .coercingOperator, .variadic, .curlyOpen, .curlyClose, .parenOpen, .parenClose, .bracketOpen, .bracketClose, .comma, .semicolon, .unresolved:
             return .newToken
         case .keyword:
             print("shouldn't happen")
@@ -124,6 +124,8 @@ public class Lexer {
             return .bracketClose
         case ",":
             return .comma
+        case ";":
+            return .semicolon
         default:
             return .unresolved
         }
