@@ -26,6 +26,12 @@ public struct Token {
     public var data: AssociatedData?
 }
 
+extension Token: Equatable {
+    public static func == (lhs: Token, rhs: Token) -> Bool {
+        lhs.literal.startIndex == rhs.literal.startIndex && lhs.literal.base == rhs.literal.base
+    }
+}
+
 extension Token {
     public enum AssociatedData {
         case interpolation([StringComponent])

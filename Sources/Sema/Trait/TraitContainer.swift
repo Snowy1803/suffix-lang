@@ -114,6 +114,9 @@ struct TraitContainer {
                 } else {
                     (first, second) = (other, trait)
                 }
+                if diagnostics.contains(where: { $0.tokens == diagnosticTokens(for: first.source) }) {
+                    continue // already reported
+                }
                 diagnostics.append(Diagnostic(tokens: diagnosticTokens(for: second.source), message: .incompatibleTraitsProvided(first, second), severity: .error, hints: [first.hint].compactMap { $0 }))
             }
         }
