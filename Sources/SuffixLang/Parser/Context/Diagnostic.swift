@@ -13,7 +13,7 @@
 import Foundation
 
 public struct Diagnostic {
-    var tokens: [Token]
+    public private(set) var tokens: [Token]
     public var message: DiagnosticMessage
     public var severity: Severity
     public var hints: [Diagnostic]

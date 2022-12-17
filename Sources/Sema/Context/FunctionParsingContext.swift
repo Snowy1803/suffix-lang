@@ -58,9 +58,8 @@ class FunctionParsingContext: ParsingContext {
         if let match = function.captures.first(where: { $0.binding === binding }) {
             return .local(match.ref)
         }
-        if function.traits.traits.keys.contains(.function(.noCapture)) {
-            typeChecker.diagnostics.append(Diagnostic(tokens: node.nodeAllTokens, message: .captureInNoCaptureFunc(binding: binding.name, function: function.name), severity: .error))
-            // TODO: add hints
+        if let info = function.traits.traits[.function(.noCapture)] {
+            typeChecker.diagnostics.append(Diagnostic(tokens: node.nodeAllTokens, message: .captureInNoCaptureFunc(binding: binding.name, function: function.name), severity: .error, hints: [info.hint].compactMap { $0 }))
             return nil
         }
         guard let toCapture = parent?.capture(binding: binding, node: node) else {

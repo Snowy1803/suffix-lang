@@ -34,11 +34,15 @@ struct TraitContainer {
             ///
             /// For a function, this will be the `no capture` trait.
             /// If it is called inside a `match` statement, it will be the `constant` trait
-            case implicitlyConstrained(ASTNode)
+            case implicitlyConstrained(ASTNode, reason: ConstraintReason)
             /// The trait was inferred by a construct inside the definition
             ///
             /// For a function, this may be the `pure` trait.
             case inferred(ASTNode)
+        }
+        
+        enum ConstraintReason {
+            case functionUsedBeforeDefinition // -> 'no capture'
         }
     }
     
@@ -86,7 +90,7 @@ struct TraitContainer {
             }
         }
         for excluded in trait.trait.wrapped.exclusiveWith {
-            if let other = traits[excluded] {
+            if let other = traits[excluded] { // TODO: avoid double diagnostic
                 diagnostics.append(Diagnostic(tokens: diagnosticTokens(for: trait.source), message: .incompatibleTraitsProvided(trait, other), severity: .error, hints: [Diagnostic(tokens: diagnosticTokens(for: other.source), message: .incompatibleTraitsProvided(trait, other), severity: .error)]))
             }
         }
@@ -100,7 +104,7 @@ struct TraitContainer {
             return traitReference.nodeAllTokens
         case .implied(let traitInfo), .inherited(let traitInfo):
             return diagnosticTokens(for: traitInfo.source)
-        case .implicitlyConstrained(let node), .inferred(let node):
+        case .implicitlyConstrained(let node, _), .inferred(let node):
             return node.nodeAllTokens
         }
     }

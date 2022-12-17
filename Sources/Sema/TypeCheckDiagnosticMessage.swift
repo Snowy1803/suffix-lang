@@ -36,14 +36,18 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case returningTooMuch(expected: [SType], actual: [SType])
     case returnMissing(expected: [SType], actual: [SType])
     case returningFromMain
-    case hintReturnHere(SType)
     case genericTypeParameterCountInvalid(expected: Int, actual: Int)
     case genericTypeParameterMissing(expected: Int)
-    case useFunctionWithCapturesBeforeDefinition(String)
-    case hintCaptureHere(String)
     case captureInNoCaptureFunc(binding: String, function: String)
     case incompatibleTraitsProvided(TraitContainer.TraitInfo, TraitContainer.TraitInfo)
     case invalidTrait(expected: TraitContainerType, trait: TraitContainer.TraitInfo)
+    
+    case hintReturnHere(SType)
+    case hintCaptureHere(String)
+    case hintTraitExplicitHere(String)
+    case hintTraitImpliedFrom(String, original: String)
+    case hintTraitInheritedFrom(String)
+    case hintUseFunctionWithCapturesBeforeDefinition(String)
     
     var description: String {
         switch self {
@@ -71,22 +75,58 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Missing return values: expected to get (\(expected.map(\.description).joined(separator: ", "))) but found  (\(actual.map(\.description).joined(separator: ", ")))"
         case .returningFromMain:
             return "Unused value in main function"
-        case .hintReturnHere(let type):
-            return "Value of type '\(type)' returned here"
         case .genericTypeParameterCountInvalid(expected: let expected, actual: let actual):
             return "Expected \(expected) type parameter\(expected > 1 ? "s" : ""), but found \(actual)"
         case .genericTypeParameterMissing(let expected):
             return "Generic type must be parameterized, expected \(expected) type parameter\(expected > 1 ? "s" : "")"
-        case .useFunctionWithCapturesBeforeDefinition(let function):
-            return "Cannot use function '\(function)' before it is defined as it captures values"
-        case .hintCaptureHere(let name):
-            return "Binding '\(name)' captured here"
         case .captureInNoCaptureFunc(let name, let funcname):
             return "Cannot capture outside non-constant binding '\(name)', function '\(funcname)' has trait 'no capture'"
         case .incompatibleTraitsProvided(let lhs, let rhs):
             return "Traits '\(lhs.trait.wrapped.name)' and '\(rhs.trait.wrapped.name)' are incompatible"
         case .invalidTrait(expected: let expected, trait: let trait):
             return "Trait '\(trait.trait.wrapped.name)' cannot be used in a '\(expected)'"
+        case .hintReturnHere(let type):
+            return "Value of type '\(type)' returned here"
+        case .hintCaptureHere(let name):
+            return "Binding '\(name)' captured here"
+        case .hintTraitExplicitHere(let name):
+            return "Trait '\(name)' was added here"
+        case .hintTraitImpliedFrom(let name, let original):
+            return "Trait '\(name)' is implied by '\(original)'"
+        case .hintTraitInheritedFrom(let name):
+            return "Trait '\(name)' was inherited from an outer function"
+        case .hintUseFunctionWithCapturesBeforeDefinition(let function):
+            return "Cannot use function '\(function)' before it is defined if it captures values"
+        }
+    }
+}
+
+extension TraitContainer.TraitInfo {
+    var hint: Diagnostic? {
+        switch source {
+        case .builtin:
+            print("There should be no issue")
+            return nil
+        case .explicit(let traitReference):
+            return Diagnostic(tokens: traitReference.nodeAllTokens, message: .hintTraitExplicitHere(self.trait.wrapped.name), severity: .hint)
+        case .implied(let traitInfo):
+            guard let og = traitInfo.hint else {
+                return nil
+            }
+            return Diagnostic(tokens: og.tokens, message: .hintTraitImpliedFrom(self.trait.wrapped.name, original: traitInfo.trait.wrapped.name), severity: .hint)
+        case .inherited(let traitInfo):
+            guard let og = traitInfo.hint else {
+                return nil
+            }
+            return Diagnostic(tokens: og.tokens, message: .hintTraitInheritedFrom(self.trait.wrapped.name), severity: .hint)
+        case .implicitlyConstrained(let node, let reason):
+            switch reason {
+            case .functionUsedBeforeDefinition:
+                return Diagnostic(tokens: node.nodeAllTokens, message: .hintUseFunctionWithCapturesBeforeDefinition(self.trait.wrapped.name), severity: .hint)
+            }
+        case .inferred:
+            print("Inferences will only be added if there is no issue")
+            return nil
         }
     }
 }
