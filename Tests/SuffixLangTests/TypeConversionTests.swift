@@ -81,6 +81,19 @@ final class TypeConversionTests: XCTestCase {
         XCTAssertTrue(variadic0.canBeAssigned(to: minimum))
     }
     
+    // () () [pure] is convertible to () () [] but not the opposite
+    func testTraitsFunctionConversion() {
+        let none = FunctionType(arguments: [], returning: [], traits: TraitContainer(type: .func, source: false, builtin: []))
+        let pure = FunctionType(arguments: [], returning: [], traits: TraitContainer(type: .func, source: false, builtin: [.function(.pure)]))
+        let impr = FunctionType(arguments: [], returning: [], traits: TraitContainer(type: .func, source: false, builtin: [.function(.impure)]))
+        
+        XCTAssertTrue(pure.canBeAssigned(to: none))
+        XCTAssertTrue(impr.canBeAssigned(to: none))
+        XCTAssertFalse(none.canBeAssigned(to: pure))
+        XCTAssertFalse(none.canBeAssigned(to: impr))
+        XCTAssertFalse(pure.canBeAssigned(to: impr))
+    }
+    
     func testArrayConversion() {
         let anyArr = ArrayType(element: any)
         let strArr = ArrayType(element: str)

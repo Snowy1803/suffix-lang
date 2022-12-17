@@ -36,12 +36,14 @@ public class FunctionType: SType {
     
     // (str, any) (int) is convertible to (str, bool) (any)
     // (str, any..., int) (int) is convertible to (str, bool, int, float, int) (any)
+    // () () [pure] is convertible to () () [] but not the opposite
     public func convertible(to other: SType) -> Bool {
         guard let other = other as? FunctionType,
               other.returning.count == self.returning.count,
               zip(self.returning, other.returning).allSatisfy({ mine, others in
                   mine.type.canBeAssigned(to: others.type)
-              }) else {
+              }),
+              other.traits.traits.keys.allSatisfy({ self.traits.traits.keys.contains($0) }) else {
             return false
         }
         func convertibleArgument(mine: Argument, others: Argument) -> Bool {
