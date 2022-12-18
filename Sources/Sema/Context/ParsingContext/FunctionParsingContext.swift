@@ -30,6 +30,7 @@ class FunctionParsingContext: ParsingContext {
     func createFunction(name: String, type: FunctionType, source: Function.Source, traits: TraitContainer) -> Function {
         let fn = Function(parent: self.function, name: name, type: type, source: source, traits: traits)
         typeChecker.functions.append(fn)
+        typeChecker.logger.log(.funcCreated(fn))
         return fn
     }
     
