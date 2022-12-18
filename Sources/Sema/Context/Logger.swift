@@ -13,7 +13,7 @@
 import Foundation
 
 public final class Logger {
-    var destinations: [LoggerDestination] = []
+    public var destinations: [LoggerDestination] = []
     
     func log(_ event: LogEvent) {
         for destination in destinations {

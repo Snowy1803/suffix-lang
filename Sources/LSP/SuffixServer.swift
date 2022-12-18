@@ -200,13 +200,13 @@ class SuffixServer: MessageHandler {
 //        let lspTokens = tokenized.lexed.flatMap({ token in
 //            token.flattenedComplete(semanticTokens: semtokens.filter({ $0.token.lineNumber == token.lineNumber }))
 //        })
-        let lspTokens = tokenized.tokens.compactMap { token in
+        let lspTokens = (tokenized.tokens.compactMap { token in
             if let type = LSPSemanticTokenType(tokenType: token.type) {
-                return LSPToken(startPosition: token.position, substring: token.literal, type: type)
+                return LSPToken(startPosition: token.position, length: token.literal.utf16.count, type: type)
             } else {
                 return nil
             }
-        }
+        } + tokenized.semanticTokens).sorted()
         
         var line: Int = 0
         var character: Int = 0

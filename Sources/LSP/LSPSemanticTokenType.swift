@@ -18,12 +18,17 @@ enum LSPSemanticTokenType: UInt32, CaseIterable {
     /// A simple or documentation comment
     case comment
     
+    /// A type name
+    case type
+    /// An enum type name
+    case `enum`
+    /// A record type name
+    case `struct`
+    
     /// A binding name
     case variable
     /// A binding name with a function type
     case function
-    /// A type name
-    case type
     /// A binding with an enum case as its source
     case enumMember
     /// A binding with a parameter as its source

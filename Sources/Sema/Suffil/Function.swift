@@ -14,10 +14,10 @@ import Foundation
 import SuffixLang
 
 public final class Function {
-    var parent: Function?
-    var name: String
-    var type: FunctionType
-    var source: Source
+    public var parent: Function?
+    public var name: String
+    public var type: FunctionType
+    public var source: Source
     var traits: TraitContainer
     
     var captures: [Capture]
@@ -51,7 +51,7 @@ public final class Function {
         return false
     }
     
-    enum Source {
+    public enum Source {
         case instruction(FunctionInstruction)
         case anonymous(AnonymousFunctionValue)
         case main

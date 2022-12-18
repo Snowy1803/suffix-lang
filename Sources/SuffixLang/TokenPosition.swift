@@ -16,16 +16,17 @@ public struct TokenPosition {
     /// A 1-indexed line number
     public var line: Int = 1
     
-    /// The UTF-16, 1-indexed, character number
+    /// The UTF-16, 1-indexed, character number in the line
     public var char: Int = 1
+    
+    /// The UTF-16, 1-indexed, character number in the document
+    public var charInDocument: Int = 1
     
     /// The index in the document, used for the cursor internally
     var index: String.Index
     var lineStart: String.Index
     
-    init(line: Int = 1, char: Int = 1, index: String.Index) {
-        self.line = line
-        self.char = char
+    init(index: String.Index) {
         self.index = index
         self.lineStart = index
     }
@@ -45,13 +46,15 @@ public struct TokenPosition {
     mutating func nextChar(document: String) {
         let prev = index
         index = document.index(after: index)
+        let diff = index.utf16Offset(in: document) - prev.utf16Offset(in: document)
         if document[prev].isNewline {
             line += 1
             char = 1
             lineStart = index
         } else {
-            char += index.utf16Offset(in: document) - prev.utf16Offset(in: document)
+            char += diff
         }
+        charInDocument += diff
     }
     
     mutating func advance(to dest: String.Index, in document: String) {
@@ -68,5 +71,17 @@ public struct TokenPosition {
 }
 
 internal extension TokenPosition {
-    static let missing = TokenPosition(line: -1, char: -1, index: "".startIndex)
+    static let missing = {
+        var pos = TokenPosition(index: "".startIndex)
+        pos.line = -1
+        pos.char = -1
+        pos.charInDocument = -1
+        return pos
+    }()
+}
+
+extension TokenPosition: Comparable {
+    public static func < (lhs: TokenPosition, rhs: TokenPosition) -> Bool {
+        lhs.index < rhs.index
+    }
 }

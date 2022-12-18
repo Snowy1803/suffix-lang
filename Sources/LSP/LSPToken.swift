@@ -15,7 +15,7 @@ import SuffixLang
 
 struct LSPToken {
     var startPosition: TokenPosition
-    var substring: Substring
+    var length: Int
     var type: LSPSemanticTokenType
 //    var modifiers: SemanticToken.Modifiers
     
@@ -39,7 +39,23 @@ struct LSPToken {
             deltaChar = UInt32(startChar - character)
             character = startChar
         }
-        let len = UInt32(substring.utf16.count)
+        let len = UInt32(length)
         return [deltaLine, deltaChar, len, type.index, 0]
+    }
+}
+
+extension LSPToken {
+    init(tokens: [Token], type: LSPSemanticTokenType) {
+        self.init(startPosition: tokens.first!.position, length: tokens.last!.endPosition.charInDocument - tokens.first!.position.charInDocument, type: type)
+    }
+}
+
+extension LSPToken: Comparable {
+    static func < (lhs: LSPToken, rhs: LSPToken) -> Bool {
+        lhs.startPosition < rhs.startPosition
+    }
+    
+    static func == (lhs: LSPToken, rhs: LSPToken) -> Bool {
+        lhs.startPosition == rhs.startPosition
     }
 }
