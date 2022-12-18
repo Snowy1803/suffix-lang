@@ -23,6 +23,7 @@ extension TypeReference {
                 context.typeChecker.diagnostics.append(Diagnostic(tokens: generic.name.tokens, message: .unknownType(generic.name.identifier), severity: .error))
                 return AnyType.shared
             }
+            context.typeChecker.logger.log(.typeReferenced(named, generic))
             let generics = named.genericArchetypesInDefinition
             guard generics.count == generic.generics?.generics.count ?? 0 else {
                 if let node = generic.generics {

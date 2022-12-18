@@ -64,6 +64,19 @@ class SemaLogCollector: LoggerDestination {
         }
     }
     
+    func getType(type: NamedType) -> LSPSemanticTokenType {
+        switch type {
+        case is AnyType:
+            return .keyword
+        case is RecordType:
+            return .struct
+        case is EnumType:
+            return .enum
+        default:
+            return .type
+        }
+    }
+    
     func log(_ event: LogEvent) {
         switch event {
         case .globalBindingCreated(let binding, let function):
@@ -97,6 +110,8 @@ class SemaLogCollector: LoggerDestination {
             }
         case .bindingReferenced(let binding, let referenceValue):
             semanticTokens.append(LSPToken(tokens: referenceValue.identifier.literal.tokens, type: getType(binding: binding)))
+        case .typeReferenced(let type, let reference):
+            semanticTokens.append(LSPToken(tokens: reference.name.tokens, type: getType(type: type)))
         }
     }
 }
