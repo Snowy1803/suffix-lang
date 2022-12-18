@@ -64,7 +64,7 @@ class FunctionParsingContext: ParsingContext {
             return nil
         }
         guard let toCapture = parent?.capture(binding: binding, node: node) else {
-            fatalError("Tried to capture a binding that does not exist")
+            return nil // probably got a diagnostic in parent
         }
         let capture = LocalRef(givenName: binding.name, type: binding.type)
         function.captures.append(Function.Capture(binding: binding, ref: capture, parentRef: toCapture, firstLocation: LocationInfo(value: (), node: node, binding: binding)))
