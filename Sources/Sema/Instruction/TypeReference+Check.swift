@@ -17,13 +17,15 @@ extension TypeReference {
     func resolve(context: ParsingContext) -> SType {
         switch self {
         case .function(let function):
-            return FunctionType(generics: [], arguments: function.arguments.resolve(context: context), returning: function.returning.resolve(context: context), traits: TraitContainer(type: .func, source: false, traits: function.traits?.createContainer(context: context) ?? [], diagnostics: &context.typeChecker.diagnostics))
+            let type = FunctionType(generics: [], arguments: function.arguments.resolve(context: context), returning: function.returning.resolve(context: context), traits: TraitContainer(type: .func, source: false, traits: function.traits?.createContainer(context: context) ?? [], diagnostics: &context.typeChecker.diagnostics))
+            context.typeChecker.logger.log(.functionTypeReferenced(type, function))
+            return type
         case .generic(let generic):
             guard let named = context.getType(name: generic.name.identifier) else {
                 context.typeChecker.diagnostics.append(Diagnostic(tokens: generic.name.tokens, message: .unknownType(generic.name.identifier), severity: .error))
                 return AnyType.shared
             }
-            context.typeChecker.logger.log(.typeReferenced(named, generic))
+            context.typeChecker.logger.log(.namedTypeReferenced(named, generic))
             let generics = named.genericArchetypesInDefinition
             guard generics.count == generic.generics?.generics.count ?? 0 else {
                 if let node = generic.generics {

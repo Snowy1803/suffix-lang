@@ -118,8 +118,12 @@ class SemaLogCollector: LoggerDestination {
             }
         case .bindingReferenced(let binding, let referenceValue):
             semanticTokens.append(LSPToken(tokens: referenceValue.identifier.literal.tokens, type: getType(binding: binding)))
-        case .typeReferenced(let type, let reference):
+        case .namedTypeReferenced(let type, let reference):
             semanticTokens.append(LSPToken(tokens: reference.name.tokens, type: getType(type: type)))
+        case .functionTypeReferenced(_, let reference):
+            for trait in reference.traits?.traits ?? [] {
+                semanticTokens.append(LSPToken(tokens: trait.trait.name.tokens, type: .interface))
+            }
         }
     }
 }

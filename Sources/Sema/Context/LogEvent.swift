@@ -28,5 +28,7 @@ public enum LogEvent {
     /// A binding was referenced
     case bindingReferenced(Binding, ReferenceValue)
     /// A named type was referenced
-    case typeReferenced(NamedType, GenericTypeReference)
+    case namedTypeReferenced(NamedType, GenericTypeReference)
+    /// A function type was referenced
+    case functionTypeReferenced(FunctionType, FunctionTypeReference)
 }
