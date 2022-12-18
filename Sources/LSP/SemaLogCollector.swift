@@ -72,6 +72,8 @@ class SemaLogCollector: LoggerDestination {
             return .struct
         case is EnumType:
             return .enum
+        case is GenericArchetype:
+            return .typeParameter
         default:
             return .type
         }
@@ -87,6 +89,12 @@ class SemaLogCollector: LoggerDestination {
             switch function.source {
             case .instruction(let functionInstruction):
                 semanticTokens.append(LSPToken(tokens: [functionInstruction.keyword], type: .keyword))
+                for generic in functionInstruction.generics?.generics ?? [] {
+                    semanticTokens.append(LSPToken(tokens: generic.name.tokens, type: .typeParameter))
+                }
+                for trait in functionInstruction.traits.traits {
+                    semanticTokens.append(LSPToken(tokens: trait.trait.name.tokens, type: .interface))
+                }
             case .anonymous:
                 break // idk
             case .main, .builtin, .synthesized:

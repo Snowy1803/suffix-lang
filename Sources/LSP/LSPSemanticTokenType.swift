@@ -24,6 +24,10 @@ enum LSPSemanticTokenType: UInt32, CaseIterable {
     case `enum`
     /// A record type name
     case `struct`
+    /// A trait type name
+    case interface
+    /// A generic type parameter name
+    case typeParameter
     
     /// A binding name
     case variable
