@@ -29,6 +29,7 @@ extension ReferenceValue {
         guard let ref = context.capture(binding: binding, node: self) else {
             return (Ref.intLiteral(0).noLocation, type ?? AnyType.shared) // this may make additional unwanted errors
         }
+        context.typeChecker.logger.log(.bindingReferenced(binding, self))
         return (LocatedRef(value: context.builder.buildCopy(value: LocatedRef(value: ref, node: self, binding: binding), type: binding.type), node: self), binding.type)
     }
 }
