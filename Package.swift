@@ -17,6 +17,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
         .package(url: "https://github.com/onevcat/Rainbow", from: "4.0.1"),
+        .package(url: "https://github.com/apple/sourcekit-lsp", branch: "main"),
     ],
     targets: [
         .target(
@@ -25,6 +26,7 @@ let package = Package(
         .target(
             name: "Sema",
             dependencies: ["SuffixLang"]),
+        
         .executableTarget(
             name: "Driver",
             dependencies: [
@@ -33,6 +35,15 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "Rainbow", package: "Rainbow"),
             ]),
+        .executableTarget(
+            name: "LSP",
+            dependencies: [
+                "SuffixLang",
+                "Sema",
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "LSPBindings", package: "sourcekit-lsp"),
+            ]),
+        
         .testTarget(
             name: "SuffixLangTests",
             dependencies: ["SuffixLang", "Sema"]),

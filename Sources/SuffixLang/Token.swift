@@ -33,6 +33,14 @@ extension Token: Equatable {
 }
 
 extension Token {
+    public var endPosition: TokenPosition {
+        var pos = position
+        pos.advance(to: literal.endIndex, in: literal.base)
+        return pos
+    }
+}
+
+extension Token {
     public enum AssociatedData {
         case interpolation([StringComponent])
     }

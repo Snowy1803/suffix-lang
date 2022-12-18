@@ -17,11 +17,7 @@ public class TypeChecker {
     var builtinContext = BuiltinParsingContext.shared
     var rootContext: RootParsingContext!
     var rootBlock: BlockContent
-    public var passes: [TypeCheckingPass] = [
-        ClosurePass(),
-        MovePass(),
-        DeadCodePass(),
-    ]
+    public var passes: [TypeCheckingPass] = TypeChecker.defaultPasses
     public var verbose = false
     
     // output
@@ -69,4 +65,15 @@ public class TypeChecker {
         prepareSuffilForPrinting()
         return functions.map(\.description).joined(separator: "\n")
     }
+}
+
+public extension TypeChecker {
+    static let defaultPasses: [TypeCheckingPass] = [
+        ClosurePass(),
+        MovePass(),
+        DeadCodePass(),
+    ]
+    static let lspPasses: [TypeCheckingPass] = [
+        ClosurePass(),
+    ]
 }
