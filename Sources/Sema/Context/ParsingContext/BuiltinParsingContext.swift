@@ -32,7 +32,9 @@ class BuiltinParsingContext: ParsingContext {
                 ArrayType(element: $0)
             },
         ]
-        self.bindings = EnumType.bool.caseBindings
+        for binding in EnumType.bool.caseBindings {
+            self.add(global: true, binding: binding)
+        }
         createBuiltinFunction(
             name: "join",
             arguments: [.init(type: str, variadic: true)],
@@ -66,6 +68,6 @@ class BuiltinParsingContext: ParsingContext {
             type: type,
             source: .builtin,
             traits: TraitContainer(type: .func, source: true, builtin: traits))
-        self.bindings.append(Binding(name: name, type: type, source: .builtin, ref: .function(function)))
+        self.add(global: true, binding: Binding(name: name, type: type, source: .builtin, ref: .function(function)))
     }
 }

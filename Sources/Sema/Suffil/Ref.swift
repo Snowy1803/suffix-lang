@@ -14,7 +14,7 @@ import Foundation
 import SuffixLang
 
 /// A reference to a previous instruction, for composition in `Inst`
-enum Ref: Equatable {
+public enum Ref: Equatable {
     /// A ref to a function
     case function(Function)
     /// A value defined in another inst
@@ -28,7 +28,7 @@ enum Ref: Equatable {
 }
 
 extension Ref: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         switch self {
         case .function(let function):
             return ".\(function.name): \(function.type)"

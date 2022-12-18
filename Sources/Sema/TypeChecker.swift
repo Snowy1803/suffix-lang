@@ -26,6 +26,8 @@ public class TypeChecker {
     /// The functions that were found. Includes named, anonymous and synthesized functions, but not builtins
     public internal(set) var functions: [Function] = []
     
+    public var logger = Logger()
+    
     public init(rootBlock: BlockContent) {
         self.rootBlock = rootBlock
         self.rootContext = RootParsingContext(typechecker: self, builtins: builtinContext)

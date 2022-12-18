@@ -28,7 +28,7 @@ extension FunctionInstruction {
         let resolved = resolve(context: partial, generics: genericArguments, traits: traits)
         let function = parent.createFunction(name: name.identifier, type: resolved, source: .instruction(self), traits: traits)
         parent.registeredFunctions[ObjectID(self)] = function
-        parent.bindings.append(Binding(name: function.name, type: function.type, source: .function(self), ref: .function(function)))
+        parent.add(global: true, binding: Binding(name: function.name, type: function.type, source: .function(self), ref: .function(function)))
     }
     
     func createSubContext(parent: FunctionParsingContext) -> FunctionParsingContext {
@@ -115,7 +115,7 @@ extension FunctionTypeReference.Argument {
             // TODO: handle variadics
             let ref = LocalRef(givenName: name.name.identifier, type: inner)
             context.function.arguments.append(ref)
-            context.bindings.append(Binding(name: name.name.identifier, type: inner, source: .argument(self), ref: .local(ref)))
+            context.add(global: false, binding: Binding(name: name.name.identifier, type: inner, source: .argument(self), ref: .local(ref)))
         case .unnamedVariadic(let variadic):
             let inner = variadic.typeAnnotation.type.resolve(context: context)
             // TODO: make variadic pack

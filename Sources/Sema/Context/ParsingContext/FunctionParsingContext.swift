@@ -33,6 +33,15 @@ class FunctionParsingContext: ParsingContext {
         return fn
     }
     
+    override func add(global: Bool, binding: Binding) {
+        super.add(global: global, binding: binding)
+        if global {
+            typeChecker.logger.log(.globalBindingCreated(binding, function))
+        } else {
+            typeChecker.logger.log(.localBindingCreated(binding, function))
+        }
+    }
+    
     func pop(count: Int, source: @autoclosure () -> [Token]) -> [StackElement] {
         let result = Array(stack.suffix(count))
         if result.count == count {

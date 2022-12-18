@@ -13,16 +13,16 @@
 import Foundation
 import SuffixLang
 
-class Binding {
+public final class Binding {
     /// The name of the binding
-    let name: String
+    public let name: String
     /// The type of the value (which also helps between overloads)
-    let type: SType
+    public let type: SType
     /// The source mapping for this binding, for diagnostics
-    let source: Source
+    public let source: Source
     /// The underlying value
     /// - Note:  it is only modified for functions to close them on the first use
-    var ref: Ref
+    public var ref: Ref
     
     init(name: String, type: SType, source: Source, ref: Ref) {
         self.name = name
@@ -31,7 +31,7 @@ class Binding {
         self.ref = ref
     }
     
-    enum Source {
+    public enum Source {
         /// This value is an explicit binding
         case binding(BindInstruction)
         /// This value is a named argument

@@ -17,7 +17,7 @@ class ParsingContext {
     var parent: ParsingContext?
     var types: [NamedType] = []
     var traits: [Trait] = []
-    var bindings: [Binding] = []
+    private(set) var bindings: [Binding] = []
     
     init(parent: ParsingContext?) {
         self.parent = parent
@@ -27,6 +27,10 @@ class ParsingContext {
         var result = parent?.getBindings(name: name) ?? []
         result.append(contentsOf: bindings.filter({ $0.name == name }))
         return result
+    }
+    
+    func add(global: Bool, binding: Binding) {
+        self.bindings.append(binding)
     }
     
     func capture(binding: Binding, node: ASTNode) -> Ref? {

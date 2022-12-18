@@ -39,7 +39,7 @@ extension RecordInstruction {
             }
             let name = bind.value.literal.identifier
             let type = FunctionType(arguments: [.init(type: record)], returning: [.init(type: inner)], traits: TraitContainer(type: .func, source: false, traits: [], diagnostics: &context.typeChecker.diagnostics))
-            context.bindings.append(Binding(
+            context.add(global: true, binding: Binding(
                 name: name,
                 type: type,
                 source: .recordFieldAccessor(record, self, bind),
@@ -48,7 +48,7 @@ extension RecordInstruction {
         }
         let constructorName = "new \(name.identifier)"
         let constructorType = FunctionType(arguments: record.fields.map { .init(type: $0.type) }, returning: [.init(type: record)], traits: TraitContainer(type: .func, source: false, traits: [], diagnostics: &context.typeChecker.diagnostics))
-        context.bindings.append(Binding(
+        context.add(global: true, binding: Binding(
             name: constructorName,
             type: constructorType,
             source: .recordConstructor(record, self),

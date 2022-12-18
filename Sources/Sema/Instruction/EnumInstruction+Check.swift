@@ -34,7 +34,7 @@ extension EnumInstruction {
                 context.typeChecker.diagnostics.append(Diagnostic(tokens: annotation.nodeAllTokens, message: .invalidTypeAnnotation, severity: .error))
             }
             let name = bind.value.literal.identifier
-            context.bindings.append(Binding(
+            context.add(global: true, binding: Binding(
                 name: name,
                 type: type,
                 source: .enumCase(type, self, bind),
