@@ -16,6 +16,6 @@ public enum LogEvent {
     case globalBindingCreated(Binding, Function)
     case localBindingCreated(Binding, Function)
     case funcCreated(Function)
-//    case enumCreated(EnumType)
-//    case recordCreated(RecordType)
+    case enumCreated(EnumType)
+    case recordCreated(RecordType)
 }

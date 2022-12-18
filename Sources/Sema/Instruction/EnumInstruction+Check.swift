@@ -42,5 +42,6 @@ extension EnumInstruction {
             return EnumType.Case(name: bind.value.literal.identifier, source: bind)
         }
         // TODO: add synthesized `eq` and `hash` implementation
+        context.typeChecker.logger.log(.enumCreated(type))
     }
 }

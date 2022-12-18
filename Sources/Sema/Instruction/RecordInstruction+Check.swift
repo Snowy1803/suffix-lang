@@ -53,5 +53,6 @@ extension RecordInstruction {
             type: constructorType,
             source: .recordConstructor(record, self),
             ref: .function(context.createFunction(name: constructorName, type: constructorType, source: .synthesized, traits: TraitContainer(type: .func, source: true, traits: [], diagnostics: &context.typeChecker.diagnostics)))))
+        context.typeChecker.logger.log(.recordCreated(record))
     }
 }
