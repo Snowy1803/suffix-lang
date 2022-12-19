@@ -48,6 +48,14 @@ extension LSPToken {
     init(tokens: [Token], type: LSPSemanticTokenType) {
         self.init(startPosition: tokens.first!.position, length: tokens.last!.endPosition.charInDocument - tokens.first!.position.charInDocument, type: type)
     }
+    
+    init?(lexicalToken token: Token) {
+        if let type = LSPSemanticTokenType(tokenType: token.type) {
+            self.init(startPosition: token.position, length: token.literal.utf16.count, type: type)
+        } else {
+            return nil
+        }
+    }
 }
 
 extension LSPToken: Comparable {

@@ -69,9 +69,11 @@ extension LSPSemanticTokenType {
             self = .string
         case .dotOperator, .bindOperator, .pushOperator, .typingOperator:
             self = .operator
+        case .number:
+            self = .number
         case .whitespace, .comma, .curlyOpen, .curlyClose, .coercingOperator, .semicolon, .bracketOpen, .bracketClose, .parenOpen, .parenClose, .unresolved, .variadic, .twoDots:
             return nil
-        case .keyword, .word, .number, .numberPrefixedWord:
+        case .keyword, .word, .numberPrefixedWord:
             return nil // needs more context
         }
     }

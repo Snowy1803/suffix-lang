@@ -64,12 +64,12 @@ struct TokenizedDocument {
         log("Type Checking", level: .debug)
         let sema = TypeChecker(rootBlock: rootBlock)
         sema.passes = TypeChecker.lspPasses
-        let collector = SemaLogCollector()
+        let collector = SemaLogCollector(lexicalTokens: tokens.compactMap(LSPToken.init(lexicalToken:)))
         sema.logger.destinations.append(collector)
         sema.typecheck()
         functions = sema.functions
         diagnostics.append(contentsOf: sema.diagnostics)
-        semanticTokens = collector.semanticTokens
+        semanticTokens = collector.lexicalTokens + collector.semanticTokens
         log("Processed", level: .debug)
     }
 }

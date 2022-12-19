@@ -14,27 +14,43 @@ import Foundation
 import Sema
 
 class SemaLogCollector: LoggerDestination {
+    var lexicalTokens: [LSPToken]
     var semanticTokens: [LSPToken] = []
+    
+    init(lexicalTokens: [LSPToken]) {
+        self.lexicalTokens = lexicalTokens
+    }
+    
+    func add(token: LSPToken) {
+        lexicalTokens.removeAll(where: { lex in
+            let a = lex.startPosition.charInDocument
+            let b = token.startPosition.charInDocument
+            let c = token.startPosition.charInDocument + lex.length
+            let d = lex.startPosition.charInDocument + lex.length
+            return a <= b && c <= d
+        })
+        semanticTokens.append(token)
+    }
     
     func createSemanticToken(binding: Binding) {
         switch binding.source {
         case .builtin, .recordConstructor:
             break
         case .binding(let bindInstruction):
-            semanticTokens.append(LSPToken(tokens: bindInstruction.value.literal.tokens, type: .variable))
+            add(token: LSPToken(tokens: bindInstruction.value.literal.tokens, type: .variable))
         case .argument(let argument):
             switch argument.spec {
             case .count, .unnamedVariadic, .unnamedSingle:
                 break // impossible
             case .named(let named):
-                semanticTokens.append(LSPToken(tokens: named.name.tokens, type: .parameter))
+                add(token: LSPToken(tokens: named.name.tokens, type: .parameter))
             }
         case .function(let functionInstruction):
-            semanticTokens.append(LSPToken(tokens: functionInstruction.name.tokens, type: .function))
+            add(token: LSPToken(tokens: functionInstruction.name.tokens, type: .function))
         case .recordFieldAccessor(_, _, let bindInstruction):
-            semanticTokens.append(LSPToken(tokens: bindInstruction.value.literal.tokens, type: .property))
+            add(token: LSPToken(tokens: bindInstruction.value.literal.tokens, type: .property))
         case .enumCase(_, _, let bindInstruction):
-            semanticTokens.append(LSPToken(tokens: bindInstruction.value.literal.tokens, type: .enumMember))
+            add(token: LSPToken(tokens: bindInstruction.value.literal.tokens, type: .enumMember))
         }
     }
     
@@ -88,12 +104,12 @@ class SemaLogCollector: LoggerDestination {
         case .funcCreated(let function):
             switch function.source {
             case .instruction(let functionInstruction):
-                semanticTokens.append(LSPToken(tokens: [functionInstruction.keyword], type: .keyword))
+                add(token: LSPToken(tokens: [functionInstruction.keyword], type: .keyword))
                 for generic in functionInstruction.generics?.generics ?? [] {
-                    semanticTokens.append(LSPToken(tokens: generic.name.tokens, type: .typeParameter))
+                    add(token: LSPToken(tokens: generic.name.tokens, type: .typeParameter))
                 }
                 for trait in functionInstruction.traits.traits {
-                    semanticTokens.append(LSPToken(tokens: trait.trait.name.tokens, type: .interface))
+                    add(token: LSPToken(tokens: trait.trait.name.tokens, type: .interface))
                 }
             case .anonymous:
                 break // idk
@@ -103,26 +119,26 @@ class SemaLogCollector: LoggerDestination {
         case .enumCreated(let enumType):
             switch enumType.source {
             case .instruction(let enumInstruction):
-                semanticTokens.append(LSPToken(tokens: [enumInstruction.keyword], type: .keyword))
-                semanticTokens.append(LSPToken(tokens: enumInstruction.name.tokens, type: .enum))
+                add(token: LSPToken(tokens: [enumInstruction.keyword], type: .keyword))
+                add(token: LSPToken(tokens: enumInstruction.name.tokens, type: .enum))
             case .builtin:
                 break
             }
         case .recordCreated(let recordType):
             switch recordType.source {
             case .instruction(let recordInstruction):
-                semanticTokens.append(LSPToken(tokens: [recordInstruction.keyword], type: .keyword))
-                semanticTokens.append(LSPToken(tokens: recordInstruction.name.tokens, type: .struct))
+                add(token: LSPToken(tokens: [recordInstruction.keyword], type: .keyword))
+                add(token: LSPToken(tokens: recordInstruction.name.tokens, type: .struct))
             case .builtin:
                 break
             }
         case .bindingReferenced(let binding, let referenceValue):
-            semanticTokens.append(LSPToken(tokens: referenceValue.identifier.literal.tokens, type: getType(binding: binding)))
+            add(token: LSPToken(tokens: referenceValue.identifier.literal.tokens, type: getType(binding: binding)))
         case .namedTypeReferenced(let type, let reference):
-            semanticTokens.append(LSPToken(tokens: reference.name.tokens, type: getType(type: type)))
+            add(token: LSPToken(tokens: reference.name.tokens, type: getType(type: type)))
         case .functionTypeReferenced(_, let reference):
             for trait in reference.traits?.traits ?? [] {
-                semanticTokens.append(LSPToken(tokens: trait.trait.name.tokens, type: .interface))
+                add(token: LSPToken(tokens: trait.trait.name.tokens, type: .interface))
             }
         }
     }
