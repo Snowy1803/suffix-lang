@@ -15,7 +15,7 @@ import SuffixLang
 
 public enum LogEvent {
     /// A binding was created, with a global scope, which means it is visible inside the full scope of the function
-    case globalBindingCreated(Binding, Function)
+    case globalBindingCreated(Binding, Function?)
     /// A binding was created, with a local scope, which means it is visible starting at the source location
     case localBindingCreated(Binding, Function)
     /// A function was declared

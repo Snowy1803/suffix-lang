@@ -14,8 +14,6 @@ import Foundation
 import SuffixLang
 
 public class TypeChecker {
-    var builtinContext = BuiltinParsingContext.shared
-    var rootContext: RootParsingContext!
     var rootBlock: BlockContent
     public var passes: [TypeCheckingPass] = TypeChecker.defaultPasses
     public var verbose = false
@@ -30,7 +28,6 @@ public class TypeChecker {
     
     public init(rootBlock: BlockContent) {
         self.rootBlock = rootBlock
-        self.rootContext = RootParsingContext(typechecker: self, builtins: builtinContext)
     }
     
     func checkPasses() {
@@ -44,6 +41,11 @@ public class TypeChecker {
         if verbose {
             print("Starting build")
         }
+        let builtinContext = BuiltinParsingContext.shared
+        for binding in builtinContext.bindings {
+            logger.log(.globalBindingCreated(binding, nil))
+        }
+        let rootContext = RootParsingContext(typechecker: self, builtins: builtinContext)
         rootBlock.typecheckContent(context: rootContext)
         for pass in passes {
             guard !diagnostics.contains(where: { $0.severity >= .error }) else {

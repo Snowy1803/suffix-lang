@@ -76,7 +76,7 @@ class SemaLogCollector: LoggerDestination {
         switch event {
         case .globalBindingCreated(let binding, let function):
             createSemanticToken(binding: binding)
-            if case .instruction(let node) = function.source,
+            if case .instruction(let node) = function?.source,
                case .block(let block) = node.block {
                 scopedBindings.append(ScopedBinding(start: block.open.endPosition, end: block.close.position, binding: binding))
             } else {
