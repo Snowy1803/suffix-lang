@@ -11,11 +11,14 @@
 //
 
 import Foundation
+import SuffixLang
 import Sema
+import LanguageServerProtocol
 
 class SemaLogCollector: LoggerDestination {
     var lexicalTokens: [LSPToken]
     var semanticTokens: [LSPToken] = []
+    var scopedBindings: [ScopedBinding] = []
     
     init(lexicalTokens: [LSPToken]) {
         self.lexicalTokens = lexicalTokens
@@ -54,32 +57,6 @@ class SemaLogCollector: LoggerDestination {
         }
     }
     
-    func getType(binding: Binding) -> LSPSemanticTokenType {
-        switch binding.source {
-        case .builtin:
-            switch binding.type {
-            case is FunctionType:
-                return .function
-            case is EnumType:
-                return .enumMember // bool
-            default:
-                return .variable
-            }
-        case .recordConstructor:
-            return .function // maybe something else ?
-        case .binding:
-            return .variable
-        case .argument:
-            return .parameter
-        case .function:
-            return .function
-        case .recordFieldAccessor:
-            return .property
-        case .enumCase:
-            return .enumMember
-        }
-    }
-    
     func getType(type: NamedType) -> LSPSemanticTokenType {
         switch type {
         case is AnyType:
@@ -99,8 +76,25 @@ class SemaLogCollector: LoggerDestination {
         switch event {
         case .globalBindingCreated(let binding, let function):
             createSemanticToken(binding: binding)
+            if case .instruction(let node) = function.source,
+               case .block(let block) = node.block {
+                scopedBindings.append(ScopedBinding(start: block.open.endPosition, end: block.close.position, binding: binding))
+            } else {
+                scopedBindings.append(ScopedBinding(start: nil, end: nil, binding: binding))
+            }
         case .localBindingCreated(let binding, let function):
             createSemanticToken(binding: binding)
+            if case .binding(let source) = binding.source {
+                let start = source.op.position
+                if case .instruction(let node) = function.source,
+                   case .block(let block) = node.block {
+                    scopedBindings.append(ScopedBinding(start: start, end: block.close.position, binding: binding))
+                } else {
+                    scopedBindings.append(ScopedBinding(start: start, end: nil, binding: binding))
+                }
+            } else {
+                print("local binding created but source isn't a `>`")
+            }
         case .funcCreated(let function):
             switch function.source {
             case .instruction(let functionInstruction):
@@ -133,13 +127,67 @@ class SemaLogCollector: LoggerDestination {
                 break
             }
         case .bindingReferenced(let binding, let referenceValue):
-            add(token: LSPToken(tokens: referenceValue.identifier.literal.tokens, type: getType(binding: binding)))
+            add(token: LSPToken(tokens: referenceValue.identifier.literal.tokens, type: binding.semanticTokenType))
         case .namedTypeReferenced(let type, let reference):
             add(token: LSPToken(tokens: reference.name.tokens, type: getType(type: type)))
         case .functionTypeReferenced(_, let reference):
             for trait in reference.traits?.traits ?? [] {
                 add(token: LSPToken(tokens: trait.trait.name.tokens, type: .interface))
             }
+        }
+    }
+}
+
+extension Binding {
+    var semanticTokenType: LSPSemanticTokenType {
+        switch source {
+        case .builtin:
+            switch type {
+            case is FunctionType:
+                return .function
+            case is EnumType:
+                return .enumMember // bool
+            default:
+                return .variable
+            }
+        case .recordConstructor:
+            return .function // maybe something else ?
+        case .binding:
+            return .variable
+        case .argument:
+            return .parameter
+        case .function:
+            return .function
+        case .recordFieldAccessor:
+            return .property
+        case .enumCase:
+            return .enumMember
+        }
+    }
+    
+    var completionKind: CompletionItemKind {
+        switch source {
+        case .builtin:
+            switch type {
+            case is FunctionType:
+                return .function
+            case is EnumType:
+                return .enumMember // bool
+            default:
+                return .variable
+            }
+        case .recordConstructor:
+            return .constructor
+        case .binding:
+            return .variable
+        case .argument:
+            return .variable
+        case .function:
+            return .function
+        case .recordFieldAccessor:
+            return .property
+        case .enumCase:
+            return .enumMember
         }
     }
 }

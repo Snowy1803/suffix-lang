@@ -52,6 +52,7 @@ struct TokenizedDocument {
     var rootBlock: BlockContent
     var functions: [Function]
     var semanticTokens: [LSPToken]
+    var scopedBindings: [ScopedBinding]
     
     init(text: String) {
         log("Lexing", level: .debug)
@@ -70,6 +71,7 @@ struct TokenizedDocument {
         functions = sema.functions
         diagnostics.append(contentsOf: sema.diagnostics)
         semanticTokens = collector.lexicalTokens + collector.semanticTokens
+        scopedBindings = collector.scopedBindings
         log("Processed", level: .debug)
     }
 }

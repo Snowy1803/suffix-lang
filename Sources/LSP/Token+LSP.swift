@@ -16,11 +16,11 @@ import LanguageServerProtocol
 
 extension Token {
     var lspStartPos: Position {
-        Position(line: position.line - 1, utf16index: position.char - 1)
+        position.lsp
     }
     
     var lspEndPos: Position {
-        Position(line: endPosition.line - 1, utf16index: endPosition.char - 1)
+        endPosition.lsp
     }
     
     var positionRange: Range<Position> {
@@ -30,6 +30,12 @@ extension Token {
 //    var positionRangeClosed: ClosedRange<Position> {
 //        lspStartPos...lspEndPos
 //    }
+}
+
+extension TokenPosition {
+    var lsp: Position {
+        Position(line: line - 1, utf16index: char - 1)
+    }
 }
 
 //extension SemanticToken.Modifiers {

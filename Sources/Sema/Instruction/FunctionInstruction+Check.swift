@@ -115,7 +115,7 @@ extension FunctionTypeReference.Argument {
             // TODO: handle variadics
             let ref = LocalRef(givenName: name.name.identifier, type: inner)
             context.function.arguments.append(ref)
-            context.add(global: false, binding: Binding(name: name.name.identifier, type: inner, source: .argument(self), ref: .local(ref)))
+            context.add(global: true, binding: Binding(name: name.name.identifier, type: inner, source: .argument(self), ref: .local(ref)))
         case .unnamedVariadic(let variadic):
             let inner = variadic.typeAnnotation.type.resolve(context: context)
             // TODO: make variadic pack

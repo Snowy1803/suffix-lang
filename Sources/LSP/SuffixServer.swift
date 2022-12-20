@@ -196,11 +196,7 @@ class SuffixServer: MessageHandler {
             return
         }
         
-//        let semtokens = tokenized.documentation?.semanticTokens ?? []
-//        let lspTokens = tokenized.lexed.flatMap({ token in
-//            token.flattenedComplete(semanticTokens: semtokens.filter({ $0.token.lineNumber == token.lineNumber }))
-//        })
-        let lspTokens = (tokenized.semanticTokens).sorted()
+        let lspTokens = tokenized.semanticTokens.sorted()
         
         var line: Int = 0
         var character: Int = 0
@@ -334,127 +330,27 @@ class SuffixServer: MessageHandler {
                     ${2:body}
                 }
                 """, insertTextFormat: .snippet))
+            items.append(CompletionItem(label: "Create a Record", kind: .snippet, detail: "record name {}", insertText: """
+                record ${1:name} {
+                    ${2:body}
+                }
+                """, insertTextFormat: .snippet))
+            items.append(CompletionItem(label: "Create an Enum", kind: .snippet, detail: "enum name {}", insertText: """
+                enum ${1:name} {
+                    ${2:body}
+                }
+                """, insertTextFormat: .snippet))
             items.append(CompletionItem(label: "Create a Binding", kind: .snippet, detail: "value > name", insertText: "${1:value} > ${2:name}", insertTextFormat: .snippet))
         }
         
-//        for imp in tokenized.imports {
-//            for f in imp.exportedFunctions {
-//                items.append(createCompletionItem(function: f, doc: tokenized.documentation))
-//            }
-//            for f in imp.exportedMethods {
-//                items.append(createCompletionItem(method: f, doc: tokenized.documentation))
-//            }
-//            for t in imp.exportedTypes.map({ TypeAlias(name: $0.string, type: $0) }) + imp.exportedTypeAliases {
-//                items.append(createCompletionItem(type: t))
-//                if let f = createCompletionItem(constructor: t, doc: tokenized.documentation) {
-//                    items.append(f)
-//                }
-//            }
-//        }
+        for binding in tokenized.scopedBindings {
+            if binding.isInScope(at: pos) {
+                items.append(CompletionItem(label: binding.binding.name, kind: binding.binding.completionKind, insertText: binding.binding.name))
+            }
+        }
         
-//        var linesOutsideFunction: [Int] = []
-//        var linesLocalScope: [Int] = []
-//        tokenized.instructions.collectScope(line: pos.line, outsideFunction: &linesOutsideFunction, local: &linesLocalScope)
-//
-//        // handle shadowings by replacing
-//        var variables: [String: Variable] = [:]
-//        for global in BuiltinsCompilingContext.defaultVariables {
-//            variables[global.name] = global
-//        }
-//        for st in tokenized.documentation?.semanticTokens ?? [] {
-//            if linesLocalScope.contains(st.token.lineNumber) || linesOutsideFunction.contains(st.token.lineNumber),
-//               st.modifiers.contains(.declaration),
-//               case .variable(let v) = st.data {
-//                variables[v.name] = v
-//            }
-//        }
-//        for v in variables.values {
-//            items.append(createCompletionItem(variable: v, doc: tokenized.documentation))
-//        }
-//
         request.reply(.success(CompletionList(isIncomplete: false, items: items)))
     }
-    
-//    func argumentSnippet(for item: Parametrable, plus: Int = 1) -> String {
-//        item.parameters.enumerated().map { i, p in "${\(i + plus):\(p.name)}" }.joined(separator: " ")
-//    }
-//
-//    func createCompletionItem(function: Function, doc: DocGenerator?) -> CompletionItem {
-//        let documentation = doc?.findDocumentation(function: function)
-//
-//        let text: String
-//        if function.returnType.isTheVoid || (function.ns.name == "standard" && function.name == "log") {
-//            text = "\(function.name): \(argumentSnippet(for: function))"
-//        } else {
-//            text = "\(function.name)[\(argumentSnippet(for: function))]"
-//        }
-//
-//        return CompletionItem(
-//            label: function.name,
-//            kind: .function,
-//            detail: function.signature,
-//            documentation: documentation.map { .markupContent(MarkupContent(kind: .markdown, value: $0.markdown)) },
-//            insertText: text,
-//            insertTextFormat: .snippet,
-//            deprecated: documentation?.deprecation != nil
-//        )
-//    }
-//
-//    func createCompletionItem(method: Method, doc: DocGenerator?) -> CompletionItem {
-//        let documentation = doc?.findDocumentation(method: method)
-//
-//        // not supporting value.method[params] syntax, would be hard to parse
-//        let text = "\(method.name) ${1:subject}: \(argumentSnippet(for: method, plus: 2))"
-//
-//        return CompletionItem(
-//            label: method.name,
-//            kind: .method,
-//            detail: method.signature,
-//            documentation: documentation.map { .markupContent(MarkupContent(kind: .markdown, value: $0.markdown)) },
-//            insertText: text,
-//            insertTextFormat: .snippet,
-//            deprecated: documentation?.deprecation != nil
-//        )
-//    }
-//
-//    func createCompletionItem(type: TypeAlias) -> CompletionItem {
-//        CompletionItem(
-//            label: type.name,
-//            kind: .class,
-//            detail: type.type.string
-//        )
-//    }
-//
-//    func createCompletionItem(constructor type: TypeAlias, doc: DocGenerator?) -> CompletionItem? {
-//        guard let function = type.type.constructor else {
-//            return nil
-//        }
-//        let documentation = doc?.findDocumentation(constructor: function)
-//
-//        let text = "\(type.name)(\(argumentSnippet(for: function)))"
-//
-//        return CompletionItem(
-//            label: type.name,
-//            kind: .constructor,
-//            detail: function.signature,
-//            documentation: documentation.map { .markupContent(MarkupContent(kind: .markdown, value: $0.markdown)) },
-//            insertText: text,
-//            insertTextFormat: .snippet,
-//            deprecated: documentation?.deprecation != nil
-//        )
-//    }
-//
-//    func createCompletionItem(variable: Variable, doc: DocGenerator?) -> CompletionItem {
-//        let documentation = doc?.findDocumentation(variable: variable)
-//
-//        return CompletionItem(
-//            label: variable.name,
-//            kind: variable.final ? .constant : .variable,
-//            detail: "\(variable.builtin ? "builtin " : "")\(variable.final ? "final " : "")\(variable.type) \(variable.name)",
-//            documentation: documentation.map { .markupContent(MarkupContent(kind: .markdown, value: $0.markdown)) },
-//            deprecated: documentation?.deprecation != nil
-//        )
-//    }
     
     // MARK: Call Hierarchy
     
