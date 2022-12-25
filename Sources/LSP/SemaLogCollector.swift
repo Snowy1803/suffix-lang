@@ -50,6 +50,7 @@ class SemaLogCollector: LoggerDestination {
                 add(token: LSPToken(tokens: named.name.tokens, type: .parameter, modifiers: [.declaration, .definition]))
             }
         case .function(let functionInstruction):
+            // TODO: deprecated
             add(token: LSPToken(tokens: functionInstruction.name.tokens, type: .function, modifiers: [.declaration, (functionInstruction.block.isSemicolon ? .definition : [])]))
         case .recordFieldAccessor(_, _, let bindInstruction):
             // TODO: deprecated
@@ -120,7 +121,7 @@ class SemaLogCollector: LoggerDestination {
             add(token: LSPToken(tokens: reference.name.tokens, type: type.semanticTokenType, modifiers: type.semanticModifiers))
         case .functionTypeReferenced(_, let reference):
             for trait in reference.traits?.traits ?? [] {
-                // TODO: trait source
+                // TODO: trait source (when we get user defined traits), deprecated
                 add(token: LSPToken(tokens: trait.trait.name.tokens, type: .interface, modifiers: [.defaultLibrary]))
             }
         }
