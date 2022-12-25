@@ -24,29 +24,33 @@ public struct Diagnostic {
     
     public init(tokens: [Token], message: DiagnosticMessage, severity: Severity, hints: [Diagnostic] = []) {
         let tokens = tokens.filter { $0.position.isValid }
-        assert(tokens.count > 0)
         self.tokens = tokens
         self.message = message
         self.severity = severity
         self.hints = hints
     }
     
-    public var document: String {
-        tokens[0].literal.base
+    public var document: String? {
+        tokens.first?.literal.base
     }
     
-    public var startPosition: TokenPosition {
-        tokens[0].position
+    public var startPosition: TokenPosition? {
+        tokens.first?.position
     }
     
-    public var endPosition: TokenPosition {
-        var pos = startPosition
-        pos.advance(to: tokens.last!.literal.endIndex, in: document)
+    public var endPosition: TokenPosition? {
+        guard var pos = startPosition else {
+            return nil
+        }
+        pos.advance(to: tokens.last!.literal.endIndex, in: document!)
         return pos
     }
     
-    public var literal: Substring {
-        document[startPosition.index..<endPosition.index]
+    public var literal: Substring? {
+        guard let document = document else {
+            return nil
+        }
+        return document[startPosition!.index..<endPosition!.index]
     }
     
     public enum Severity: Comparable {

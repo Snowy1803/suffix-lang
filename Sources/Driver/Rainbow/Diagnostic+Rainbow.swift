@@ -30,12 +30,18 @@ extension Diagnostic.Severity {
 extension Diagnostic {
     func representNicely(filepath: String) -> String {
         // remove tabs as they mess everything up with their wider size
-        let base = startPosition.getFullLine(document: document)
-        var msg = "\((filepath as NSString).lastPathComponent):\(startPosition.line):\(startPosition.char): \(severity.colorfulDescription): \(message)\n"
-        msg += base.replacingOccurrences(of: "\t", with: " ")
-        msg += String(repeating: " ", count: max(0, startPosition.char - 1))
-        msg += "^" + String(repeating: "~", count: max(0, literal.count - 1))
-        msg += "\n"
+        var msg: String
+        if tokens.count > 0 {
+            let base = startPosition!.getFullLine(document: document!)
+            let startPosition = startPosition!
+            msg = "\((filepath as NSString).lastPathComponent):\(startPosition.line):\(startPosition.char): \(severity.colorfulDescription): \(message)\n"
+            msg += base.replacingOccurrences(of: "\t", with: " ")
+            msg += String(repeating: " ", count: max(0, startPosition.char - 1))
+            msg += "^" + String(repeating: "~", count: max(0, literal!.count - 1))
+            msg += "\n"
+        } else {
+            msg = "\(severity.colorfulDescription): \(message)\n"
+        }
         for hint in hints {
             msg += hint.representNicely(filepath: filepath)
         }

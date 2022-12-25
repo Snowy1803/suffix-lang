@@ -152,7 +152,7 @@ class SuffixServer: MessageHandler {
     // MARK: Diagnostics
     
     func publishDiagnostics(_ diag: [Diagnostic], for doc: Document) {
-        client.send(PublishDiagnosticsNotification(uri: doc.item.uri, version: doc.item.version, diagnostics: diag.map { $0.toLSP(doc: doc.item.uri) }))
+        client.send(PublishDiagnosticsNotification(uri: doc.item.uri, version: doc.item.version, diagnostics: diag.compactMap { $0.toLSP(doc: doc.item.uri) }))
     }
     
     // MARK: - Requests

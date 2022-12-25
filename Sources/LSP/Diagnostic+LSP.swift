@@ -21,7 +21,10 @@ extension Diagnostic {
     /// Converts a Suffix Notice to an LSP Diagnostic
     /// - Parameter doc: the document
     /// - Returns: An LSP Diagnostic
-    func toLSP(doc: DocumentURI) -> LSPDiagnostic {
+    func toLSP(doc: DocumentURI) -> LSPDiagnostic? {
+        guard !tokens.isEmpty else {
+            return nil
+        }
         let rel: [DiagnosticRelatedInformation] = self.hints.map { hint in
             DiagnosticRelatedInformation(location: Location(uri: doc, range: hint.positionRange), message: hint.message.description)
         }
