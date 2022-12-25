@@ -17,7 +17,7 @@ struct LSPToken {
     var startPosition: TokenPosition
     var length: Int
     var type: LSPSemanticTokenType
-//    var modifiers: SemanticToken.Modifiers
+    var modifiers: Modifiers
     
     /// Generates the integer array required by the LSP protocol for sending semantic tokens
     /// - Parameters:
@@ -40,18 +40,18 @@ struct LSPToken {
             character = startChar
         }
         let len = UInt32(length)
-        return [deltaLine, deltaChar, len, type.index, 0]
+        return [deltaLine, deltaChar, len, type.index, modifiers.rawValue]
     }
 }
 
 extension LSPToken {
-    init(tokens: [Token], type: LSPSemanticTokenType) {
-        self.init(startPosition: tokens.first!.position, length: tokens.last!.endPosition.charInDocument - tokens.first!.position.charInDocument, type: type)
+    init(tokens: [Token], type: LSPSemanticTokenType, modifiers: Modifiers) {
+        self.init(startPosition: tokens.first!.position, length: tokens.last!.endPosition.charInDocument - tokens.first!.position.charInDocument, type: type, modifiers: modifiers)
     }
     
     init?(lexicalToken token: Token) {
         if let type = LSPSemanticTokenType(tokenType: token.type) {
-            self.init(startPosition: token.position, length: token.literal.utf16.count, type: type)
+            self.init(startPosition: token.position, length: token.literal.utf16.count, type: type, modifiers: [])
         } else {
             return nil
         }

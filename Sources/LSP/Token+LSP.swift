@@ -37,15 +37,3 @@ extension TokenPosition {
         Position(line: line - 1, utf16index: char - 1)
     }
 }
-
-//extension SemanticToken.Modifiers {
-//    static let legend = [
-//        "declaration",
-//        "definition",
-//        "readonly",
-//        "deprecated",
-//        "modification",
-//        "documentation",
-//        "defaultLibrary",
-//    ]
-//}

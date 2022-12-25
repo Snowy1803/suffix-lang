@@ -121,7 +121,7 @@ class SuffixServer: MessageHandler {
             semanticTokensProvider: SemanticTokensOptions(
                 legend: SemanticTokensLegend(
                     tokenTypes: LSPSemanticTokenType.allCases.map(\.name),
-                    tokenModifiers: []),
+                    tokenModifiers: LSPToken.Modifiers.legend),
                 range: .bool(false),
                 full: .value(.init(delta: false)))))))
     }

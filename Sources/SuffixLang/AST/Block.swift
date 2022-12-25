@@ -39,4 +39,13 @@ public enum BlockOrSemicolon: ASTEnum {
             return node
         }
     }
+    
+    public var isSemicolon: Bool {
+        switch self {
+        case .semicolon:
+            return true
+        case .block:
+            return false
+        }
+    }
 }

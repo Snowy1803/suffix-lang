@@ -40,35 +40,23 @@ class SemaLogCollector: LoggerDestination {
         case .builtin, .recordConstructor:
             break
         case .binding(let bindInstruction):
-            add(token: LSPToken(tokens: bindInstruction.value.literal.tokens, type: .variable))
+            // TODO: deprecated
+            add(token: LSPToken(tokens: bindInstruction.value.literal.tokens, type: .variable, modifiers: [.declaration, .definition]))
         case .argument(let argument):
             switch argument.spec {
             case .count, .unnamedVariadic, .unnamedSingle:
                 break // impossible
             case .named(let named):
-                add(token: LSPToken(tokens: named.name.tokens, type: .parameter))
+                add(token: LSPToken(tokens: named.name.tokens, type: .parameter, modifiers: [.declaration, .definition]))
             }
         case .function(let functionInstruction):
-            add(token: LSPToken(tokens: functionInstruction.name.tokens, type: .function))
+            add(token: LSPToken(tokens: functionInstruction.name.tokens, type: .function, modifiers: [.declaration, (functionInstruction.block.isSemicolon ? .definition : [])]))
         case .recordFieldAccessor(_, _, let bindInstruction):
-            add(token: LSPToken(tokens: bindInstruction.value.literal.tokens, type: .property))
+            // TODO: deprecated
+            add(token: LSPToken(tokens: bindInstruction.value.literal.tokens, type: .property, modifiers: [.declaration, .definition]))
         case .enumCase(_, _, let bindInstruction):
-            add(token: LSPToken(tokens: bindInstruction.value.literal.tokens, type: .enumMember))
-        }
-    }
-    
-    func getType(type: NamedType) -> LSPSemanticTokenType {
-        switch type {
-        case is AnyType:
-            return .keyword
-        case is RecordType:
-            return .struct
-        case is EnumType:
-            return .enum
-        case is GenericArchetype:
-            return .typeParameter
-        default:
-            return .type
+            // TODO: deprecated
+            add(token: LSPToken(tokens: bindInstruction.value.literal.tokens, type: .enumMember, modifiers: [.declaration, .definition]))
         }
     }
     
@@ -98,12 +86,12 @@ class SemaLogCollector: LoggerDestination {
         case .funcCreated(let function):
             switch function.source {
             case .instruction(let functionInstruction):
-                add(token: LSPToken(tokens: [functionInstruction.keyword], type: .keyword))
+                add(token: LSPToken(tokens: [functionInstruction.keyword], type: .keyword, modifiers: []))
                 for generic in functionInstruction.generics?.generics ?? [] {
-                    add(token: LSPToken(tokens: generic.name.tokens, type: .typeParameter))
+                    add(token: LSPToken(tokens: generic.name.tokens, type: .typeParameter, modifiers: [.declaration]))
                 }
                 for trait in functionInstruction.traits.traits {
-                    add(token: LSPToken(tokens: trait.trait.name.tokens, type: .interface))
+                    add(token: LSPToken(tokens: trait.trait.name.tokens, type: .interface, modifiers: []))
                 }
             case .anonymous:
                 break // idk
@@ -113,28 +101,71 @@ class SemaLogCollector: LoggerDestination {
         case .enumCreated(let enumType):
             switch enumType.source {
             case .instruction(let enumInstruction):
-                add(token: LSPToken(tokens: [enumInstruction.keyword], type: .keyword))
-                add(token: LSPToken(tokens: enumInstruction.name.tokens, type: .enum))
+                add(token: LSPToken(tokens: [enumInstruction.keyword], type: .keyword, modifiers: []))
+                add(token: LSPToken(tokens: enumInstruction.name.tokens, type: .enum, modifiers: [.declaration, .definition]))
             case .builtin:
                 break
             }
         case .recordCreated(let recordType):
             switch recordType.source {
             case .instruction(let recordInstruction):
-                add(token: LSPToken(tokens: [recordInstruction.keyword], type: .keyword))
-                add(token: LSPToken(tokens: recordInstruction.name.tokens, type: .struct))
+                add(token: LSPToken(tokens: [recordInstruction.keyword], type: .keyword, modifiers: []))
+                add(token: LSPToken(tokens: recordInstruction.name.tokens, type: .struct, modifiers: [.declaration, .definition]))
             case .builtin:
                 break
             }
         case .bindingReferenced(let binding, let referenceValue):
-            add(token: LSPToken(tokens: referenceValue.identifier.literal.tokens, type: binding.semanticTokenType))
+            add(token: LSPToken(tokens: referenceValue.identifier.literal.tokens, type: binding.semanticTokenType, modifiers: binding.semanticModifiers))
         case .namedTypeReferenced(let type, let reference):
-            add(token: LSPToken(tokens: reference.name.tokens, type: getType(type: type)))
+            add(token: LSPToken(tokens: reference.name.tokens, type: type.semanticTokenType, modifiers: type.semanticModifiers))
         case .functionTypeReferenced(_, let reference):
             for trait in reference.traits?.traits ?? [] {
-                add(token: LSPToken(tokens: trait.trait.name.tokens, type: .interface))
+                // TODO: trait source
+                add(token: LSPToken(tokens: trait.trait.name.tokens, type: .interface, modifiers: [.defaultLibrary]))
             }
         }
+    }
+}
+
+extension NamedType {
+    var semanticTokenType: LSPSemanticTokenType {
+        switch self {
+        case is AnyType:
+            return .keyword
+        case is RecordType:
+            return .struct
+        case is EnumType:
+            return .enum
+        case is GenericArchetype:
+            return .typeParameter
+        default:
+            return .type
+        }
+    }
+    
+    var semanticModifiers: LSPToken.Modifiers {
+        // TODO: add deprecated
+        let defaultLibrary: LSPToken.Modifiers = {
+            switch self {
+            case let type as EnumType:
+                switch type.source {
+                case .builtin:
+                    return .defaultLibrary
+                case .instruction:
+                    return []
+                }
+            case let type as RecordType:
+                switch type.source {
+                case .builtin:
+                    return .defaultLibrary
+                case .instruction:
+                    return []
+                }
+            default:
+                return .defaultLibrary
+            }
+        }()
+        return [defaultLibrary]
     }
 }
 
@@ -163,6 +194,19 @@ extension Binding {
         case .enumCase:
             return .enumMember
         }
+    }
+    
+    var semanticModifiers: LSPToken.Modifiers {
+        // TODO: add deprecated
+        let defaultLibrary: LSPToken.Modifiers = {
+            switch source {
+            case .builtin:
+                return .defaultLibrary
+            default:
+                return []
+            }
+        }()
+        return [defaultLibrary]
     }
     
     var completionKind: CompletionItemKind {
