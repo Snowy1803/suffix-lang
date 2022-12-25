@@ -17,13 +17,15 @@ enum Trait: Equatable, Hashable {
     case function(FunctionTrait)
     case callingConvention(CallingConventionTrait)
     case trait(TraitTrait)
+    case documentation(DocumentationTrait)
     
     var wrapped: TraitProtocol {
         switch self {
         case .accessControl(let trait as TraitProtocol),
              .function(let trait as TraitProtocol),
              .callingConvention(let trait as TraitProtocol),
-             .trait(let trait as TraitProtocol):
+             .trait(let trait as TraitProtocol),
+             .documentation(let trait as TraitProtocol):
             return trait
         }
     }
@@ -47,6 +49,7 @@ extension Trait {
         allBuiltins.append(contentsOf: FunctionTrait.allCases.map({ .function($0) }))
         allBuiltins.append(contentsOf: CallingConventionTrait.allCases.map({ .callingConvention($0) }))
         allBuiltins.append(contentsOf: TraitTrait.allCases.map({ .trait($0) }))
+        allBuiltins.append(contentsOf: DocumentationTrait.allCases.map({ .documentation($0) }))
         return allBuiltins
     }()
 }
