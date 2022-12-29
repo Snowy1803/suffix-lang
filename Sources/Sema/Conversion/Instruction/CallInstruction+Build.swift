@@ -77,7 +77,7 @@ extension CallInstruction {
         let stmt = CallStmt(input: parameters, function: value, functionType: functionType, source: self)
         // TODO: resolve generics / specialise and stuff
         for (i, returnType) in returnTypes.enumerated() {
-            let elem = TStackElement(value: .callReturn(CallReturnVal(call: stmt, index: i, type: returnType)))
+            let elem = TStackElement(value: .callReturn(CallReturnVal(call: stmt, index: i, type: returnType)), source: .call(self))
             context.stack.append(elem)
         }
         return stmt

@@ -43,26 +43,26 @@ extension Val {
         }
     }
     
-    var node: ASTNode? {
-        switch self {
-        case .int(let intVal):
-            switch intVal.source {
-            case .ast(let node): return node
-            case .builtin: return nil
-            }
-        case .float(let node as ASTNode),
-             .string(let node as ASTNode):
-            return node
-        case .reference(let referenceVal):
-            switch referenceVal.source {
-            case .ast(let node): return node
-            }
-        case .anonymousFunc(let anonymousFunctionVal):
-            return anonymousFunctionVal.source
-        case .callReturn(let callReturnVal):
-            return callReturnVal.call.source
-        case .argument(let argumentVal):
-            return argumentVal.source
-        }
-    }
+//    var node: ASTNode? {
+//        switch self {
+//        case .int(let intVal):
+//            switch intVal.source {
+//            case .ast(let node): return node
+//            case .builtin: return nil
+//            }
+//        case .float(let node as ASTNode),
+//             .string(let node as ASTNode):
+//            return node
+//        case .reference(let referenceVal):
+//            switch referenceVal.source {
+//            case .ast(let node): return node
+//            }
+//        case .anonymousFunc(let anonymousFunctionVal):
+//            return anonymousFunctionVal.source
+//        case .callReturn(let callReturnVal):
+//            return callReturnVal.call.source
+//        case .argument(let argumentVal):
+//            return argumentVal.source
+//        }
+//    }
 }

@@ -15,13 +15,25 @@ import SuffixLang
 
 public class TStackElement {
     public let value: Val
+    public var source: Source
     
-    init(value: Val) {
+    init(value: Val, source: Source) {
         self.value = value
+        self.source = source
     }
     
     public enum Source {
         case push(PushInstruction)
         case call(CallInstruction)
+        case argument(FunctionTypeReference.Argument)
+        
+        var node: ASTNode {
+            switch self {
+            case .push(let node as ASTNode),
+                 .call(let node as ASTNode),
+                 .argument(let node as ASTNode):
+                return node
+            }
+        }
     }
 }

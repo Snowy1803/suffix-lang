@@ -112,7 +112,7 @@ extension FunctionTypeReference.Argument {
             }
             let inner = int.typeAnnotation.type.resolve(context: context)
             for _ in 0..<count {
-                context.stack.append(TStackElement(value: .argument(ArgumentVal(function: context.function, index: argumentCount, type: inner, source: self))))
+                context.stack.append(TStackElement(value: .argument(ArgumentVal(function: context.function, index: argumentCount, type: inner, source: self)), source: .argument(self)))
                 argumentCount += 1
             }
         case .named(let name):
@@ -123,11 +123,11 @@ extension FunctionTypeReference.Argument {
         case .unnamedVariadic(let variadic):
             let inner = variadic.typeAnnotation.type.resolve(context: context)
             // TODO: make variadic pack
-            context.stack.append(TStackElement(value: .argument(ArgumentVal(function: context.function, index: argumentCount, type: inner, source: self))))
+            context.stack.append(TStackElement(value: .argument(ArgumentVal(function: context.function, index: argumentCount, type: inner, source: self)), source: .argument(self)))
             argumentCount += 1
         case .unnamedSingle(let type):
             let inner = type.resolve(context: context)
-            context.stack.append(TStackElement(value: .argument(ArgumentVal(function: context.function, index: argumentCount, type: inner, source: self))))
+            context.stack.append(TStackElement(value: .argument(ArgumentVal(function: context.function, index: argumentCount, type: inner, source: self)), source: .argument(self)))
             argumentCount += 1
         }
     }

@@ -46,8 +46,7 @@ extension BlockContent {
                 token = fn.source.block.close
             case .main:
                 for value in context.stack {
-                    // TODO: use TStackElement.source instead (diagnostic on the 'push' not the value)
-                    let tokens: [Token] = value.value.node?.nodeAllTokens ?? []
+                    let tokens = value.source.node.nodeAllTokens
                     context.typeChecker.diagnostics.append(Diagnostic(tokens: tokens, message: .returningFromMain, severity: .error))
                 }
                 return RetStmt(input: [], parent: context.function)
@@ -57,8 +56,7 @@ extension BlockContent {
                 message: .returningTooMuch(expected: expectedTypes, actual: stack.map(\.value.type)),
                 severity: .error,
                 hints: context.stack.map { value in
-                    // TODO: use TStackElement.source instead (diagnostic on the 'push' not the value)
-                    let tokens: [Token] = value.value.node?.nodeAllTokens ?? []
+                    let tokens = value.source.node.nodeAllTokens
                     return Diagnostic(tokens: tokens, message: .hintReturnHere(value.value.type), severity: .hint)
                 }
             ))
@@ -81,8 +79,7 @@ extension BlockContent {
                 message: .returnMissing(expected: expectedTypes, actual: stack.map(\.value.type)),
                 severity: .error,
                 hints: context.stack.map { value in
-                    // TODO: use TStackElement.source instead (diagnostic on the 'push' not the value)
-                    let tokens: [Token] = value.value.node?.nodeAllTokens ?? []
+                    let tokens = value.source.node.nodeAllTokens
                     return Diagnostic(tokens: tokens, message: .hintReturnHere(value.value.type), severity: .hint)
                 }
             ))
