@@ -33,5 +33,14 @@ public class RecordType: NamedType, LeafType { // TODO: when generic records arr
     public enum Source {
         case instruction(RecordInstruction)
         case builtin
+        
+        var asInstruction: RecordInstruction? {
+            switch self {
+            case .instruction(let recordInstruction):
+                return recordInstruction
+            case .builtin:
+                return nil
+            }
+        }
     }
 }

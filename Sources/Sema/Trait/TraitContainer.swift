@@ -13,7 +13,7 @@
 import Foundation
 import SuffixLang
 
-struct TraitContainer {
+public struct TraitContainer {
     let type: TraitContainerType
     let source: Bool
     private(set) var traits: [Trait: TraitInfo]

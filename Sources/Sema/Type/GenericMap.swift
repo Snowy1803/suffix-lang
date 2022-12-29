@@ -12,17 +12,19 @@
 
 import Foundation
 
+protocol MappableType: SType {}
+
 public struct GenericMap {
-    var map: [ObjectID<GenericArchetype>: SType]
+    var map: [ObjectIdentifier: SType]
     
-    func apply(type: GenericArchetype) -> SType {
-        if let mapped = map[ObjectID(type)] {
+    func apply(type: some MappableType) -> SType {
+        if let mapped = map[ObjectIdentifier(type)] {
             return mapped
         }
         return type
     }
     
-    func contains(type: GenericArchetype) -> Bool {
-        map.keys.contains(ObjectID(type))
+    func contains(type: some MappableType) -> Bool {
+        map.keys.contains(ObjectIdentifier(type))
     }
 }

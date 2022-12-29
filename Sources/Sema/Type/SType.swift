@@ -61,6 +61,9 @@ extension SType {
         if type is AnyType {
             return true
         }
+        if type is UnresolvedType {
+            return true // maybe
+        }
         // we may need a type.canWrap(other: self) for optionals and move the condition for any
         return self.convertible(to: type)
     }

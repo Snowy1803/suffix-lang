@@ -32,17 +32,26 @@ public class EnumType: NamedType, LeafType {
     public enum Source {
         case instruction(EnumInstruction)
         case builtin
+        
+        var asInstruction: EnumInstruction? {
+            switch self {
+            case .instruction(let enumInstruction):
+                return enumInstruction
+            case .builtin:
+                return nil
+            }
+        }
     }
 }
 
 extension EnumType {
     static let bool = EnumType(name: "bool", cases: [Case(name: "false"), Case(name: "true")], source: .builtin)
 }
-
-extension EnumType {
-    var caseBindings: [Binding] {
-        cases.enumerated().map { i, c in
-            Binding(name: c.name, type: self, source: c.source.map { Binding.Source.binding($0) } ?? .builtin, ref: .intLiteral(i))
-        }
-    }
-}
+//
+//extension EnumType {
+//    var caseBindings: [TBinding] {
+//        cases.enumerated().map { i, c in
+//            TBinding(name: c.name, type: self, source: c.source.map { TBinding.Source.binding($0) } ?? .builtin, ref: .intLiteral(i))
+//        }
+//    }
+//}

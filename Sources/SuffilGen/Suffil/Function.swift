@@ -12,6 +12,7 @@
 
 import Foundation
 import SuffixLang
+import Sema
 
 public final class Function {
     public var parent: Function?

@@ -26,12 +26,16 @@ let package = Package(
         .target(
             name: "Sema",
             dependencies: ["SuffixLang"]),
+        .target(
+            name: "SuffilGen",
+            dependencies: ["SuffixLang", "Sema"]),
         
         .executableTarget(
             name: "Driver",
             dependencies: [
                 "SuffixLang",
                 "Sema",
+                "SuffilGen",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "Rainbow", package: "Rainbow"),
             ]),

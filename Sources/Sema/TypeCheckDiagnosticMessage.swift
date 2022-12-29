@@ -43,6 +43,8 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
     case invalidTrait(expected: TraitContainerType, trait: TraitContainer.TraitInfo)
     case duplicateTrait(String)
     case externWithBlock
+    case argumentCountMissing(String)
+    case ambiguousReturnCount(String)
     
     case hintReturnHere(SType)
     case hintCaptureHere(String)
@@ -92,6 +94,10 @@ enum TypeCheckDiagnosticMessage: DiagnosticMessage {
             return "Functions with the 'extern' trait cannot have a definition, consider replacing it with a semicolon"
         case .duplicateTrait(let name):
             return "Duplicate trait '\(name)'"
+        case .argumentCountMissing(let name):
+            return "Argument count for call to function '\(name)' could not be determined, please add it explicitly"
+        case .ambiguousReturnCount(let name):
+            return "Ambiguous return values count to function '\(name)', please add the type of the function explicitly"
         case .hintReturnHere(let type):
             return "Value of type '\(type)' returned here"
         case .hintCaptureHere(let name):
