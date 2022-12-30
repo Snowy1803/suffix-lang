@@ -29,3 +29,9 @@ public class IntVal {
         case builtin
     }
 }
+
+extension IntVal: CustomStringConvertible {
+    public var description: String {
+        "\(value): \(type)"
+    }
+}

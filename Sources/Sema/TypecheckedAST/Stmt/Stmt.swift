@@ -21,3 +21,24 @@ public enum Stmt {
     case `enum`(EnumType)
     case ret(RetStmt)
 }
+
+extension Stmt: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .push(let stmt):
+            return stmt.description
+        case .call(let stmt):
+            return stmt.description
+        case .bind(let stmt):
+            return stmt.description
+        case .function(let stmt):
+            return stmt.description
+        case .record(let type):
+            return type.declarationDescription
+        case .enum(let type):
+            return type.declarationDescription
+        case .ret(let stmt):
+            return stmt.description
+        }
+    }
+}

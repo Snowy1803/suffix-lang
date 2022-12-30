@@ -35,7 +35,6 @@ let package = Package(
             dependencies: [
                 "SuffixLang",
                 "Sema",
-                "SuffilGen",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "Rainbow", package: "Rainbow"),
             ]),

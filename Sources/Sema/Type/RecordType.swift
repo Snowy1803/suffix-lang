@@ -44,3 +44,11 @@ public class RecordType: NamedType, LeafType { // TODO: when generic records arr
         }
     }
 }
+
+extension RecordType {
+    public var declarationDescription: String {
+        let firstline = "record \(name) {"
+        let fields = self.fields.map { "    > \($0.name): \($0.type)\n" }.joined()
+        return "\(firstline)\n\(fields)}"
+    }
+}

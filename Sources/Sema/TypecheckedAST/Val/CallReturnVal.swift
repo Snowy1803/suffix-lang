@@ -24,3 +24,9 @@ public class CallReturnVal {
         self.type = type
     }
 }
+
+extension CallReturnVal: CustomStringConvertible {
+    public var description: String {
+        "@callReturn(\(call.function.name), \(index)): \(type)"
+    }
+}

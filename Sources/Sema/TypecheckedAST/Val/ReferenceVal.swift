@@ -29,3 +29,9 @@ public class ReferenceVal {
         case ast(ReferenceValue)
     }
 }
+
+extension ReferenceVal: CustomStringConvertible {
+    public var description: String {
+        "\(name): \(type) # converted from binding of type \(resolvedBinding?.type ?? ErrorType())"
+    }
+}

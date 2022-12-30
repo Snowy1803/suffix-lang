@@ -22,3 +22,9 @@ public class BindStmt {
         self.source = source
     }
 }
+
+extension BindStmt: CustomStringConvertible {
+    public var description: String {
+        "> \(binding.name): \(binding.type)"
+    }
+}

@@ -27,3 +27,9 @@ public class CallStmt {
         self.source = source
     }
 }
+
+extension CallStmt: CustomStringConvertible {
+    public var description: String {
+        ".\(function) # converted to \(functionType)"
+    }
+}

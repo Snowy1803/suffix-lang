@@ -66,3 +66,24 @@ extension Val {
 //        }
 //    }
 }
+
+extension Val: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .int(let intVal):
+            return intVal.description
+        case .float(let float):
+            return "\(float.float)"
+        case .string(let str):
+            return "\(str.components)"
+        case .reference(let referenceVal):
+            return referenceVal.description
+        case .anonymousFunc(let anonymousFunctionVal):
+            return anonymousFunctionVal.description
+        case .callReturn(let callReturnVal):
+            return callReturnVal.description
+        case .argument(let argumentVal):
+            return argumentVal.description
+        }
+    }
+}

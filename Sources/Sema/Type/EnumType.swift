@@ -47,6 +47,14 @@ public class EnumType: NamedType, LeafType {
 extension EnumType {
     static let bool = EnumType(name: "bool", cases: [Case(name: "false"), Case(name: "true")], source: .builtin)
 }
+
+extension EnumType {
+    public var declarationDescription: String {
+        let firstline = "enum \(name) {"
+        let cases = self.cases.map(\.name).map { "    > \($0)\n" }.joined()
+        return "\(firstline)\n\(cases)}"
+    }
+}
 //
 //extension EnumType {
 //    var caseBindings: [TBinding] {

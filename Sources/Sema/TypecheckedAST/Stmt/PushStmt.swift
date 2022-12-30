@@ -22,3 +22,9 @@ public class PushStmt {
         self.source = source
     }
 }
+
+extension PushStmt: CustomStringConvertible {
+    public var description: String {
+        "&\(element.value)"
+    }
+}

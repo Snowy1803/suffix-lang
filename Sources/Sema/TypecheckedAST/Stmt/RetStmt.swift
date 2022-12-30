@@ -22,3 +22,9 @@ public class RetStmt {
         self.parent = parent
     }
 }
+
+extension RetStmt: CustomStringConvertible {
+    public var description: String {
+        "# returns \(input.count) stack elements"
+    }
+}

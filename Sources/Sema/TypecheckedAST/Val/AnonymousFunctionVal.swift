@@ -27,3 +27,16 @@ public class AnonymousFunctionVal: ASTNode {
         self.traits = traits
     }
 }
+
+extension AnonymousFunctionVal: CustomStringConvertible {
+    public var description: String {
+        let traits = traits.traits.keys.map(\.wrapped.name).sorted().map { ", " + $0 }.joined()
+        let firstline = "func \(type)\(traits) {"
+        let statements = content.map(\.description)
+            .joined(separator: "\n")
+            .split(separator: "\n")
+            .map { "    " + $0 }
+            .joined(separator: "\n")
+        return "\(firstline)\n\(statements)\n}"
+    }
+}

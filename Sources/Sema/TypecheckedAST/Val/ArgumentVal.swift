@@ -26,3 +26,9 @@ public class ArgumentVal {
         self.source = source
     }
 }
+
+extension ArgumentVal: CustomStringConvertible {
+    public var description: String {
+        "@argument(\(function.name), \(index)): \(type)"
+    }
+}

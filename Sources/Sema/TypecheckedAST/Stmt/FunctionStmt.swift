@@ -29,3 +29,16 @@ public class FunctionStmt {
         self.source = source
     }
 }
+
+extension FunctionStmt: CustomStringConvertible {
+    public var description: String {
+        let traits = traits.traits.keys.map(\.wrapped.name).sorted().map { ", " + $0 }.joined()
+        let firstline = "func \(name) \(type)\(traits) {"
+        let statements = content.map(\.description)
+            .joined(separator: "\n")
+            .split(separator: "\n")
+            .map { "    " + $0 }
+            .joined(separator: "\n")
+        return "\(firstline)\n\(statements)\n}"
+    }
+}

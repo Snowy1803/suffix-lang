@@ -62,6 +62,6 @@ class UnresolvedType: MappableType {
 
 extension UnresolvedType: CustomStringConvertible {
     var description: String {
-        "unresolved type at \(ObjectIdentifier(self))"
+        "unresolved type at \(ObjectIdentifier(self).debugDescription.dropFirst("ObjectIdentifier(".count).dropLast())"
     }
 }
