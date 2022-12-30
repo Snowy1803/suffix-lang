@@ -19,6 +19,7 @@ public class AnonymousFunctionVal: ASTNode {
     public let source: AnonymousFunctionValue
     public var traits: TraitContainer
     public var content: [Stmt] = []
+    public var arguments: [ArgumentSpec] = []
     
     init(generics: [GenericArchetype], type: FunctionType, source: AnonymousFunctionValue, traits: TraitContainer) {
         self.generics = generics

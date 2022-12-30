@@ -34,5 +34,28 @@ public final class TFunction: ReferenceHashable {
         case anonymous(AnonymousFunctionVal)
         case main
     }
+    
+    var arguments: [ArgumentSpec] {
+        _read {
+            switch content {
+            case .statement(let functionStmt):
+                yield functionStmt.arguments
+            case .anonymous(let anonymousFunctionVal):
+                yield anonymousFunctionVal.arguments
+            case .main:
+                yield []
+            }
+        }
+        _modify {
+            switch content {
+            case .statement(let functionStmt):
+                yield &functionStmt.arguments
+            case .anonymous(let anonymousFunctionVal):
+                yield &anonymousFunctionVal.arguments
+            case .main:
+                fatalError()
+            }
+        }
+    }
 }
 

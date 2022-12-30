@@ -20,6 +20,7 @@ public class FunctionStmt {
     public var traits: TraitContainer
     public let source: FunctionInstruction
     public var content: [Stmt] = []
+    public var arguments: [ArgumentSpec] = []
 
     init(name: String, generics: [GenericArchetype], type: FunctionType, traits: TraitContainer, source: FunctionInstruction) {
         self.name = name

@@ -77,9 +77,8 @@ extension FunctionTypeReference.Arguments {
     }
     
     func registerLocalBindings(subcontext: FunctionParsingContext) {
-        var count = 0
         arguments.forEach {
-            $0.registerLocalBindings(context: subcontext, argumentCount: &count)
+            $0.registerLocalBindings(context: subcontext)
         }
     }
 }
@@ -103,7 +102,7 @@ extension FunctionTypeReference.Argument {
         }
     }
     
-    func registerLocalBindings(context: FunctionParsingContext, argumentCount: inout Int) {
+    func registerLocalBindings(context: FunctionParsingContext) {
         switch spec {
         case .count(let int):
             var count = int.count.integer
@@ -112,23 +111,27 @@ extension FunctionTypeReference.Argument {
             }
             let inner = int.typeAnnotation.type.resolve(context: context)
             for _ in 0..<count {
-                context.stack.append(TStackElement(value: .argument(ArgumentVal(function: context.function, index: argumentCount, type: inner, source: self)), source: .argument(self)))
-                argumentCount += 1
+                let element = TStackElement(value: .argument(ArgumentVal(function: context.function, index: context.function.arguments.count, type: inner, source: self)), source: .argument(self))
+                context.stack.append(element)
+                context.function.arguments.append(.stack(element))
             }
         case .named(let name):
             let inner = name.typeAnnotation.type.resolve(context: context)
             // TODO: handle variadics
-            context.add(global: true, binding: TBinding(name: name.name.identifier, type: inner, source: .argument(self), content: .argument(ArgumentVal(function: context.function, index: argumentCount, type: inner, source: self))))
-            argumentCount += 1
+            let binding = TBinding(name: name.name.identifier, type: inner, source: .argument(self), content: .argument(ArgumentVal(function: context.function, index: context.function.arguments.count, type: inner, source: self)))
+            context.add(global: true, binding: binding)
+            context.function.arguments.append(.binding(binding))
         case .unnamedVariadic(let variadic):
             let inner = variadic.typeAnnotation.type.resolve(context: context)
             // TODO: make variadic pack
-            context.stack.append(TStackElement(value: .argument(ArgumentVal(function: context.function, index: argumentCount, type: inner, source: self)), source: .argument(self)))
-            argumentCount += 1
+            let element = TStackElement(value: .argument(ArgumentVal(function: context.function, index: context.function.arguments.count, type: inner, source: self)), source: .argument(self))
+            context.stack.append(element)
+            context.function.arguments.append(.stack(element))
         case .unnamedSingle(let type):
             let inner = type.resolve(context: context)
-            context.stack.append(TStackElement(value: .argument(ArgumentVal(function: context.function, index: argumentCount, type: inner, source: self)), source: .argument(self)))
-            argumentCount += 1
+            let element = TStackElement(value: .argument(ArgumentVal(function: context.function, index: context.function.arguments.count, type: inner, source: self)), source: .argument(self))
+            context.stack.append(element)
+            context.function.arguments.append(.stack(element))
         }
     }
 }
