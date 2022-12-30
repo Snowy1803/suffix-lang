@@ -1,5 +1,5 @@
 //
-//  TypeChecker.swift
+//  SuffilGenerator.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 05/11/2022.
@@ -13,9 +13,9 @@
 import Foundation
 import SuffixLang
 
-public class TypeChecker {
+public class SuffilGenerator {
     var rootBlock: BlockContent
-    public var passes: [TypeCheckingPass] = TypeChecker.defaultPasses
+    public var passes: [SuffilPass] = SuffilGenerator.defaultPasses
     public var verbose = false
     
     // output
@@ -36,7 +36,7 @@ public class TypeChecker {
         }
     }
     
-    public func typecheck() {
+    public func generate() {
         checkPasses()
         if verbose {
             print("Starting build")
@@ -71,13 +71,13 @@ public class TypeChecker {
     }
 }
 
-public extension TypeChecker {
-    static let defaultPasses: [TypeCheckingPass] = [
+public extension SuffilGenerator {
+    static let defaultPasses: [SuffilPass] = [
         ClosurePass(),
         MovePass(),
         DeadCodePass(),
     ]
-    static let lspPasses: [TypeCheckingPass] = [
+    static let lspPasses: [SuffilPass] = [
         ClosurePass(),
     ]
 }

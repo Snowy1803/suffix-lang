@@ -13,24 +13,24 @@
 import Foundation
 import SuffixLang
 
-class ClosurePass: TypeCheckingPass {
+class ClosurePass: SuffilPass {
     var description: String { "Closure resolution" }
     
-    func run(typechecker: TypeChecker) {
-        for function in typechecker.functions {
-            run(function: function, typechecker: typechecker)
+    func run(generator: SuffilGenerator) {
+        for function in generator.functions {
+            run(function: function, generator: generator)
         }
     }
     
-    func run(function: Function, typechecker: TypeChecker) {
+    func run(function: Function, generator: SuffilGenerator) {
         for inst in function.instructions {
             if case .closure(let closureInst) = inst {
-                run(closure: closureInst, typechecker: typechecker)
+                run(closure: closureInst, generator: generator)
             }
         }
     }
     
-    func run(closure inst: ClosureInst, typechecker: TypeChecker) {
+    func run(closure inst: ClosureInst, generator: SuffilGenerator) {
         assert(inst.captures.isEmpty, "Closure resolution ran twice")
         for capture in inst.function.value.captures {
             inst.captures.append(LocatedRef(value: capture.parentRef, binding: capture.binding))

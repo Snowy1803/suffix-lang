@@ -13,12 +13,12 @@
 import Foundation
 import SuffixLang
 
-class MovePass: TypeCheckingPass {
+class MovePass: SuffilPass {
     var description: String { "Unnecessary copies elimination" }
     
-    func run(typechecker: TypeChecker) {
-        for function in typechecker.functions {
-            run(function: function, typechecker: typechecker)
+    func run(generator: SuffilGenerator) {
+        for function in generator.functions {
+            run(function: function, generator: generator)
         }
     }
     /// Runs the Unnecessary copies elimination, replacing copy+destroy to a move
@@ -36,7 +36,7 @@ class MovePass: TypeCheckingPass {
     /// ```suffil
     /// () = call .smth (%0)
     /// ```
-    func run(function: Function, typechecker: TypeChecker) {
+    func run(function: Function, generator: SuffilGenerator) {
         var copies: [CopyInst] = []
         var instsToRemove: Set<ObjectIdentifier> = []
         var copiesToReplaceInOrder: [CopyInst] = []

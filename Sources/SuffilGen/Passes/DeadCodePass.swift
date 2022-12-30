@@ -13,16 +13,16 @@
 import Foundation
 import SuffixLang
 
-class DeadCodePass: TypeCheckingPass {
+class DeadCodePass: SuffilPass {
     var description: String { "Dead code elimination" }
     
-    func run(typechecker: TypeChecker) {
-        for function in typechecker.functions {
-            run(function: function, typechecker: typechecker)
+    func run(generator: SuffilGenerator) {
+        for function in generator.functions {
+            run(function: function, generator: generator)
         }
     }
     
-    func run(function: Function, typechecker: TypeChecker) {
+    func run(function: Function, generator: SuffilGenerator) {
         var uses: [LocalRef: Int] = [:]
         for inst in function.instructions {
             for def in inst.wrapped.definingRefs {

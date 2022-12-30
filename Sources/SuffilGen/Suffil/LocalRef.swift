@@ -11,6 +11,7 @@
 //
 
 import Foundation
+import Sema
 
 public final class LocalRef {
     var givenName: String

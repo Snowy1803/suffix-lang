@@ -12,6 +12,6 @@
 
 import Foundation
 
-public protocol TypeCheckingPass: AnyObject, CustomStringConvertible {
+public protocol SuffilPass: AnyObject, CustomStringConvertible {
     func run(typechecker: TypeChecker)
 }
