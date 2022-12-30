@@ -20,14 +20,6 @@ extension FunctionParsingContext {
         return value
     }
     
-    func constrainFunctionType(type: SType) {
-        if type is FunctionType {
-            // no op
-        } else {
-            constraints.append(.functionType(type, argumentCount: nil))
-        }
-    }
-    
     func constrainFunctionType(type: SType, argumentCount: Int) {
         // always called with UnresolvedType from ReferenceVal
         constraints.append(.functionType(type, argumentCount: argumentCount))
@@ -46,9 +38,19 @@ extension FunctionParsingContext {
         return bindings
     }
     
+    func constrain(reference: ReferenceVal, oneOf bindings: [TBinding]) {
+        if bindings.count == 1,
+           let binding = bindings.first {
+            reference.resolvedBinding = binding
+        } else {
+            constraints.append(.possibleBindings(reference, possibilities: bindings))
+        }
+    }
+    
     enum Constraint {
         case error(String)
         case convertible(from: SType, to: SType)
-        case functionType(SType, argumentCount: Int?)
+        case functionType(SType, argumentCount: Int)
+        case possibleBindings(ReferenceVal, possibilities: [TBinding])
     }
 }

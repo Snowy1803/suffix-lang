@@ -21,6 +21,7 @@ extension ReferenceValue {
         if let count = self.argumentCount?.count.integer {
             context.constrainFunctionType(type: ref.type, argumentCount: count)
         }
+        context.constrain(reference: ref, oneOf: context.computePossibleBindings(reference: ref))
         return ref
     }
 }

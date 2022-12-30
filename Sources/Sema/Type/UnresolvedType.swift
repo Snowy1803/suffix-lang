@@ -23,7 +23,7 @@ class UnresolvedType: MappableType {
     func convertible(to other: SType) -> Bool {
         for constraint in context.constraints {
             switch constraint {
-            case .error:
+            case .error, .possibleBindings:
                 break
             case .convertible(let from, let to):
                 if from === self {
@@ -33,18 +33,14 @@ class UnresolvedType: MappableType {
             case .functionType(let type, let argumentCount):
                 if type === self {
                     if let other = other as? FunctionType {
-                        if let argumentCount {
-                            if other.variadicIndex == nil {
-                                if argumentCount != other.arguments.count {
-                                    return false
-                                }
-                            } else {
-                                if argumentCount < other.arguments.count {
-                                    return false
-                                }
+                        if other.variadicIndex == nil {
+                            if argumentCount != other.arguments.count {
+                                return false
                             }
                         } else {
-                            return true // maybe
+                            if argumentCount < other.arguments.count {
+                                return false
+                            }
                         }
                     } else if other is UnresolvedType {
                         return true // maybe

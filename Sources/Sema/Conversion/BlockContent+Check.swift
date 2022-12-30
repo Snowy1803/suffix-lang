@@ -27,6 +27,7 @@ extension BlockContent {
             $0.buildInstruction(context: context)
         }
         statements.append(.ret(buildRet(context: context)))
+        // TODO: constraint resolution
         return statements
     }
     

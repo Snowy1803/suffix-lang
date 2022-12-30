@@ -16,7 +16,6 @@ import SuffixLang
 extension CallInstruction {
     func buildInstruction(context: FunctionParsingContext) -> CallStmt {
         let value = value.buildValue(context: context)
-        context.constrainFunctionType(type: value.type)
 //        assert(type.isConcrete) // TODO: make it non-variadic in ReferenceValue.buildValue
         let possibilities = context.computePossibleBindings(reference: value)
         var argumentCount: Int?

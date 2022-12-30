@@ -27,7 +27,7 @@ public final class TypeChecker {
         self.rootBlock = rootBlock
     }
     
-    public func typecheck() {
+    public func typecheck() -> [Stmt] {
         if verbose {
             print("Starting build")
         }
@@ -36,6 +36,6 @@ public final class TypeChecker {
 //            logger.log(.globalBindingCreated(binding, nil))
 //        }
         let rootContext = RootParsingContext(typechecker: self, builtins: builtinContext)
-        rootBlock.typecheckContent(context: rootContext)
+        return rootBlock.typecheckContent(context: rootContext)
     }
 }
