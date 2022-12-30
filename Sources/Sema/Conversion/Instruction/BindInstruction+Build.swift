@@ -18,6 +18,9 @@ extension BindInstruction {
         let value = context.pop(count: 1, source: nodeAllTokens).first
         let target = self.value.typeAnnotation?.type.resolve(context: context) ?? value?.value.type ?? context.createUnresolvedType()
         let content = value.map({ TBinding.Content.element($0)}) ?? .error
+        if let value {
+            context.constrain(type: value.value.type, convertibleTo: target)
+        }
         let binding = TBinding(name: self.value.literal.identifier, type: target, source: .binding(self), content: content)
         context.add(global: false, binding: binding)
         return BindStmt(binding: binding, source: self)

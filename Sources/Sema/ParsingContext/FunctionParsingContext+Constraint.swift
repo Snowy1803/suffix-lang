@@ -26,6 +26,9 @@ extension FunctionParsingContext {
     }
     
     func constrain(type: SType, convertibleTo other: SType) {
+        if type === other {
+            return
+        }
         constraints.append(.convertible(from: type, to: other))
     }
     
