@@ -13,7 +13,7 @@
 import Foundation
 import SuffixLang
 
-public class ReferenceVal {
+public class ReferenceVal: ReferenceHashable {
     public let name: String
     public var type: SType
     public let source: Source

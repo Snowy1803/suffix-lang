@@ -13,7 +13,7 @@
 import Foundation
 
 /// The UnresolvedType is a placeholder type, used inside function/type declarations and replaced with a concrete or placeholder when the function or type is actually used
-class UnresolvedType: MappableType {
+class UnresolvedType: MappableType, ReferenceHashable {
     let context: FunctionParsingContext
     
     init(context: FunctionParsingContext) {

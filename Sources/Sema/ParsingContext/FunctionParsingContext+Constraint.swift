@@ -16,7 +16,7 @@ extension FunctionParsingContext {
     /// Creates a new type, that will have to be resolved later by constraint resolution
     func createUnresolvedType() -> UnresolvedType {
         let value = UnresolvedType(context: self)
-        unresolvedTypes.append(value)
+        unresolvedTypes.insert(value)
         return value
     }
     
@@ -45,6 +45,7 @@ extension FunctionParsingContext {
         if bindings.count == 1,
            let binding = bindings.first {
             reference.resolvedBinding = binding
+            self.unresolvedBindings.remove(reference)
         } else {
             constraints.append(.possibleBindings(reference, possibilities: bindings))
         }

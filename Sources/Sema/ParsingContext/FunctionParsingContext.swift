@@ -18,8 +18,8 @@ class FunctionParsingContext: ParsingContext {
     var stack: [TStackElement] = []
     
     var constraints: [Constraint] = []
-    var unresolvedTypes: [UnresolvedType] = []
-    var unresolvedBindings: [ReferenceVal] = []
+    var unresolvedTypes: Set<UnresolvedType> = []
+    var unresolvedBindings: Set<ReferenceVal> = []
     
     init(parent: ParsingContext, function: TFunction) {
         self.function = function

@@ -13,7 +13,7 @@
 import Foundation
 import SuffixLang
 
-public final class TFunction {
+public final class TFunction: ReferenceHashable {
     public var parent: TFunction?
     public var name: String
     public var type: FunctionType
@@ -36,12 +36,3 @@ public final class TFunction {
     }
 }
 
-extension TFunction: Equatable, Hashable {
-    public static func ==(_ lhs: TFunction, _ rhs: TFunction) -> Bool {
-        lhs === rhs
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(ObjectIdentifier(self))
-    }
-}

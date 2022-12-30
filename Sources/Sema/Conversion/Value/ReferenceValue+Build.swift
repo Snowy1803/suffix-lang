@@ -17,7 +17,7 @@ extension ReferenceValue {
     func buildValue(context: FunctionParsingContext) -> ReferenceVal {
         let type = identifier.typeAnnotation?.type.resolve(context: context)
         let ref = ReferenceVal(name: identifier.literal.identifier, type: type ?? context.createUnresolvedType(), source: .ast(self))
-        context.unresolvedBindings.append(ref)
+        context.unresolvedBindings.insert(ref)
         if let count = self.argumentCount?.count.integer {
             context.constrainFunctionType(type: ref.type, argumentCount: count)
         }
