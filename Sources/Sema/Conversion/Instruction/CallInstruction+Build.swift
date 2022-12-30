@@ -73,6 +73,7 @@ extension CallInstruction {
             returning: returnTypes.map { .init(type: $0) },
             // TODO: add 'pure' trait if we're in a pure func
             traits: TraitContainer(type: .func, source: false, traits: [], diagnostics: &context.typeChecker.diagnostics))
+        context.constrain(type: value.type, convertibleTo: functionType)
         let stmt = CallStmt(input: parameters, function: value, functionType: functionType, source: self)
         // TODO: resolve generics / specialise and stuff
         for (i, returnType) in returnTypes.enumerated() {
