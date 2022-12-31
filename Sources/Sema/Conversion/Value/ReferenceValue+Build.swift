@@ -25,3 +25,12 @@ extension ReferenceValue {
         return ref
     }
 }
+
+extension StringValue {
+    func createStringInterpolationFunctionRef(name: String, type: SType, context: FunctionParsingContext) -> ReferenceVal {
+        let ref = ReferenceVal(name: name, type: type, source: .stringInterpolationFunction(self))
+        context.unresolvedBindings.insert(ref)
+        context.constrain(reference: ref, oneOf: context.computePossibleBindings(reference: ref))
+        return ref
+    }
+}

@@ -1,5 +1,5 @@
 //
-//  ReferenceVal.swift
+//  ConstantStringVal.swift
 //  SuffixLang
 // 
 //  Created by Emil Pedersen on 22/10/2022.
@@ -13,26 +13,25 @@
 import Foundation
 import SuffixLang
 
-public class ReferenceVal: ReferenceHashable {
-    public let name: String
-    public var type: SType
+public class ConstantStringVal {
+    public let value: String
+    public var type: SType // usually StringType
     public let source: Source
-    public var resolvedBinding: TBinding?
     
-    init(name: String, type: SType, source: Source) {
-        self.name = name
+    init(value: String, type: SType, source: Source) {
+        self.value = value
         self.type = type
         self.source = source
     }
     
     public enum Source {
-        case ast(ReferenceValue)
-        case stringInterpolationFunction(StringValue)
+        case ast(StringValue)
+        case builtin
     }
 }
 
-extension ReferenceVal: CustomStringConvertible {
+extension ConstantStringVal: CustomStringConvertible {
     public var description: String {
-        "\(name): \(type) # converted from binding of type \(resolvedBinding?.type ?? ErrorType())"
+        "\(value.debugDescription): \(type)"
     }
 }

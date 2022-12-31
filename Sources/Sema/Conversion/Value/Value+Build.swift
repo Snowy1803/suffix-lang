@@ -21,8 +21,7 @@ extension Value {
         case .float(let float):
             return .float(float)
         case .string(let str):
-            // TODO: move interpolation here probably
-            return .string(str)
+            return str.buildValue(context: context)
         case .reference(let ref):
             return .reference(ref.buildValue(context: context))
         case .anonymousFunc(let fn):

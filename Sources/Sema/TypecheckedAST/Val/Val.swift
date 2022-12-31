@@ -16,7 +16,8 @@ import SuffixLang
 public enum Val {
     case int(IntVal)
     case float(FloatValue)
-    case string(StringValue)
+    case stringLiteral(ConstantStringVal)
+    case stringInterpolation(StringInterpolationVal)
     case reference(ReferenceVal)
     case anonymousFunc(AnonymousFunctionVal)
     case callReturn(CallReturnVal)
@@ -30,8 +31,10 @@ extension Val {
             return intVal.type
         case .float:
             return FloatType.shared
-        case .string:
-            return StringType.shared
+        case .stringLiteral(let str):
+            return str.type
+        case .stringInterpolation(let str):
+            return str.type
         case .reference(let referenceVal):
             return referenceVal.type
         case .anonymousFunc(let anonymousFunctionVal):
@@ -74,8 +77,10 @@ extension Val: CustomStringConvertible {
             return intVal.description
         case .float(let float):
             return "\(float.float)"
-        case .string(let str):
-            return "\(str.components)"
+        case .stringLiteral(let str):
+            return str.description
+        case .stringInterpolation(let str):
+            return str.description
         case .reference(let referenceVal):
             return referenceVal.description
         case .anonymousFunc(let anonymousFunctionVal):
