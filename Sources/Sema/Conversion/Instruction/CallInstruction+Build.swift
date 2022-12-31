@@ -17,7 +17,7 @@ extension CallInstruction {
     func buildInstruction(context: FunctionParsingContext) -> CallStmt {
         let value = value.buildValue(context: context)
 //        assert(type.isConcrete) // TODO: make it non-variadic in ReferenceValue.buildValue
-        let possibilities = context.computePossibleBindings(reference: value)
+        let possibilities = context.constraints.computePossibleBindings(context: context, reference: value)
         var argumentCount: Int?
         var returnCount: Int?
         for possibility in possibilities {
@@ -64,16 +64,16 @@ extension CallInstruction {
             if i < parameters.count {
                 return parameters[i].value.type
             } else {
-                return context.createUnresolvedType()
+                return context.constraints.createUnresolvedType()
             }
         }
-        let returnTypes = (0..<actualReturnCount).map { _ in context.createUnresolvedType() }
+        let returnTypes = (0..<actualReturnCount).map { _ in context.constraints.createUnresolvedType() }
         let functionType = FunctionType(
             arguments: argumentTypes.map { .init(type: $0) },
             returning: returnTypes.map { .init(type: $0) },
             // TODO: add 'pure' trait if we're in a pure func
             traits: TraitContainer(type: .func, source: false, traits: [], diagnostics: &context.typeChecker.diagnostics))
-        context.constrain(type: value.type, convertibleTo: functionType)
+        context.constraints.constrain(type: value.type, convertibleTo: functionType)
         let stmt = CallStmt(input: parameters, function: value, functionType: functionType, source: self)
         // TODO: resolve generics / specialise and stuff
         for (i, returnType) in returnTypes.enumerated() {

@@ -16,10 +16,10 @@ import SuffixLang
 extension BindInstruction {
     func buildInstruction(context: FunctionParsingContext) -> BindStmt {
         let value = context.pop(count: 1, source: nodeAllTokens).first
-        let target = self.value.typeAnnotation?.type.resolve(context: context) ?? value?.value.type ?? context.createUnresolvedType()
+        let target = self.value.typeAnnotation?.type.resolve(context: context) ?? value?.value.type ?? context.constraints.createUnresolvedType()
         let content = value.map({ TBinding.Content.element($0)}) ?? .error
         if let value {
-            context.constrain(type: value.value.type, convertibleTo: target)
+            context.constraints.constrain(type: value.value.type, convertibleTo: target)
         }
         let binding = TBinding(name: self.value.literal.identifier, type: target, source: .binding(self), content: content)
         context.add(global: false, binding: binding)

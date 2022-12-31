@@ -12,7 +12,12 @@
 
 import Foundation
 
-extension FunctionParsingContext {
+class ConstraintContainer {
+    
+    var constraints: [Constraint] = []
+    var unresolvedTypes: Set<UnresolvedType> = []
+    var unresolvedBindings: Set<ReferenceVal> = []
+    
     /// Creates a new type, that will have to be resolved later by constraint resolution
     func createUnresolvedType() -> UnresolvedType {
         let value = UnresolvedType(context: self)
@@ -32,11 +37,11 @@ extension FunctionParsingContext {
         constraints.append(.convertible(from: type, to: other))
     }
     
-    func computePossibleBindings(reference: ReferenceVal) -> [TBinding] {
+    func computePossibleBindings(context: FunctionParsingContext, reference: ReferenceVal) -> [TBinding] {
         if let resolved = reference.resolvedBinding {
             return [resolved]
         }
-        var bindings = self.getBindings(name: reference.name)
+        var bindings = context.getBindings(name: reference.name)
         bindings = bindings.filter({ $0.type.canBeAssigned(to: reference.type) })
         return bindings
     }

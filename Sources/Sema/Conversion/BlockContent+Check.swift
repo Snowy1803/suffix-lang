@@ -27,7 +27,7 @@ extension BlockContent {
             $0.buildInstruction(context: context)
         }
         statements.append(.ret(buildRet(context: context)))
-        return context.resolveConstraints(statements: statements)
+        return context.constraints.resolveConstraints(statements: statements)
     }
     
     func buildRet(context: FunctionParsingContext) -> RetStmt {

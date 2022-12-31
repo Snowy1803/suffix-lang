@@ -17,9 +17,7 @@ class FunctionParsingContext: ParsingContext {
     var function: TFunction
     var stack: [TStackElement] = []
     
-    var constraints: [Constraint] = []
-    var unresolvedTypes: Set<UnresolvedType> = []
-    var unresolvedBindings: Set<ReferenceVal> = []
+    var constraints = ConstraintContainer()
     
     init(parent: ParsingContext, function: TFunction) {
         self.function = function

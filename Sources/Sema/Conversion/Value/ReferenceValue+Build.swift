@@ -16,12 +16,12 @@ import SuffixLang
 extension ReferenceValue {
     func buildValue(context: FunctionParsingContext) -> ReferenceVal {
         let type = identifier.typeAnnotation?.type.resolve(context: context)
-        let ref = ReferenceVal(name: identifier.literal.identifier, type: type ?? context.createUnresolvedType(), source: .ast(self))
-        context.unresolvedBindings.insert(ref)
+        let ref = ReferenceVal(name: identifier.literal.identifier, type: type ?? context.constraints.createUnresolvedType(), source: .ast(self))
+        context.constraints.unresolvedBindings.insert(ref)
         if let count = self.argumentCount?.count.integer {
-            context.constrainFunctionType(type: ref.type, argumentCount: count)
+            context.constraints.constrainFunctionType(type: ref.type, argumentCount: count)
         }
-        context.constrain(reference: ref, oneOf: context.computePossibleBindings(reference: ref))
+        context.constraints.constrain(reference: ref, oneOf: context.constraints.computePossibleBindings(context: context, reference: ref))
         return ref
     }
 }
@@ -29,8 +29,8 @@ extension ReferenceValue {
 extension StringValue {
     func createStringInterpolationFunctionRef(name: String, type: SType, context: FunctionParsingContext) -> ReferenceVal {
         let ref = ReferenceVal(name: name, type: type, source: .stringInterpolationFunction(self))
-        context.unresolvedBindings.insert(ref)
-        context.constrain(reference: ref, oneOf: context.computePossibleBindings(reference: ref))
+        context.constraints.unresolvedBindings.insert(ref)
+        context.constraints.constrain(reference: ref, oneOf: context.constraints.computePossibleBindings(context: context, reference: ref))
         return ref
     }
 }
