@@ -51,10 +51,36 @@ extension FunctionParsingContext {
         }
     }
     
+    func resolveConstraints(statements: [Stmt]) -> [Stmt] {
+        for constraint in constraints {
+            print(constraint)
+        }
+//        for unresolvedType in unresolvedTypes {
+//            var possibilities: [SType]?
+//            for constraint in constraints {
+//                switch constraint {
+//                case .error:
+//                    break
+//                case .convertible(let from, let to):
+//                    <#code#>
+//                case .functionType(let sType, let argumentCount):
+//                    <#code#>
+//                case .possibleBindings(let referenceVal, let possibilities):
+//                    <#code#>
+//                }
+//            }
+//        }
+        return statements
+    }
+    
     enum Constraint {
+        /// There is a typechecking error
         case error(String)
+        /// One type must be convertible to the other type
         case convertible(from: SType, to: SType)
+        /// The type must be a function with a certain concrete number of arguments
         case functionType(SType, argumentCount: Int)
+        /// The ReferenceVal's binding must be resolved in the given array of possibilities. The binding's type must be convertible to the reference's type
         case possibleBindings(ReferenceVal, possibilities: [TBinding])
     }
 }

@@ -47,6 +47,13 @@ class BuiltinParsingContext: ParsingContext {
             arguments: [.init(type: any, variadic: true)],
             returning: [],
             traits: [.function(.impure)])
+        
+        createBuiltinFunction(
+            name: "eq",
+            arguments: [.init(type: bool), .init(type: bool)],
+            returning: [bool],
+            traits: [.function(.constant)])
+        
         GenericArchetype(name: "T")
             .with { t in
                 createBuiltinFunction(
@@ -54,6 +61,15 @@ class BuiltinParsingContext: ParsingContext {
                     generics: [t],
                     arguments: [.init(type: bool), .init(type: t), .init(type: t)],
                     returning: [t],
+                    traits: [.function(.constant)])
+            }
+        GenericArchetype(name: "Element")
+            .with { t in
+                createBuiltinFunction(
+                    name: "new array",
+                    generics: [t],
+                    arguments: [.init(type: t, variadic: true)],
+                    returning: [ArrayType(element: t)],
                     traits: [.function(.constant)])
             }
     }
