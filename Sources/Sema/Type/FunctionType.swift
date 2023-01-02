@@ -15,13 +15,11 @@ import SuffixLang
 
 public class FunctionType: SType {
     public var typeID: STypeID { .function }
-    let generics: [GenericArchetype]
     public let arguments: [Argument]
     public let returning: [Argument]
     let traits: TraitContainer
     
-    init(generics: [GenericArchetype] = [], arguments: [Argument], returning: [Argument], traits: TraitContainer) {
-        self.generics = generics
+    init(arguments: [Argument], returning: [Argument], traits: TraitContainer) {
         self.arguments = arguments
         self.returning = returning
         self.traits = traits
@@ -31,9 +29,9 @@ public class FunctionType: SType {
         arguments.firstIndex(where: \.variadic)
     }
     
-    var isConcrete: Bool {
-        variadicIndex == nil && generics.isEmpty
-    }
+//    var isConcrete: Bool {
+//        variadicIndex == nil && generics.isEmpty
+//    }
     
     // (str, any) (int) is convertible to (str, bool) (any)
     // (str, any..., int) (int) is convertible to (str, bool, int, float, int) (any)
@@ -70,7 +68,6 @@ public class FunctionType: SType {
     
     public func map(with map: GenericMap) -> SType {
         FunctionType(
-            generics: generics.filter { !map.contains(type: $0) },
             arguments: arguments.map { Argument(type: $0.type.map(with: map), variadic: $0.variadic) },
             returning: returning.map { Argument(type: $0.type.map(with: map), variadic: $0.variadic) },
             traits: traits
@@ -79,9 +76,6 @@ public class FunctionType: SType {
     
     public var description: String {
         var desc = ""
-        if !generics.isEmpty {
-            desc += "[\(generics.map(\.description).joined(separator: ", "))] "
-        }
         desc += "(\(arguments.map(\.description).joined(separator: ", "))) "
         desc += "(\(returning.map(\.description).joined(separator: ", ")))"
         if !traits.traits.isEmpty {
@@ -89,10 +83,7 @@ public class FunctionType: SType {
         }
         return desc
     }
-    
-    // ???: Currently unused
-    public var genericArchetypesInDefinition: [GenericArchetype] { generics }
-    
+        
     public struct Argument: CustomStringConvertible {
         public var type: SType
         public var variadic: Bool = false

@@ -14,15 +14,13 @@ import Foundation
 import SuffixLang
 
 public class AnonymousFunctionVal: ASTNode {
-    public let generics: [GenericArchetype]
     public var type: FunctionType
     public let source: AnonymousFunctionValue
     public var traits: TraitContainer
     public var content: [Stmt] = []
     public var arguments: [ArgumentSpec] = []
     
-    init(generics: [GenericArchetype], type: FunctionType, source: AnonymousFunctionValue, traits: TraitContainer) {
-        self.generics = generics
+    init(type: FunctionType, source: AnonymousFunctionValue, traits: TraitContainer) {
         self.type = type
         self.source = source
         self.traits = traits

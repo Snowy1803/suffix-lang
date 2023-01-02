@@ -14,9 +14,9 @@ import Foundation
 import SuffixLang
 
 extension FunctionInstruction {
-    private func resolve(context: ParsingContext, generics: [GenericArchetype], traits: TraitContainer) -> FunctionType {
+    private func resolve(context: ParsingContext, traits: TraitContainer) -> FunctionType {
         let resolved = arguments.resolve(context: context)
-        return FunctionType(generics: generics, arguments: resolved, returning: returning.resolve(context: context), traits: traits)
+        return FunctionType(arguments: resolved, returning: returning.resolve(context: context), traits: traits)
     }
     
     func buildInstruction(context parent: FunctionParsingContext) -> FunctionStmt {
@@ -24,9 +24,9 @@ extension FunctionInstruction {
         let genericArguments = generics?.generics.map { GenericArchetype(name: $0.name.identifier) } ?? []
         partial.types.append(contentsOf: genericArguments)
         let traits = TraitContainer(type: .func, source: true, traits: traits.createContainer(context: parent), diagnostics: &parent.typeChecker.diagnostics)
-        let resolved = resolve(context: partial, generics: genericArguments, traits: traits)
+        let resolved = resolve(context: partial, traits: traits)
         // TODO: remove `source` for FunctionType
-        return FunctionStmt(name: name.identifier, generics: genericArguments, type: resolved, traits: traits, source: self)
+        return FunctionStmt(name: name.identifier, generics: genericArguments, functionType: resolved, traits: traits, source: self)
     }
     
 }
@@ -41,24 +41,22 @@ extension FunctionStmt {
     
     func createSubContext(parent: FunctionParsingContext, function: TFunction) -> FunctionParsingContext {
         let subcontext = FunctionParsingContext(parent: parent, function: function)
-        subcontext.types.append(contentsOf: function.type.generics)
+        subcontext.types.append(contentsOf: function.generics)
         return subcontext
     }
 }
 
 extension AnonymousFunctionValue {
-    private func resolve(context: ParsingContext, generics: [GenericArchetype], traits: TraitContainer) -> FunctionType {
+    private func resolve(context: ParsingContext, traits: TraitContainer) -> FunctionType {
         let resolved = arguments.resolve(context: context)
-        return FunctionType(generics: generics, arguments: resolved, returning: returning.resolve(context: context), traits: traits)
+        return FunctionType(arguments: resolved, returning: returning.resolve(context: context), traits: traits)
     }
     
     func buildPartialValue(context parent: FunctionParsingContext) -> AnonymousFunctionVal {
         let partial = PartialFunctionParsingContext(parent: parent)
-        let genericArguments = generics?.generics.map { GenericArchetype(name: $0.name.identifier) } ?? []
-        partial.types.append(contentsOf: genericArguments)
         let traits = TraitContainer(type: .func, source: true, traits: traits.createContainer(context: parent), diagnostics: &parent.typeChecker.diagnostics)
-        let resolved = resolve(context: partial, generics: genericArguments, traits: traits)
-        return AnonymousFunctionVal(generics: genericArguments, type: resolved, source: self, traits: traits)
+        let resolved = resolve(context: partial, traits: traits)
+        return AnonymousFunctionVal(type: resolved, source: self, traits: traits)
     }
 }
 
@@ -66,7 +64,6 @@ extension AnonymousFunctionVal {
     func createAnonymousFunctionContext(parent: FunctionParsingContext) -> FunctionParsingContext {
         let function = parent.createFunction(name: "anonymous function", type: type, content: .anonymous(self), traits: traits)
         let subcontext = FunctionParsingContext(parent: parent, function: function)
-        subcontext.types.append(contentsOf: function.type.generics)
         return subcontext
     }
 }

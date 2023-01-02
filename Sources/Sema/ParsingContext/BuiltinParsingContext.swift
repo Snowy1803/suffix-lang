@@ -29,7 +29,7 @@ class BuiltinParsingContext: ParsingContext {
             bool,
             str,
             GenericArchetype(name: "Element").with {
-                ArrayType(element: $0)
+                GenericType(generics: [$0], wrapped: ArrayType(element: $0))
             },
         ]
         for binding in EnumType.bool.cases.enumerated().map({ i, c in
@@ -75,11 +75,11 @@ class BuiltinParsingContext: ParsingContext {
     }
     
     func createBuiltinFunction(name: String, generics: [GenericArchetype] = [], arguments: [FunctionType.Argument], returning: [SType], traits: [Trait]) {
-        let type = FunctionType(
-            generics: generics,
+        let ftype = FunctionType(
             arguments: arguments,
             returning: returning.map { .init(type: $0) },
             traits: TraitContainer(type: .func, source: false, builtin: traits))
+        let type: SType = generics.isEmpty ? ftype : GenericType(generics: generics, wrapped: ftype)
         self.add(global: true, binding: TBinding(name: name, type: type, source: .builtin, content: .builtinFunction))
     }
 }

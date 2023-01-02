@@ -25,7 +25,6 @@ extension AnonymousFunctionValue {
                 return nil
             }
             self.keyword = keyword
-            self.generics = GenericDefinition(stream: stream)
             self.arguments = FunctionTypeReference.Arguments(assert: stream)
             self.returning = FunctionTypeReference.ReturnValues(assert: stream)
             self.traits = TraitCollection(stream: stream)

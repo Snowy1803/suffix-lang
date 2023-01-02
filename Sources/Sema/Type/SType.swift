@@ -23,6 +23,7 @@ public enum STypeID {
     case str // (StringType)
     
     case archetype // (GenericArchetype)
+    case generic // (GenericType)
     
     case function // (FunctionType)
     
@@ -42,9 +43,6 @@ public protocol SType: AnyObject, CustomStringConvertible {
     
     /// Returns a modified type with the generic map applied
     func map(with map: GenericMap) -> SType
-    
-    /// Returns all the generic archetypes used in the definition, that must be replaced before this type can be used concretely
-    var genericArchetypesInDefinition: [GenericArchetype] { get }
 }
 
 public protocol NamedType: SType {
@@ -70,8 +68,6 @@ extension LeafType {
     public func map(with map: GenericMap) -> SType {
         self
     }
-    
-    public var genericArchetypesInDefinition: [GenericArchetype] { [] }
 }
 
 extension SType {

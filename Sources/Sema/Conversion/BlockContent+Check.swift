@@ -31,7 +31,7 @@ extension BlockContent {
     }
     
     func buildRet(context: FunctionParsingContext) -> RetStmt {
-        let expectedTypes = context.function.type.returning.map(\.type)
+        let expectedTypes = context.function.functionType.returning.map(\.type)
         let stack = context.stack
         if expectedTypes.count < stack.count {
             let token: Token

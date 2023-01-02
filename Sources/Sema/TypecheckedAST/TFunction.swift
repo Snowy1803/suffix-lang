@@ -16,17 +16,40 @@ import SuffixLang
 public final class TFunction: ReferenceHashable {
     public var parent: TFunction?
     public var name: String
-    public var type: FunctionType
+    public var type: SType // GenericType / FunctionType
     public var content: Content
     public var traits: TraitContainer
     
-    init(parent: TFunction?, name: String, type: FunctionType, content: Content, traits: TraitContainer) {
+    init(parent: TFunction?, name: String, type: SType, content: Content, traits: TraitContainer) {
+        assert(type is FunctionType || (type is GenericType && (type as! GenericType).wrapped is FunctionType))
         assert(traits.type == .func)
         self.parent = parent
         self.name = name
         self.type = type
         self.content = content
         self.traits = traits
+    }
+    
+    var generics: [GenericArchetype] {
+        switch type {
+        case let type as GenericType:
+            return type.generics
+        case is FunctionType:
+            return []
+        default:
+            preconditionFailure()
+        }
+    }
+    
+    var functionType: FunctionType {
+        switch type {
+        case let type as GenericType:
+            return type.wrapped as! FunctionType
+        case let type as FunctionType:
+            return type
+        default:
+            preconditionFailure()
+        }
     }
     
     public enum Content {

@@ -16,18 +16,26 @@ import SuffixLang
 public class FunctionStmt {
     public let name: String
     public let generics: [GenericArchetype]
-    public var type: FunctionType
+    public var functionType: FunctionType
     public var traits: TraitContainer
     public let source: FunctionInstruction
     public var content: [Stmt] = []
     public var arguments: [ArgumentSpec] = []
 
-    init(name: String, generics: [GenericArchetype], type: FunctionType, traits: TraitContainer, source: FunctionInstruction) {
+    init(name: String, generics: [GenericArchetype], functionType: FunctionType, traits: TraitContainer, source: FunctionInstruction) {
         self.name = name
         self.generics = generics
-        self.type = type
+        self.functionType = functionType
         self.traits = traits
         self.source = source
+    }
+    
+    var type: SType {
+        if generics.isEmpty {
+            return functionType
+        } else {
+            return GenericType(generics: generics, wrapped: functionType)
+        }
     }
 }
 

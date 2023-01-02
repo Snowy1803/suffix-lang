@@ -17,7 +17,7 @@ extension TypeReference {
     func resolve(context: ParsingContext) -> SType {
         switch self {
         case .function(let function):
-            let type = FunctionType(generics: [], arguments: function.arguments.resolve(context: context), returning: function.returning.resolve(context: context), traits: TraitContainer(type: .func, source: false, traits: function.traits?.createContainer(context: context) ?? [], diagnostics: &context.typeChecker.diagnostics))
+            let type = FunctionType(arguments: function.arguments.resolve(context: context), returning: function.returning.resolve(context: context), traits: TraitContainer(type: .func, source: false, traits: function.traits?.createContainer(context: context) ?? [], diagnostics: &context.typeChecker.diagnostics))
 //            context.typeChecker.logger.log(.functionTypeReferenced(type, function))
             return type
         case .generic(let generic):
@@ -26,7 +26,7 @@ extension TypeReference {
                 return ErrorType()
             }
 //            context.typeChecker.logger.log(.namedTypeReferenced(named, generic))
-            let generics = named.genericArchetypesInDefinition
+            let generics = named.typeID == .generic ? (named as! GenericType).generics : []
             guard generics.count == generic.generics?.generics.count ?? 0 else {
                 if let node = generic.generics {
                     context.typeChecker.diagnostics.append(Diagnostic(tokens: node.nodeAllTokens, message: .genericTypeParameterCountInvalid(expected: generics.count, actual: node.generics.count), severity: .error))
