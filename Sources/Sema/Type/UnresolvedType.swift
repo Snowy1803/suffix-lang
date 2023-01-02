@@ -12,8 +12,9 @@
 
 import Foundation
 
-/// The UnresolvedType is a placeholder type, used inside function/type declarations and replaced with a concrete or placeholder when the function or type is actually used
+/// The UnresolvedType is a type variable, used during typechecking until the type inference has found the correct type
 class UnresolvedType: MappableType, ReferenceHashable {
+    public var typeID: STypeID { .variable }
     let context: ConstraintContainer
     
     init(context: ConstraintContainer) {

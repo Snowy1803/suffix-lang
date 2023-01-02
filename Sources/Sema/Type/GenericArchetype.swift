@@ -14,6 +14,7 @@ import Foundation
 
 /// The GenericArchetype is a generic placeholder type, used inside function/type declarations and replaced with a concrete or placeholder when the function or type is actually used
 public class GenericArchetype: NamedType, MappableType {
+    public var typeID: STypeID { .archetype }
     public var name: String
     
     public init(name: String) {

@@ -13,6 +13,7 @@
 import Foundation
 
 public final class ArrayType: NamedType {
+    public var typeID: STypeID { .array }
     public var name: String { "array" }
     public var element: SType
     

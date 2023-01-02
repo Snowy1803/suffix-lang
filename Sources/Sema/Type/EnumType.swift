@@ -14,6 +14,7 @@ import Foundation
 import SuffixLang
 
 public class EnumType: NamedType, LeafType {
+    public var typeID: STypeID { .enum }
     public var name: String
     public var cases: [Case]
     public var source: Source

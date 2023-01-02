@@ -12,7 +12,28 @@
 
 import Foundation
 
+public enum STypeID {
+    // Named types
+    case any // (AnyType)
+    case array // (ArrayType)
+    case `enum` // (EnumType)
+    case float // (FloatType)
+    case int // (IntType)
+    case record // (RecordType)
+    case str // (StringType)
+    
+    case archetype // (GenericArchetype)
+    
+    case function // (FunctionType)
+    
+    // sema-internal types
+    case variable // (UnresolvedType)
+    case error // (ErrorType)
+}
+
 public protocol SType: AnyObject, CustomStringConvertible {
+    var typeID: STypeID { get }
+    
     /// Returns true if this type can be converted to the different type `other`
     /// This function need not return true if the types are the same or if the other type is `any`,
     /// as this is handled in `canBeAssigned(to:)`

@@ -15,6 +15,7 @@ import Foundation
 /// The ErrorType is a placeholder errored type, used inside when a type that does not exist is referenced
 /// This value is not a singleton because two different error types are not equal
 class ErrorType: LeafType {
+    public var typeID: STypeID { .error }
 }
 
 extension ErrorType: CustomStringConvertible {

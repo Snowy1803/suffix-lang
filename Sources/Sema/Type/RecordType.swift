@@ -14,6 +14,7 @@ import Foundation
 import SuffixLang
 
 public class RecordType: NamedType, LeafType { // TODO: when generic records arrive, it won't be a leaf anymore
+    public var typeID: STypeID { .record }
     public var name: String
     public var fields: [Field]
     public var source: Source

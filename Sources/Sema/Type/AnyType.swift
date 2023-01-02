@@ -13,6 +13,7 @@
 import Foundation
 
 public final class AnyType: NamedType, LeafType {
+    public var typeID: STypeID { .any }
     public var name: String { "any" }
     
     public static let shared = AnyType()

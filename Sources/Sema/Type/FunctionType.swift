@@ -14,6 +14,7 @@ import Foundation
 import SuffixLang
 
 public class FunctionType: SType {
+    public var typeID: STypeID { .function }
     let generics: [GenericArchetype]
     public let arguments: [Argument]
     public let returning: [Argument]

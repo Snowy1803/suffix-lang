@@ -13,6 +13,7 @@
 import Foundation
 
 public final class StringType: NamedType, LeafType {
+    public var typeID: STypeID { .str }
     public var name: String { "str" }
     
     public static let shared = StringType()
