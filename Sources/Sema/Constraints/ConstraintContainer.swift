@@ -15,8 +15,13 @@ import Foundation
 class ConstraintContainer {
     
     var constraints: [Constraint] = []
+    
     var unresolvedTypes: Set<UnresolvedType> = []
     var unresolvedBindings: Set<ReferenceVal> = []
+    
+    // Resolved types and bindings aren't applied right away, only when we're sure this is the correct solution
+    var resolvedTypes: [UnresolvedType: SType] = [:]
+    var resolvedBindings: [ReferenceVal: TBinding] = [:]
     
     /// Creates a new type, that will have to be resolved later by constraint resolution
     func createUnresolvedType() -> UnresolvedType {
